@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.0.1] | 30 | 2026-10-04 | Analyseur Q : l'appui de 3 s ramène au menu, même le doigt sur une image |
 | [1.0.0] | 27 | 2026-10-03 | L'app réécrite en composants (Preact), styles et images regroupés, tests avec Jest |
 | [0.10.0] | 22 | 2026-10-03 | La carte de visite, nouveau tour en largeur ; dans le navigateur, le menu dit que c'est une app |
 | [0.9.0] | 20 | 2026-10-03 | À la fin de la routine, on reste dans le tour ; l'appui de 3 s ramène au menu |
@@ -31,7 +32,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.0.1] — 2026-10-04
+
+30 commits
 
 - **Analyseur Q : l'appui de 3 s ramène au menu, même le doigt posé sur une image.** Sur Android, Chrome faisait d'un toucher prolongé sur une image de slide (le logo, les cartes) un glisser ou son menu d'image, et annulait le geste avant les 3 s : on ne pouvait plus revenir au menu. Les images laissent maintenant passer le doigt à la slide. Test dans Chrome : l'appui de 3 s sur le logo, puis sur une autre slide, ramène au menu.
 - `.claude/launch.json`, la configuration locale du serveur de développement de l'app Claude, sort du dépôt (il y était entré par erreur avec la 1.0.0, ouvert au réseau local par `--host`) et est ignoré par git. Rien ne change pour l'app publiée : ce fichier ne servait qu'à lancer `npm run dev`.
@@ -262,6 +265,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.0.1]: https://github.com/dezande/mes-tours/releases/tag/v1.0.1
 [1.0.0]: https://github.com/dezande/mes-tours/releases/tag/v1.0.0
 [0.10.0]: https://github.com/dezande/mes-tours/releases/tag/v0.10.0
 [0.9.0]: https://github.com/dezande/mes-tours/releases/tag/v0.9.0
