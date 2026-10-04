@@ -100,7 +100,7 @@ export function Slide({ slide, index, nombre, langue, place, loin, vue, taille, 
 			<div className="slide-body">
 				{etiquette && <p className="etiquette"><Ligne texte={etiquette} /></p>}
 				{titre && <h1 className="titre"><Ligne texte={titre} /></h1>}
-				{image && <img className="image" src={adresseDeLImage(image)} alt="" decoding="async" onLoad={() => setImagesChargees((n) => n + 1)} />}
+				{image && <img className="image" src={adresseDeLImage(image)} alt="" draggable={false} decoding="async" onLoad={() => setImagesChargees((n) => n + 1)} />}
 				{grand && <p className="grand"><Ligne texte={grand} /></p>}
 				{texte && (
 					<div className="texte">

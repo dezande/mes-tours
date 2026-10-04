@@ -169,7 +169,12 @@ strong {
 	color: $accent;
 }
 
+// Une image ne prend pas le doigt : sur Android, Chrome ferait d'un toucher prolongé sur elle un
+// glisser ou son menu d'image, et annulerait l'appui de 3 s qui ramène au menu. Le toucher passe
+// donc à la slide, dessous.
 .image {
+	pointer-events: none;
+	-webkit-user-drag: none;
 	display: block;
 	max-width: 100%;
 	max-height: calc(var(--fit) * var(--app-h) * .6);

@@ -260,6 +260,22 @@ test('Analyseur Q : « suivante » sur la dernière slide ne quitte pas le tour'
 	});
 }, TIMEOUT);
 
+test('Analyseur Q : l’appui de 3 s ramène au menu, même le doigt posé sur une image', async () => {
+	await withApp(async (page) => {
+		// La première slide montre le logo : le doigt est posé en plein dessus.
+		await ouvrir(page, 'analyseur-q', `document.querySelector('.slide.current .image')?.complete`);
+		const image = await page.evaluate<Point>(dansLeTour(`(() => { const r = document.querySelector('.slide.current .image').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()`));
+		await appuiLong(page, image);
+		await attendreLeMenu(page);
+		// Et ailleurs sur une autre slide, après avoir avancé.
+		await ouvrir(page, 'analyseur-q', `document.querySelector('.slide.current')?.dataset.index === '0'`);
+		await pressKey(page, 'ArrowRight');
+		await sleep(600);
+		await appuiLong(page);
+		await attendreLeMenu(page);
+	});
+}, TIMEOUT);
+
 test('rouvrir un tour commence une nouvelle routine', async () => {
 	await withApp(async (page) => {
 		await ouvrir(page, 'analyseur-q', `document.querySelector('.slide.current')?.dataset.index === '0'`);

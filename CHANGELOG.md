@@ -33,6 +33,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ## [Non publié]
 
+- **Analyseur Q : l'appui de 3 s ramène au menu, même le doigt posé sur une image.** Sur Android, Chrome faisait d'un toucher prolongé sur une image de slide (le logo, les cartes) un glisser ou son menu d'image, et annulait le geste avant les 3 s : on ne pouvait plus revenir au menu. Les images laissent maintenant passer le doigt à la slide. Test dans Chrome : l'appui de 3 s sur le logo, puis sur une autre slide, ramène au menu.
 - `.claude/launch.json`, la configuration locale du serveur de développement de l'app Claude, sort du dépôt (il y était entré par erreur avec la 1.0.0, ouvert au réseau local par `--host`) et est ignoré par git. Rien ne change pour l'app publiée : ce fichier ne servait qu'à lancer `npm run dev`.
 
 ## [1.0.0] — 2026-10-03
