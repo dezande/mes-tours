@@ -1,0 +1,5 @@
+@use "tokens" as *;
+@use "../../components/jauge";
+
+// Jauge de l'appui long, jusqu'au retour au menu (components/_jauge.scss) : à l'encre, sur le ciel.
+@include jauge.jauge($prefixe: "mor", $couleur: $encre, $piste: rgba($bg, .16));

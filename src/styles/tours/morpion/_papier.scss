@@ -1,0 +1,150 @@
+@use "tokens" as *;
+@use "../../abstracts/mixins" as *;
+
+/*
+ * Le papier froissé, seul au centre du fond bleu ciel (components/Papier.tsx).
+ *
+ *   .papier-pivot  le retourne (rotateY) ;
+ *   .papier-face   le recto et le verso, dos à dos (backface-visibility) ;
+ *   .ombre         l'ombre portée, qui suit le bord froissé ;
+ *   .feuille       le papier lui-même, découpé selon son bord froissé (logic/dessin.ts : contour).
+ */
+
+#table {
+	// Le plus grand papier qui tienne : 4 sur 5, au plus 92 % de la largeur et 86 % de la hauteur libre.
+	--ratio: .8;
+	--dispo-h: calc(var(--app-h) - var(--safe-t) - var(--safe-b) - 32px);
+	--papier-h: min(calc(var(--app-w) * .92 / var(--ratio)), calc(var(--dispo-h) * .86), 640px);
+	--papier-w: calc(var(--papier-h) * var(--ratio));
+	position: relative;
+	width: var(--papier-w);
+	height: var(--papier-h);
+}
+
+.papier {
+	@include cover;
+	perspective: 1400px;
+	// Posé un peu de travers, comme jeté sur la table.
+	transform: rotate(-2deg);
+}
+
+.papier-pivot {
+	@include cover;
+	transform-style: preserve-3d;
+	transition: transform .7s cubic-bezier(.4, .02, .2, 1);
+}
+
+.papier.retourne .papier-pivot {
+	transform: rotateY(180deg);
+}
+
+.papier-face {
+	@include cover;
+	@include backface-hidden;
+}
+
+// L'ombre suit le bord froissé, autour de la feuille découpée. Pas sur .papier-face : sur l'élément
+// qui tourne, un filtre empêche Chrome de cacher son dos.
+.ombre {
+	@include cover;
+	filter: drop-shadow(0 2px 2px rgba(20, 60, 90, .25)) drop-shadow(0 14px 22px rgba(20, 60, 90, .28));
+}
+
+.verso {
+	transform: rotateY(180deg);
+}
+
+.feuille {
+	@include cover;
+	display: grid;
+	place-items: center;
+	overflow: hidden;
+	background: radial-gradient(130% 100% at 35% 25%, #fffefb, $papier 55%, $papier-ombre 140%);
+	color: $encre;
+}
+
+// Les plis et le grain (components/Papier.tsx : Froissure), sous l'écriture.
+.froissure {
+	@include cover;
+	width: 100%;
+	height: 100%;
+
+	.facette.claire {
+		fill: #fff;
+	}
+
+	.facette.ombre {
+		fill: #3c5468;
+	}
+
+	.pli {
+		fill: none;
+		stroke-linecap: round;
+		stroke-width: 1px;
+		vector-effect: non-scaling-stroke;
+	}
+
+	.creux {
+		stroke: rgba(47, 68, 86, .16);
+	}
+
+	.relief {
+		stroke: rgba(255, 255, 255, .55);
+	}
+
+	.grain {
+		mix-blend-mode: multiply;
+		opacity: .12;
+	}
+}
+
+// « Prédiction », écrit au stylo, en travers du papier.
+.mot {
+	position: relative;
+	margin: 0;
+	font-family: $manuscrit;
+	font-weight: 700;
+	font-size: calc(var(--papier-w) * .19);
+	line-height: 1;
+	transform: rotate(-7deg);
+	white-space: nowrap;
+	// L'encre a un peu bu dans le papier.
+	text-shadow: 0 0 .5px rgba(29, 58, 138, .6);
+	opacity: .92;
+}
+
+.ecrit {
+	position: relative;
+	width: 82%;
+	transform: rotate(1.5deg);
+}
+
+// La grille de morpion, écrite au même stylo (components/Papier.tsx : GrilleEcrite).
+.grille {
+	display: block;
+	width: 100%;
+	height: auto;
+	overflow: visible;
+
+	path {
+		fill: none;
+		stroke: currentColor;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-width: 2.6;
+		opacity: .92;
+	}
+
+	.traits-grille {
+		stroke-width: 2.2;
+	}
+
+	.gagnante {
+		stroke-width: 3;
+	}
+}
+
+// Au démarrage, le papier apparaît directement à sa place, sans retournement.
+#table.no-anim .papier-pivot {
+	transition: none;
+}

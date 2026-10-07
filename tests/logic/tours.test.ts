@@ -5,8 +5,8 @@ import { LANGS } from '../../src/logic/i18n.ts';
 import { REGISTRE } from '../../src/tours/registre.ts';
 import { TOURS } from '../../src/content/tours.ts';
 
-test('les cinq tours, chacun une seule fois', () => {
-	expect(TOURS.map((tour) => tour.dossier)).toStrictEqual(['boule-de-cristal', 'carte-de-visite', 'pile-ou-face', 'six-predictions', 'analyseur-q']);
+test('les six tours, chacun une seule fois', () => {
+	expect(TOURS.map((tour) => tour.dossier)).toStrictEqual(['boule-de-cristal', 'carte-de-visite', 'pile-ou-face', 'morpion', 'six-predictions', 'analyseur-q']);
 });
 
 test('chaque tour a un dossier valide, un nom et une description dans les deux langues', () => {

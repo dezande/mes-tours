@@ -1,0 +1,21 @@
+/*
+ * Morpion (src/tours/morpion/) : tous ses styles sont rangés sous .scene-morpion, la page du tour
+ * (src/pages/PageTour.tsx). Ses animations sont préfixées « mor- » : les @keyframes, eux, valent
+ * pour toute l'app.
+ */
+@use "sass:meta";
+@use "tokens";
+
+// Le fond derrière #app quand elle pivote, et sous la barre du téléphone.
+html[data-tour="morpion"],
+html[data-tour="morpion"] body {
+	background: tokens.$ciel;
+}
+
+.scene-morpion {
+	@include meta.load-css("base");
+	@include meta.load-css("scene");
+	@include meta.load-css("papier");
+	@include meta.load-css("overlays");
+	@include meta.load-css("menu");
+}

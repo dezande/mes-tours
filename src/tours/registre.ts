@@ -33,6 +33,10 @@ export const REGISTRE: Readonly<Record<string, EntreeDuRegistre>> = {
 		charger: () => import('./pile-ou-face/index.tsx'),
 		couleurTheme: '#071a0f',
 	},
+	'morpion': {
+		charger: () => import('./morpion/index.tsx'),
+		couleurTheme: '#8fd3f4',
+	},
 	'six-predictions': {
 		charger: () => import('./six-predictions/index.tsx'),
 		couleurTheme: '#071a0f',

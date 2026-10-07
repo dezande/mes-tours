@@ -119,7 +119,8 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 	width: 100%;
 	max-width: 520px;
 	display: grid;
-	gap: 14px;
+	// Six tuiles tiennent sur un écran de téléphone, sans faire défiler (tests dans Chrome).
+	gap: 12px;
 	// La place de la main, qui déborde à gauche des tuiles.
 	padding-left: 14px;
 	// L'écart minimal avec le bandeau d'installation, quand le menu défile.
@@ -158,7 +159,7 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 	display: flex;
 	align-items: center;
 	gap: 14px;
-	min-height: 96px;
+	min-height: 92px;
 	padding: 10px 12px;
 	text-align: left;
 }

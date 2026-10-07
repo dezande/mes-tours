@@ -7,6 +7,7 @@ Tous mes accessoires de scène dans **une seule application** : https://dezande.
 | Boule de cristal (3 boulettes : 6, 16, 26) | double toucher après le nombre : il s'efface, la boule est prête pour un nouveau nombre | [boule-de-cristal](https://github.com/dezande/boule-de-cristal) |
 | Carte de visite (Arcane Système : 17, 19, 21, 23 aux 4 coins) | double toucher sur la carte retournée : elle revient sur son recto, prête pour un nouveau numéro | — (créé ici, d'après l'ancienne routine Arcane Système de la boule) |
 | Pile ou face | double toucher après la carte retournée : elle revient face cachée | [pile-ou-face](https://github.com/dezande/pile-ou-face) |
+| Morpion | double toucher sur le papier retourné : il revient sur « Prédiction », prêt pour une nouvelle grille | — (créé ici) |
 | Les six prédictions | double toucher sur la table vide : le paquet revient, faces en bas | [six-predictions](https://github.com/dezande/six-predictions) |
 | Analyseur Q | « suivante » après la dernière slide : rien, on reste sur la dernière slide | [analyseur-q](https://github.com/dezande/analyseur-q) |
 
