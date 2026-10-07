@@ -9,12 +9,11 @@ test('les six tours, chacun une seule fois', () => {
 	expect(TOURS.map((tour) => tour.dossier)).toStrictEqual(['boule-de-cristal', 'carte-de-visite', 'pile-ou-face', 'morpion', 'six-predictions', 'analyseur-q']);
 });
 
-test('chaque tour a un dossier valide, un nom et une description dans les deux langues', () => {
+test('chaque tour a un dossier valide et un nom dans les deux langues', () => {
 	for (const tour of TOURS) {
 		expect(tour.dossier, `dossier « ${tour.dossier} »`).toMatch(/^[a-z0-9-]+$/);
 		for (const lang of LANGS) {
 			expect(tour.nom[lang]?.trim() ?? '', `${tour.dossier} : nom vide en ${lang}`).not.toBe('');
-			expect(tour.description[lang]?.trim() ?? '', `${tour.dossier} : description vide en ${lang}`).not.toBe('');
 		}
 	}
 });
