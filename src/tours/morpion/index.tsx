@@ -4,7 +4,8 @@
  *   toucher la moitié du haut   : le papier se retourne sur la grille du haut
  *   toucher la moitié du bas    : le papier se retourne sur la grille du bas
  *   (après le délai réglé ; 0 s par défaut, au toucher)
- *   deux touchers rapprochés, ou R : le papier revient sur « Prédiction », prêt pour une nouvelle routine
+ *   deux touchers rapprochés, ou R : le papier revient sur « Prédiction » ; un toucher, où que ce
+ *   soit, le retourne sur la même grille : la première choisie est gardée jusqu'au retour au menu
  *   appui de 3 s n'importe où, Échap ou M : retour au menu principal
  *
  * Organisation du dossier :
@@ -30,7 +31,7 @@ import { usePont } from '../pont.tsx';
 import { annonce, Papier } from './components/Papier.tsx';
 import { Reglages } from './components/Reglages.tsx';
 import { keyAction } from './logic/keys.ts';
-import { apresGeste, CACHE, coteDuPoint, montrer, type Cote, type Etat } from './logic/papier.ts';
+import { apresGeste, CACHE, cacher, coteDuPoint, montrer, type Cote, type Etat } from './logic/papier.ts';
 import { sanitizeSettings } from './logic/settings.ts';
 
 /**
@@ -82,7 +83,8 @@ export default function Morpion() {
 	/**
 	 * Ce qu'un geste de la scène déclenche, à la hauteur `y` (repère de l'app) :
 	 *   un tap        arme le papier, sur la grille du haut en haut de l'écran et sur celle du bas en bas ;
-	 *   un double     remet le papier sur « Prédiction », s'il était déjà armé au premier toucher.
+	 *   un double     remet le papier sur « Prédiction », s'il était déjà armé au premier toucher ;
+	 *                 le toucher suivant le retourne sur la même grille, où qu'il soit.
 	 */
 	const { scene, jauge } = useGestesDoubleToucher(reglages.showHoldRing, (geste, { y }) => {
 		// La hauteur de l'app, et non de la fenêtre : l'app peut être pivotée (kit/web/orientation.ts).
@@ -95,7 +97,7 @@ export default function Morpion() {
 
 	// ↑ la grille du haut, ↓ celle du bas, R le papier sur « Prédiction » ; Échap ou M : retour au menu.
 	useClavier(keyAction, (action) => {
-		if (action === 'cacher') changer(CACHE);
+		if (action === 'cacher') changer(cacher(etatRef.current));
 		else changer(apresGeste(etatRef.current, 'tap', action, etatRef.current));
 	});
 

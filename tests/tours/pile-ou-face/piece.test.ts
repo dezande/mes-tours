@@ -1,5 +1,5 @@
-// L'état de la carte : pile en haut, face en bas, armée une seule fois, remise par un double toucher.
-import { apresGeste, CACHEE, coteDuPoint, enJeu, montrer, type Etat } from '../../../src/tours/pile-ou-face/logic/piece.ts';
+// L'état de la carte : pile en haut, face en bas, armée une seule fois, remise par un double toucher, la prédiction gardée.
+import { apresGeste, CACHEE, cacher, coteDuPoint, enJeu, montrer, type Etat } from '../../../src/tours/pile-ou-face/logic/piece.ts';
 
 test('la moitié du haut fait pile, celle du bas fait face', () => {
 	expect(coteDuPoint(0, 800)).toBe('pile');
@@ -38,11 +38,19 @@ test('le délai écoulé retourne la carte armée, et rien d’autre', () => {
 	expect(montrer(montree)).toBe(montree);
 });
 
-test('un double toucher sur une carte armée ou retournée la remet face cachée', () => {
+test('un double toucher sur une carte armée ou retournée la remet face cachée, sa prédiction gardée', () => {
 	const armee: Etat = { phase: 'armee', cote: 'pile' };
 	const montree: Etat = { phase: 'montree', cote: 'face' };
-	expect(apresGeste(armee, 'double', 'face', armee)).toBe(CACHEE);
-	expect(apresGeste(montree, 'double', 'pile', montree)).toBe(CACHEE);
+	expect(apresGeste(armee, 'double', 'face', armee)).toStrictEqual({ phase: 'cachee', garde: 'pile' });
+	expect(apresGeste(montree, 'double', 'pile', montree)).toStrictEqual({ phase: 'cachee', garde: 'face' });
+});
+
+test('la prédiction gardée revient au toucher suivant, même sur l’autre moitié de l’écran', () => {
+	const gardee = cacher({ phase: 'montree', cote: 'face' });
+	expect(apresGeste(gardee, 'tap', 'pile', gardee)).toStrictEqual({ phase: 'armee', cote: 'face' });
+	// Déjà face cachée : cacher ne change rien.
+	expect(cacher(gardee)).toBe(gardee);
+	expect(cacher(CACHEE)).toBe(CACHEE);
 });
 
 test('deux touchers vifs pour armer ne remettent pas aussitôt la carte face cachée', () => {
