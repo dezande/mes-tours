@@ -46,6 +46,20 @@ test('↑ retourne le papier sur la grille du haut, R le remet sur « Prédictio
 	touche('r');
 	expect(papier).not.toHaveClass('retourne');
 	expect(window.location.hash).toBe('#/tours/morpion');
+	// ↓ le retourne, mais toujours sur la grille du haut : la première est gardée jusqu'au menu.
+	touche('ArrowDown');
+	expect(papier).toHaveClass('retourne');
+	expect(papier.dataset.cote).toBe('haut');
+	// Passé par le menu, le tour repart à zéro : ↓ donne la grille du bas.
+	touche('Escape');
+	expect(await screen.findByText('Choisis un tour')).toBeInTheDocument();
+	act(() => {
+		window.location.hash = '#/tours/morpion';
+	});
+	await waitFor(() => expect(document.querySelector('#table .papier')).not.toBeNull());
+	await act(() => new Promise((fin) => setTimeout(fin, 150)));
+	touche('ArrowDown');
+	expect(document.querySelector<HTMLElement>('#table .papier')!.dataset.cote).toBe('bas');
 });
 
 test('↓ donne la grille du bas, et une autre touche ne la change plus', async () => {

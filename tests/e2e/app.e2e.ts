@@ -145,31 +145,36 @@ test('ouverte dans le navigateur, le menu dit que c’est une app ; installée, 
 
 /* ================= Chaque routine, jusqu'au retour au menu ================= */
 
-test('Pile ou face : le double toucher de fin remet la carte face cachée, on reste dans le tour ; l’appui de 3 s ramène au menu', async () => {
+test('Pile ou face : le double toucher cache la carte, qui se retourne ensuite toujours sur la même prédiction ; l’appui de 3 s ramène au menu, qui la libère', async () => {
 	await withApp(async (page) => {
 		await ouvrir(page, 'pile-ou-face', `Boolean(document.querySelector('#table .carte .dos svg'))`);
 		await page.tap(HAUT);
-		await attendre(page, dansLeTour(`document.querySelector('#table .carte').classList.contains('retournee')`), 'carte retournée', 3000);
+		await attendre(page, dansLeTour(`document.querySelector('#table .carte').classList.contains('retournee')`), 'retournée en haut', 3000);
 		expect(await page.evaluate(dansLeTour(`document.querySelector('#table .carte').dataset.cote`))).toBe('pile');
-		await sleep(600);
+		await sleep(800);
 		await page.doubleTap(CENTRE);
 		await attendre(page, dansLeTour(`!document.querySelector('#table .carte').classList.contains('retournee')`), 'carte face cachée', 3000);
 		await sleep(800);
-		expect(await page.evaluate<boolean>(`location.hash.startsWith('#/tours/pile-ou-face')`), 'le double toucher a quitté le tour').toBeTruthy();
-		// Une nouvelle routine, sur place.
-		await page.tap(HAUT);
-		await attendre(page, dansLeTour(`document.querySelector('#table .carte').classList.contains('retournee')`), 'nouvelle routine', 3000);
-		await sleep(600);
+		expect(await page.evaluate<boolean>(`location.hash.startsWith('#/tours/pile-ou-face')`), 'le double toucher a quitté le tour').toBe(true);
+		// Touchée en bas, elle se retourne encore, mais sur la même prédiction : gardée jusqu'au menu.
+		await page.tap({ x: CENTRE.x, y: SCREEN.height * .8 });
+		await attendre(page, dansLeTour(`document.querySelector('#table .carte').classList.contains('retournee')`), 'retournée à nouveau', 3000);
+		expect(await page.evaluate(dansLeTour(`document.querySelector('#table .carte').dataset.cote`))).toBe('pile');
+		await sleep(800);
 		await appuiLong(page);
 		await attendreLeMenu(page);
+		// Passé par le menu, le tour repart à zéro : le bas donne l'autre prédiction.
+		await ouvrir(page, 'pile-ou-face', `Boolean(document.querySelector('#table .carte .dos svg'))`);
+		await page.tap({ x: CENTRE.x, y: SCREEN.height * .8 });
+		await attendre(page, dansLeTour(`document.querySelector('#table .carte').dataset.cote === 'face' && document.querySelector('#table .carte').classList.contains('retournee')`), 'l’autre prédiction', 3000);
 	});
 }, TIMEOUT);
 
-test('Morpion : le haut retourne le papier sur sa grille, le double toucher le remet sur « Prédiction », sur place ; l’appui de 3 s ramène au menu', async () => {
+test('Morpion : le double toucher remet le papier sur « Prédiction », qui se retourne ensuite toujours sur la même grille ; l’appui de 3 s ramène au menu, qui la libère', async () => {
 	await withApp(async (page) => {
 		await ouvrir(page, 'morpion', `Boolean(document.querySelector('#table .papier .recto .mot'))`);
 		await page.tap(HAUT);
-		await attendre(page, dansLeTour(`document.querySelector('#table .papier').classList.contains('retourne')`), 'papier retourné', 3000);
+		await attendre(page, dansLeTour(`document.querySelector('#table .papier').classList.contains('retourne')`), 'retournée en haut', 3000);
 		expect(await page.evaluate(dansLeTour(`document.querySelector('#table .papier').dataset.cote`))).toBe('haut');
 		expect(await page.evaluate(dansLeTour(`document.querySelectorAll('#table .grille .signe-x, #table .grille .signe-o').length`))).toBe(10);
 		await sleep(800);
@@ -177,12 +182,17 @@ test('Morpion : le haut retourne le papier sur sa grille, le double toucher le r
 		await attendre(page, dansLeTour(`!document.querySelector('#table .papier').classList.contains('retourne')`), 'papier sur « Prédiction »', 3000);
 		await sleep(800);
 		expect(await page.evaluate<boolean>(`location.hash.startsWith('#/tours/morpion')`), 'le double toucher a quitté le tour').toBe(true);
-		// Une nouvelle routine, sur place : le bas donne l'autre grille.
+		// Touchée en bas, elle se retourne encore, mais sur la même prédiction : gardée jusqu'au menu.
 		await page.tap({ x: CENTRE.x, y: SCREEN.height * .8 });
-		await attendre(page, dansLeTour(`document.querySelector('#table .papier').dataset.cote === 'bas' && document.querySelector('#table .papier').classList.contains('retourne')`), 'grille du bas', 3000);
+		await attendre(page, dansLeTour(`document.querySelector('#table .papier').classList.contains('retourne')`), 'retournée à nouveau', 3000);
+		expect(await page.evaluate(dansLeTour(`document.querySelector('#table .papier').dataset.cote`))).toBe('haut');
 		await sleep(800);
 		await appuiLong(page);
 		await attendreLeMenu(page);
+		// Passé par le menu, le tour repart à zéro : le bas donne l'autre prédiction.
+		await ouvrir(page, 'morpion', `Boolean(document.querySelector('#table .papier .recto .mot'))`);
+		await page.tap({ x: CENTRE.x, y: SCREEN.height * .8 });
+		await attendre(page, dansLeTour(`document.querySelector('#table .papier').dataset.cote === 'bas' && document.querySelector('#table .papier').classList.contains('retourne')`), 'l’autre prédiction', 3000);
 	});
 }, TIMEOUT);
 

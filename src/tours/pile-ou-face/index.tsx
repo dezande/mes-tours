@@ -3,7 +3,8 @@
  *   toucher la moitié du haut   : la carte se retourne sur « 0,20 euro pile »
  *   toucher la moitié du bas    : la carte se retourne sur « 0,20 euro face »
  *   (après le délai réglé ; 0 s par défaut, au toucher)
- *   deux touchers rapprochés, ou R : la carte revient face cachée, prête pour une nouvelle routine
+ *   deux touchers rapprochés, ou R : la carte revient face cachée ; un toucher, où que ce soit, la
+ *   retourne sur la même prédiction : la première choisie est gardée jusqu'au retour au menu
  *   appui de 3 s n'importe où, Échap ou M : retour au menu principal
  *
  * Organisation du dossier :
@@ -29,7 +30,7 @@ import { usePont } from '../pont.tsx';
 import { annonce, Carte } from './components/Carte.tsx';
 import { Reglages } from './components/Reglages.tsx';
 import { keyAction } from './logic/keys.ts';
-import { apresGeste, CACHEE, coteDuPoint, montrer, type Cote, type Etat } from './logic/piece.ts';
+import { apresGeste, CACHEE, cacher, coteDuPoint, montrer, type Cote, type Etat } from './logic/piece.ts';
 import { sanitizeSettings } from './logic/settings.ts';
 
 /**
@@ -83,7 +84,8 @@ export default function PileOuFace() {
 	/**
 	 * Ce qu'un geste de la scène déclenche, à la hauteur `y` (repère de l'app) :
 	 *   un tap        arme la carte, sur pile en haut de l'écran et sur face en bas ;
-	 *   un double     remet la carte face cachée, si elle était déjà armée au premier toucher.
+	 *   un double     remet la carte face cachée, si elle était déjà armée au premier toucher ;
+	 *                 le toucher suivant la retourne sur la même prédiction, où qu'il soit.
 	 */
 	const { scene, jauge } = useGestesDoubleToucher(reglages.showHoldRing, (geste, { y }) => {
 		// La hauteur de l'app, et non de la fenêtre : l'app peut être pivotée (kit/web/orientation.ts).
@@ -96,7 +98,7 @@ export default function PileOuFace() {
 
 	// ↑ pile, ↓ face, R la carte face cachée ; Échap ou M : retour au menu.
 	useClavier(keyAction, (action) => {
-		if (action === 'cacher') changer(CACHEE);
+		if (action === 'cacher') changer(cacher(etatRef.current));
 		else changer(apresGeste(etatRef.current, 'tap', action, etatRef.current));
 	});
 

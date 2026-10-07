@@ -37,6 +37,20 @@ test('↑ retourne la carte sur pile, R la remet face cachée : on reste dans le
 	touche('r');
 	expect(carte).not.toHaveClass('retournee');
 	expect(window.location.hash).toBe('#/tours/pile-ou-face');
+	// ↓ la retourne, mais toujours sur pile : la première prédiction est gardée jusqu'au menu.
+	touche('ArrowDown');
+	expect(carte).toHaveClass('retournee');
+	expect(carte.dataset.cote).toBe('pile');
+	// Passé par le menu, le tour repart à zéro : ↓ donne face.
+	touche('Escape');
+	expect(await screen.findByText('Choisis un tour')).toBeInTheDocument();
+	act(() => {
+		window.location.hash = '#/tours/pile-ou-face';
+	});
+	await waitFor(() => expect(document.querySelector('#table .carte')).not.toBeNull());
+	await act(() => new Promise((fin) => setTimeout(fin, 150)));
+	touche('ArrowDown');
+	expect(document.querySelector<HTMLElement>('#table .carte')!.dataset.cote).toBe('face');
 });
 
 test('une fois la carte retournée, une autre touche ne change plus la prédiction', async () => {

@@ -49,8 +49,8 @@ export const INTERFACE = {
 		en: 'With a delay, the card flips by itself once the delay set above has passed. Once the choice is made, another tap changes nothing.',
 	},
 	'aide.double': {
-		fr: 'Deux touchers rapprochés : la carte revient face cachée, prête pour un nouveau tour.',
-		en: 'Two quick taps: the card turns back face down, ready for another round.',
+		fr: 'Deux touchers rapprochés : la carte revient face cachée. Elle se retourne ensuite toujours sur la même prédiction, jusqu\'au retour au menu.',
+		en: 'Two quick taps: the card turns back face down. It then always flips to the same prediction, until you go back to the menu.',
 	},
 	'aide.appui': {
 		fr: 'Appui de 3 s pendant le tour : on le quitte, retour au menu de Mes tours. Ces réglages s\'ouvrent par l\'écrou ⚙ du menu.',
