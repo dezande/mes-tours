@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.1.0] | 34 | 2026-10-07 | Morpion, nouveau tour ; la première prédiction gardée jusqu'au menu ; le menu aux fonds des tours |
 | [1.0.1] | 30 | 2026-10-04 | Analyseur Q : l'appui de 3 s ramène au menu, même le doigt sur une image |
 | [1.0.0] | 27 | 2026-10-03 | L'app réécrite en composants (Preact), styles et images regroupés, tests avec Jest |
 | [0.10.0] | 22 | 2026-10-03 | La carte de visite, nouveau tour en largeur ; dans le navigateur, le menu dit que c'est une app |
@@ -32,7 +33,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.1.0] — 2026-10-07
+
+34 commits
 
 - **Morpion, un nouveau tour.** Sur un fond bleu ciel, un papier froissé, déplié, marqué « Prédiction » ; au dos, une grille de morpion remplie au stylo. Le même système que Pile ou face : toucher le haut ou le bas de l'écran retourne le papier sur l'une des deux grilles (après le délai réglé) : en haut, X barre la première ligne, une croix et un rond superposés dans le coin en haut à gauche ; en bas, X barre la troisième colonne, la croix et le rond superposés au bout de la deuxième ligne, le double toucher le remet sur « Prédiction », sur place, et l'appui de 3 s ramène au menu. Sa tuile a son icône en pixels ; les tuiles du menu sont un peu resserrées, pour que les six tiennent sur un écran de téléphone. Tests des grilles, du papier et des réglages, et test dans Chrome de toute la routine.
 - **Pile ou face et Morpion : la première prédiction choisie est gardée jusqu'au retour au menu.** Le double toucher (ou R) cache toujours la carte ou le papier, et un toucher le retourne à nouveau, mais toujours sur la même prédiction, même en touchant l'autre moitié de l'écran. Le retour au menu (appui de 3 s, Échap ou M) la libère : le tour rouvre prêt pour un nouveau choix. Tests au clavier et dans Chrome.
@@ -271,6 +274,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.1.0]: https://github.com/dezande/mes-tours/releases/tag/v1.1.0
 [1.0.1]: https://github.com/dezande/mes-tours/releases/tag/v1.0.1
 [1.0.0]: https://github.com/dezande/mes-tours/releases/tag/v1.0.0
 [0.10.0]: https://github.com/dezande/mes-tours/releases/tag/v0.10.0
