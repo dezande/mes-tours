@@ -41,6 +41,12 @@ export const TOURS: readonly Tour[] = [
 		description: { fr: '0,20 euro, pile en haut, face en bas', en: '20 cents: tails at the top, heads at the bottom' },
 	},
 	{
+		// Le même système que Pile ou face : le haut ou le bas de l'écran choisit la grille.
+		dossier: 'morpion',
+		nom: { fr: 'Morpion', en: 'Tic-tac-toe' },
+		description: { fr: 'Un papier froissé, une grille au dos', en: 'A crumpled paper, a grid on the back' },
+	},
+	{
 		dossier: 'six-predictions',
 		nom: { fr: 'Les six prédictions', en: 'The six predictions' },
 		description: { fr: 'Six cartes qui se retournent une à une', en: 'Six cards that turn over one by one' },

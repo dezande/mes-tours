@@ -1,0 +1,25 @@
+// Couleurs et typographies du Morpion, figées à la compilation.
+
+// Le fond de la scène : un bleu ciel, plus clair en haut, comme un ciel de beau temps.
+$ciel-haut: #cdeefc;
+$ciel: #8fd3f4;
+$ciel-bas: #63bde8;
+
+// Les réglages : un bleu de nuit, l'accent bleu ciel.
+$bg: #0f2433;
+$ink: #eef6fb;
+$ink-soft: rgba(238, 246, 251, .62);
+$ink-faint: rgba(238, 246, 251, .14);
+$accent: $ciel;
+$panel: #16303f;
+
+// Le papier : un papier d'imprimante à peine jauni, écrit au stylo bille bleu.
+$papier: #fbf9f3;
+$papier-ombre: #e4dfd2;
+$encre: #1d3a8a;
+
+$sans: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+$serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", "Noto Serif", Georgia, serif;
+
+// Écriture à la main : Caveat, embarquée avec l'app (styles/_polices.scss), puis les cursives du système.
+$manuscrit: "Caveat", "Bradley Hand", "Noteworthy", "Segoe Script", "Ink Free", cursive;

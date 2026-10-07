@@ -32,6 +32,10 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **Morpion, un nouveau tour.** Sur un fond bleu ciel, un papier froissé, déplié, marqué « Prédiction » ; au dos, une grille de morpion remplie au stylo. Le même système que Pile ou face : toucher le haut ou le bas de l'écran retourne le papier sur l'une des deux grilles (après le délai réglé) : en haut, X barre la première ligne, une croix et un rond superposés dans le coin en haut à gauche ; en bas, X barre la troisième colonne, la croix et le rond superposés au bout de la deuxième ligne, le double toucher le remet sur « Prédiction », sur place, et l'appui de 3 s ramène au menu. Sa tuile a son icône en pixels ; les tuiles du menu sont un peu resserrées, pour que les six tiennent sur un écran de téléphone. Tests des grilles, du papier et des réglages, et test dans Chrome de toute la routine.
+
 ## [1.0.1] — 2026-10-04
 
 30 commits

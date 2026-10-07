@@ -102,7 +102,7 @@ async function pressKey(page: Page, key: string): Promise<void> {
 
 /* ================= Le menu principal ================= */
 
-test('le menu 16 bits montre les cinq tours, chacun avec son icône et son écrou ⚙', async () => {
+test('le menu 16 bits montre les six tours, chacun avec son icône et son écrou ⚙', async () => {
 	await withApp(async (page) => {
 		const tuiles = await page.evaluate<{ nom: string; icone: boolean; ecrou: string | null }[]>(`[...document.querySelectorAll('#tours .tour')].map((t) => ({
 			nom: t.querySelector('.tour-nom').textContent,
@@ -160,6 +160,27 @@ test('Pile ou face : le double toucher de fin remet la carte face cachée, on re
 		await page.tap(HAUT);
 		await attendre(page, dansLeTour(`document.querySelector('#table .carte').classList.contains('retournee')`), 'nouvelle routine', 3000);
 		await sleep(600);
+		await appuiLong(page);
+		await attendreLeMenu(page);
+	});
+}, TIMEOUT);
+
+test('Morpion : le haut retourne le papier sur sa grille, le double toucher le remet sur « Prédiction », sur place ; l’appui de 3 s ramène au menu', async () => {
+	await withApp(async (page) => {
+		await ouvrir(page, 'morpion', `Boolean(document.querySelector('#table .papier .recto .mot'))`);
+		await page.tap(HAUT);
+		await attendre(page, dansLeTour(`document.querySelector('#table .papier').classList.contains('retourne')`), 'papier retourné', 3000);
+		expect(await page.evaluate(dansLeTour(`document.querySelector('#table .papier').dataset.cote`))).toBe('haut');
+		expect(await page.evaluate(dansLeTour(`document.querySelectorAll('#table .grille .signe-x, #table .grille .signe-o').length`))).toBe(10);
+		await sleep(800);
+		await page.doubleTap(CENTRE);
+		await attendre(page, dansLeTour(`!document.querySelector('#table .papier').classList.contains('retourne')`), 'papier sur « Prédiction »', 3000);
+		await sleep(800);
+		expect(await page.evaluate<boolean>(`location.hash.startsWith('#/tours/morpion')`), 'le double toucher a quitté le tour').toBe(true);
+		// Une nouvelle routine, sur place : le bas donne l'autre grille.
+		await page.tap({ x: CENTRE.x, y: SCREEN.height * .8 });
+		await attendre(page, dansLeTour(`document.querySelector('#table .papier').dataset.cote === 'bas' && document.querySelector('#table .papier').classList.contains('retourne')`), 'grille du bas', 3000);
+		await sleep(800);
 		await appuiLong(page);
 		await attendreLeMenu(page);
 	});
@@ -430,6 +451,7 @@ test('écrou ⚙ : les réglages du tour s’ouvrent seuls, « Fermer » ramène
 			['boule-de-cristal', '#settings'],
 			['carte-de-visite', '#settings'],
 			['pile-ou-face', '#menu'],
+			['morpion', '#menu'],
 			['six-predictions', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
@@ -459,6 +481,7 @@ test('écrou ⚙ : une croix en haut à droite ferme les réglages, plus de bout
 			['boule-de-cristal', '#settings'],
 			['carte-de-visite', '#settings'],
 			['pile-ou-face', '#menu'],
+			['morpion', '#menu'],
 			['six-predictions', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
@@ -491,6 +514,7 @@ test('écrou ⚙ : tous les réglages ont la même structure, le nom du tour en 
 			['boule-de-cristal', '#settings'],
 			['carte-de-visite', '#settings'],
 			['pile-ou-face', '#menu'],
+			['morpion', '#menu'],
 			['six-predictions', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
@@ -672,6 +696,7 @@ test('chaque tour reçoit les marges de l’écran : rien sous la caméra fronta
 			['boule-de-cristal', `Boolean(document.querySelector('#number'))`],
 			['carte-de-visite', `Boolean(document.querySelector('#number'))`],
 			['pile-ou-face', `Boolean(document.querySelector('#table .carte'))`],
+			['morpion', `Boolean(document.querySelector('#table .papier'))`],
 			['six-predictions', `document.querySelectorAll('#paquet .carte').length === 6`],
 			['analyseur-q', `Boolean(document.querySelector('.slide.current'))`],
 		] as const) {

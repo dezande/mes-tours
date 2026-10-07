@@ -93,6 +93,37 @@ def carte_de_visite():
         t[Y][X]=ors[2]
     return contour(t,'#2a1606')
 
+# ---------- Morpion : le papier froissé, une grille remplie au stylo bleu ----------
+def morpion():
+    t=toile()
+    blancs=['#8fa5b8','#c3d1dc','#e6edf2','#ffffff']
+    coins=[(4.5,4.0),(27.5,3.0),(28.5,28.0),(3.5,29.0)]
+    def dedans(px,py):
+        signe=None
+        for i in range(4):
+            (ax,ay),(bx,by)=coins[i],coins[(i+1)%4]
+            c=(bx-ax)*(py-ay)-(by-ay)*(px-ax)
+            if signe is None: signe=c>0
+            elif (c>0)!=signe: return False
+        return True
+    pli=(15.0,17.0)   # le point où les plis se croisent
+    for y in range(N):
+        for x in range(N):
+            px,py=x+.5,y+.5
+            if not dedans(px,py): continue
+            # quatre facettes autour du croisement des plis, chacune sa lumière
+            dx,dy=px-pli[0],py-pli[1]
+            facette=(0 if dy<0 else 2)+(1 if dx>0 else 0)
+            v=[0.95,0.7,0.55,0.85][facette]-0.15*((px+py)/64)
+            t[y][x]=ramp(v,blancs,x,y)
+    encre='#1d3a8a'
+    for k in range(7,26):
+        t[k][13]=encre; t[k][19]=encre; t[13][k]=encre; t[19][k]=encre
+    X=[(0,0),(2,0),(1,1),(0,2),(2,2)]; O=[(1,0),(0,1),(2,1),(1,2)]
+    for (cx,cy),motif in (((9,9),X),((15,9),O),((15,15),X),((21,15),O),((21,21),X)):
+        for (u,v) in motif: t[cy+v][cx+u]=encre
+    return contour(t,'#1b2f45')
+
 # ---------- Pile ou face : la pièce de 20 centimes ----------
 CHIFFRES={'2':["0110","1001","0001","0010","0100","1000","1111"],'0':["0110","1001","1001","1001","1001","1001","0110"]}
 def piece():
@@ -232,7 +263,7 @@ def en_grille(t):
         lignes.append(l)
     return lignes
 
-icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'six-predictions':eventail(),'analyseur-q':analyseur()}
+icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'morpion':morpion(),'six-predictions':eventail(),'analyseur-q':analyseur()}
 gear=ecrou()
 # palette commune
 couleurs=[]
@@ -256,6 +287,6 @@ def svg(grille,pal,ox,oy,s):
 corps=''
 for i,(k,v) in enumerate(out['icones'].items()):
     corps+=svg(v,out['palette'],20+i*180,20,5)
-corps+=svg(out['ecrou'],out['palette'],940,40,5)
-open(__import__('os').path.join(__import__('os').path.dirname(__file__) or '.', 'apercu.svg'),'w').write(f'<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="200" shape-rendering="crispEdges"><rect width="1080" height="200" fill="#20306a"/>{corps}</svg>')
+corps+=svg(out['ecrou'],out['palette'],1120,40,5)
+open(__import__('os').path.join(__import__('os').path.dirname(__file__) or '.', 'apercu.svg'),'w').write(f'<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="200" shape-rendering="crispEdges"><rect width="1260" height="200" fill="#20306a"/>{corps}</svg>')
 print(len(couleurs),'couleurs')

@@ -1,0 +1,25 @@
+@use "tokens" as *;
+@use "../../components/panneau-reglages" as panneau;
+
+// Le panneau de réglages, sur un bleu de nuit (components/_panneau-reglages.scss).
+@include panneau.panneau-reglages($fond: $bg, $texte: $ink, $texte-doux: $ink-soft,
+	$filet: $ink-faint, $accent: $accent, $carte: $panel, $serif: $serif);
+
+// Curseur du délai : la valeur est écrite à droite de son nom.
+.slider-label {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 12px;
+
+	output {
+		color: $accent;
+		font-variant-numeric: tabular-nums;
+	}
+}
+
+@include panneau.curseur($accent);
+
+.slider-hint {
+	margin: 6px 0 0;
+}
