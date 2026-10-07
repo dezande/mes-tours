@@ -1,7 +1,7 @@
 /*
  * Le menu principal, en pixel art façon console 16 bits : une fenêtre par tour (content/tours.ts),
- * avec son icône en pixels (content/pixels.ts), et la main des jeux de rôle qui montre la tuile
- * touchée. Toucher la tuile lance le tour ; l'écrou ⚙ à côté ouvre ses réglages. Les boutons
+ * au fond de son tour, avec son nom et son icône en pixels (content/pixels.ts), et la main des jeux
+ * de rôle qui montre la tuile touchée. Toucher la tuile lance le tour ; l'écrou ⚙ à côté ouvre ses réglages. Les boutons
  * agissent au lever du doigt, appui bref ou long (BoutonTactile).
  *
  * Le bouton FR / EN choisit la langue du menu et de tous les tours (langue/LangueContext.tsx).
@@ -51,10 +51,7 @@ export function Menu() {
 								{/* La main qui montre la tuile, le temps du toucher ; puis l'icône du tour. */}
 								<PixelArt grille={MAIN} className="main" />
 								<PixelArt grille={ICONES[tour.dossier]!} className="tour-icone" />
-								<span className="tour-texte">
-									<span className="tour-nom">{nom}</span>
-									<span className="tour-description">{tour.description[langue]}</span>
-								</span>
+								<span className="tour-nom">{nom}</span>
 							</BoutonTactile>
 							<BoutonTactile className="tour-reglages" aria-label={`${TEXTES.reglagesDe[langue]}${nom}`} onAction={() => naviguer(adresseDuTour(tour.dossier, true))}>
 								<PixelArt grille={ECROU} className="ecrou" />

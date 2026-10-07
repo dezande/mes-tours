@@ -18,13 +18,12 @@ function toucher(element: HTMLElement): void {
 	fireEvent.touchEnd(element, { touches: [], changedTouches: [doigt] });
 }
 
-test('une tuile par tour, avec son nom, sa description et son écrou ⚙', () => {
+test('une tuile par tour, avec son nom et son écrou ⚙', () => {
 	render(<App />);
 	const tuiles = document.querySelectorAll<HTMLElement>('#tours .tour');
 	expect([...tuiles].map((tuile) => tuile.dataset.dossier)).toStrictEqual(TOURS.map((tour) => tour.dossier));
 	for (const [i, tour] of TOURS.entries()) {
 		expect(within(tuiles[i]!).getByText(tour.nom.fr)).toBeInTheDocument();
-		expect(within(tuiles[i]!).getByText(tour.description.fr)).toBeInTheDocument();
 		expect(within(tuiles[i]!).getByRole('button', { name: `Réglages : ${tour.nom.fr}` })).toBeInTheDocument();
 	}
 	expect(document.querySelector('#version')).toHaveTextContent(`Version ${APP_VERSION}`);
