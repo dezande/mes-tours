@@ -9,7 +9,7 @@
  */
 
 import photoDuDos from '../../../assets/images/princesse/dos.jpg';
-import { CADRE_FIGURE, DEMI_VALET, ENSEIGNE } from '../logic/dessin.ts';
+import { CADRE_FIGURE, DEMI_VALET, ENSEIGNE, partage } from '../logic/dessin.ts';
 import { estFigure, estRouge, indexDeCarte, placesDesEnseignes, type Carte, type Enseigne } from '../logic/cartes.ts';
 
 /**
@@ -44,7 +44,10 @@ function Index({ carte }: { carte: Carte }) {
 	);
 }
 
-/** Le valet : son cadre, sa moitié haute, et la même tête-bêche ; son enseigne dans le coin du cadre. */
+/**
+ * Le valet : son cadre, sa moitié haute, et la même tête-bêche, partagées en biais ; le grand
+ * carreau dans le coin du cadre, et son reflet dans le coin opposé.
+ */
 function Valet({ enseigne }: { enseigne: Enseigne }) {
 	const { x, y, l, h } = CADRE_FIGURE;
 	const moitie = DEMI_VALET.map((piece, i) => (
@@ -55,9 +58,9 @@ function Valet({ enseigne }: { enseigne: Enseigne }) {
 			<rect className="fond-figure" x={x} y={y} width={l} height={h} />
 			<g>{moitie}</g>
 			<g transform="rotate(180 50 70)">{moitie}</g>
-			<path className="milieu" d={`M${x} 70H${x + l}`} />
-			<EnseigneEn enseigne={enseigne} x={x + 7} y={y + 7.5} taille={9} />
-			<EnseigneEn enseigne={enseigne} x={x + l - 7} y={y + h - 7.5} taille={9} retourne />
+			<path className="milieu" d={`M${x} ${partage(x)}L${x + l} ${partage(x + l)}`} />
+			<EnseigneEn enseigne={enseigne} x={x + 8.5} y={y + 9.5} taille={14} />
+			<EnseigneEn enseigne={enseigne} x={x + l - 8.5} y={y + h - 9.5} taille={14} retourne />
 			<rect className="cadre-figure" x={x} y={y} width={l} height={h} />
 		</g>
 	);

@@ -1,5 +1,5 @@
 // Les tracés des faces : les enseignes et le valet, bien formés et à leur place.
-import { CADRE_FIGURE, DEMI_VALET, ENSEIGNE } from '../../../src/tours/princesse/logic/dessin.ts';
+import { CADRE_FIGURE, DEMI_VALET, ENSEIGNE, partage } from '../../../src/tours/princesse/logic/dessin.ts';
 import { ENSEIGNES } from '../../../src/tours/princesse/logic/cartes.ts';
 
 /** Les coordonnées absolues d'un tracé (commandes M, L, C, Q, H, V en majuscules seulement). */
@@ -22,11 +22,13 @@ test('chaque enseigne est dessinée, dans sa case de 100 × 100', () => {
 	}
 });
 
-test('la moitié du valet reste dans son cadre, au-dessus de la ligne du milieu', () => {
+test('la moitié du valet reste dans son cadre, au-dessus de la ligne de partage en biais', () => {
 	const { x, y, l } = CADRE_FIGURE;
+	// Le partage passe par le centre de la carte : tête-bêche, les deux moitiés s'y rejoignent.
+	expect(partage(50)).toBe(70);
 	for (const piece of DEMI_VALET) {
 		for (const [px, py] of points(piece.d)) {
-			expect(px! >= x && px! <= x + l && py! >= y && py! <= 70, `${piece.teinte} : ${px}, ${py}`).toBe(true);
+			expect(px! >= x && px! <= x + l && py! >= y && py! <= partage(px!) + .01, `${piece.teinte} : ${px}, ${py}`).toBe(true);
 		}
 	}
 });

@@ -36,31 +36,88 @@ export interface Piece {
 export const CADRE_FIGURE = { x: 17, y: 19, l: 66, h: 102 } as const;
 
 /**
- * La moitié haute du valet, en buste, de la tête aux épaules ; la moitié basse est la même,
- * tête-bêche autour du centre de la carte, comme sur un vrai jeu. Tout reste au-dessus de la ligne
- * du milieu (y = 70).
+ * La ligne qui partage le valet en deux moitiés, en biais comme sur les cartes classiques : elle
+ * passe par le centre de la carte (50, 70) et descend vers la gauche. La moitié haute est au-dessus,
+ * la moitié basse en est la même, tête-bêche autour du centre.
+ */
+export const PENTE = .45;
+/** La hauteur de la ligne de partage à l'abscisse `x`. */
+export const partage = (x: number): number => 70 - PENTE * (x - 50);
+
+/** Un point à `ecart` au-dessus de la ligne de partage, à l'abscisse `x`. */
+const auDessus = (x: number, ecart: number): string => `${x} ${(partage(x) - ecart).toFixed(2)}`;
+
+const [GAUCHE, DROITE] = [17, 83];
+
+/** Les rayures bleues du plastron, verticales, du col jusqu'à la bande dorée. */
+function rayures(): string {
+	let d = '';
+	for (let x = 42; x <= 59; x += 1.8) d += `M${x.toFixed(1)} 52.6L${auDessus(Number(x.toFixed(1)), 8.6)}`;
+	return d;
+}
+
+/** Les épis de la bande dorée : des chevrons le long du partage. */
+function epis(): string {
+	let d = '';
+	for (let x = GAUCHE + 2.5; x <= DROITE - 2; x += 3.4) {
+		const y = partage(x) - 5.5;
+		d += `M${(x + 1.2).toFixed(2)} ${(y - 1.6).toFixed(2)}L${x.toFixed(2)} ${(y + .3).toFixed(2)}L${(x + 1.2).toFixed(2)} ${(y + 1.9).toFixed(2)}`;
+	}
+	return d;
+}
+
+/**
+ * La moitié haute du valet de carreau, dans la composition traditionnelle des cartes classiques
+ * (le portrait anglais des jeux américains) : de face, la toque rouge à panneaux blancs, les cheveux
+ * dorés qui s'enroulent sous les oreilles, les yeux bleus, le col doré et son médaillon, la manche
+ * rouge à rayure bleue, le plastron rayé, la bande dorée à épis et la bande noire le long du partage
+ * en biais, et, à droite, la main qui tient la hallebarde au fer en croissant. Le visage reste blanc,
+ * comme le papier. Tout reste au-dessus de la ligne de partage (`partage`).
  */
 export const DEMI_VALET: readonly Piece[] = [
-	// Les épaules : le pourpoint, mi-bleu mi-rouge, et ses galons jaunes.
-	{ d: 'M18 70V66C26 61 36 59 45 61L50 62V70Z', teinte: 'bleu' },
-	{ d: 'M82 70V66C74 61 64 59 55 61L50 62V70Z', teinte: 'rouge' },
-	{ d: 'M24 70L27 63.4L30 63L27.4 70ZM35 70L36.6 61.6L39.6 61.4L38.4 70Z', teinte: 'jaune' },
-	{ d: 'M76 70L73 63.4L70 63L72.6 70ZM65 70L63.4 61.6L60.4 61.4L61.6 70Z', teinte: 'jaune' },
-	// Le col en éventail.
-	{ d: 'M37 59.5C44 64.5 56 64.5 63 59.5L64.5 63.5C56 69 44 69 35.5 63.5Z', teinte: 'blanc' },
-	{ d: 'M40 62.5L41.6 66M45 64L45.8 67.6M50 64.6V68.2M55 64L54.2 67.6M60 62.5L58.4 66', teinte: 'noir', trait: true },
-	// Les cheveux, bouclés, de part et d'autre du visage.
-	{ d: 'M37.5 41C32 45 31 51 33 57C34.5 55 36 55.6 37.5 57.5C37 52 38 47 40.5 43Z', teinte: 'jaune' },
-	{ d: 'M62.5 41C68 45 69 51 67 57C65.5 55 64 55.6 62.5 57.5C63 52 62 47 59.5 43Z', teinte: 'jaune' },
-	// Le visage.
-	{ d: 'M39 47C39 40 44 37 50 37C56 37 61 40 61 47C61 55 56 60.5 50 60.5C44 60.5 39 55 39 47Z', teinte: 'peau' },
-	{ d: 'M43.4 46.2Q45.8 44.8 48.2 46.2M51.8 46.2Q54.2 44.8 56.6 46.2', teinte: 'noir', trait: true },
-	{ d: `${cercle(45.8, 48.4, .9)}${cercle(54.2, 48.4, .9)}`, teinte: 'noir' },
-	{ d: 'M50 48.6L48.4 53.6L50.8 54', teinte: 'noir', trait: true },
-	{ d: 'M46.6 56.4Q50 58.2 53.4 56.4', teinte: 'rouge', trait: true },
-	// Le chapeau, rouge à bord jaune, et sa plume.
-	{ d: 'M33 43C34 33 42 27.5 50 27.5C58 27.5 66 33 67 43C61 39.6 56 38.6 50 38.6C44 38.6 39 39.6 33 43Z', teinte: 'rouge' },
-	{ d: 'M33 43C39 39.6 44 38.6 50 38.6C56 38.6 61 39.6 67 43L67.6 45.6C61 42.2 56 41.4 50 41.4C44 41.4 39 42.2 32.4 45.6Z', teinte: 'jaune' },
-	{ d: 'M60.5 32C63 27.4 67.5 24.2 73.5 23.4C70.6 25.6 67.8 28.6 64.2 33.6Z', teinte: 'blanc' },
-	{ d: 'M61.8 32.6C64.8 28.6 68.6 25.6 73 23.8M64.6 29.6L64.2 27.4M66.8 27.6L66.8 25.6M69.2 25.8L69.6 24.2', teinte: 'noir', trait: true },
+	// Le vêtement, bleu, des épaules jusqu'au partage.
+	{ d: `M${GAUCHE} 54C25 51 33 50.4 38 50.6H62C70 50.4 77 50.8 ${DROITE} 51.6L${auDessus(DROITE, 0)}L${auDessus(GAUCHE, 0)}Z`, teinte: 'bleu' },
+	// La manche rouge, à gauche, et sa rayure bleue.
+	{ d: `M${GAUCHE} 54C22 52 30 51 37 51L${auDessus(37, 8)}L${auDessus(GAUCHE, 8)}Z`, teinte: 'rouge' },
+	{ d: 'M19 60C24 57.6 30 56.8 35 57V59.6C30 59.4 24 60.2 19 62.6Z', teinte: 'bleu' },
+	{ d: 'M19 66C24 63.6 30 62.8 35 63V64.4C30 64.2 24 65 19 67.4Z', teinte: 'blanc' },
+	// Le galon blanc à zigzag, entre la manche et le plastron.
+	{ d: `M37 51H40.4L${auDessus(40.4, 8)}L${auDessus(37, 8)}Z`, teinte: 'blanc' },
+	{ d: 'M37.6 53L39.8 55L37.6 57L39.8 59L37.6 61L39.8 63L37.6 65', teinte: 'bleu', trait: true },
+	// L'épaule droite, rouge.
+	{ d: `M60 51.2C66 50.4 72 50.4 79 50.8L${auDessus(79, 8)}L${auDessus(60, 8)}Z`, teinte: 'rouge' },
+	// Le plastron blanc, rayé de bleu.
+	{ d: `M40.4 52.4H60L${auDessus(60, 8)}L${auDessus(40.4, 8)}Z`, teinte: 'blanc' },
+	{ d: rayures(), teinte: 'bleu', trait: true },
+	// La bande dorée à épis, puis la bande noire, le long du partage.
+	{ d: `M${auDessus(GAUCHE, 8)}L${auDessus(DROITE, 8)}L${auDessus(DROITE, 3)}L${auDessus(GAUCHE, 3)}Z`, teinte: 'jaune' },
+	{ d: epis(), teinte: 'noir', trait: true },
+	{ d: `M${auDessus(GAUCHE, 3)}L${auDessus(DROITE, 3)}L${auDessus(DROITE, 0)}L${auDessus(GAUCHE, 0)}Z`, teinte: 'noir' },
+	// Le col doré, et le médaillon qui y pend.
+	{ d: 'M38 47C42 50.5 58 50.5 62 47L63 50C58 54 42 54 37 50Z', teinte: 'jaune' },
+	{ d: 'M40 49.6C44 52 56 52 60 49.6', teinte: 'noir', trait: true },
+	{ d: `M48.4 52.6L50 54.2L51.6 52.6Z${cercle(50, 57, 2.8)}`, teinte: 'jaune' },
+	{ d: cercle(50, 57, 1.2), teinte: 'rouge' },
+	// Les cheveux dorés, en mèches, qui s'enroulent vers l'extérieur sous les oreilles.
+	{ d: 'M41 29C38 31 37 36 37.5 41C36 42 35 44 36 46C37.5 47.5 40.4 46.5 40 44.5C39 44 39.5 42.5 41.4 43Z', teinte: 'jaune' },
+	{ d: 'M59 29C62 31 63 36 62.5 41C64 42 65 44 64 46C62.5 47.5 59.6 46.5 60 44.5C61 44 60.5 42.5 58.6 43Z', teinte: 'jaune' },
+	{ d: 'M39.6 31.6V41.4M38.6 34V42.4M60.4 31.6V41.4M61.4 34V42.4M37.4 44.2Q38.4 45.4 39.2 44.6M62.6 44.2Q61.6 45.4 60.8 44.6', teinte: 'noir', trait: true },
+	// Le visage, de face.
+	{ d: 'M41 29H59V38C59 44 55 47.5 50 47.5C45 47.5 41 44 41 38Z', teinte: 'blanc' },
+	{ d: 'M43 32.4Q45.5 31.4 48 32.2M52 32.2Q54.5 31.4 57 32.4', teinte: 'noir', trait: true },
+	{ d: 'M43.4 34.6Q45.6 33.2 47.8 34.6Q45.6 35.8 43.4 34.6ZM52.2 34.6Q54.4 33.2 56.6 34.6Q54.4 35.8 52.2 34.6Z', teinte: 'blanc' },
+	{ d: `${cercle(45.6, 34.6, .95)}${cercle(54.4, 34.6, .95)}`, teinte: 'bleu' },
+	{ d: `${cercle(45.6, 34.6, .4)}${cercle(54.4, 34.6, .4)}`, teinte: 'noir' },
+	{ d: 'M50 35V39.6Q49 40.8 47.8 40.2M50 39.6Q51 40.8 52.2 40.2', teinte: 'noir', trait: true },
+	{ d: 'M47.4 43Q50 44.2 52.6 43', teinte: 'rouge', trait: true },
+	{ d: 'M48.8 45.2Q50 45.8 51.2 45.2', teinte: 'noir', trait: true },
+	// La toque, rouge à panneaux blancs, posée sur le haut du cadre.
+	{ d: 'M36 19H64L61 29.4H39Z', teinte: 'rouge' },
+	{ d: 'M39.4 21H45L44.2 27.4H40.8ZM47.4 21H52.6V27.4H47.4ZM55 21H60.6L59.2 27.4H55.8Z', teinte: 'blanc' },
+	// La hallebarde, le long du bord droit : la hampe, le fer en croissant semé de points, la main.
+	{ d: `M79.4 19.4H81.4L${auDessus(81.4, 3)}L${auDessus(79.4, 3)}Z`, teinte: 'jaune' },
+	{ d: 'M79.4 22C73 22.5 69.5 26 69 30.5C69.5 35 73 38 79.4 38.5C75.5 36 74 33 74 30.5C74 27.5 75.5 24.5 79.4 22Z', teinte: 'jaune' },
+	{ d: `${cercle(71.6, 30.5, .7)}${cercle(73.4, 26, .6)}${cercle(73.4, 35, .6)}`, teinte: 'noir' },
+	{ d: 'M75.6 41C75.6 39.6 77 39 79 39.2L82.6 39.6V47L79 47.4C77 47.6 75.6 46.6 75.6 45.2Z', teinte: 'blanc' },
+	{ d: 'M76.4 41.4H79.4M76.2 43.2H79.6M76.4 45H79.4', teinte: 'noir', trait: true },
 ];
