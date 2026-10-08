@@ -25,8 +25,6 @@ jobs:
         with:
           # Historique complet : le numéro de version est le nombre de commits.
           fetch-depth: 0
-          # Le kit commun (src/kit, dépôt kit-scene).
-          submodules: true
 
       - uses: actions/setup-node@v7
         with:

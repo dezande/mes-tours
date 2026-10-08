@@ -18,7 +18,7 @@
  *                pure, testée sous Node), content/ (textes) ; registre.ts les relie au menu
  *   styles/      TOUTES les feuilles de style Sass (main.scss), un dossier par tour
  *   assets/      polices, images et icône de l'app
- *   kit/         code commun des accessoires de scène (sous-module kit-scene, voir son README)
+ *   kit/         code commun des accessoires de scène (repris de kit-scene)
  *   version.ts   numéro de version de l'app (semver), affiché en bas du menu
  *   sw/          compilation du service worker du kit (kit/sw/sw.ts)
  */
