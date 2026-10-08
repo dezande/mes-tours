@@ -102,7 +102,7 @@ async function pressKey(page: Page, key: string): Promise<void> {
 
 /* ================= Le menu principal ================= */
 
-test('le menu 16 bits montre les sept tours, chacun avec son icône et son écrou ⚙', async () => {
+test('le menu 16 bits montre les huit tours, chacun avec son icône et son écrou ⚙', async () => {
 	await withApp(async (page) => {
 		const tuiles = await page.evaluate<{ nom: string; icone: boolean; ecrou: string | null }[]>(`[...document.querySelectorAll('#tours .tour')].map((t) => ({
 			nom: t.querySelector('.tour-nom').textContent,
@@ -269,6 +269,56 @@ test('Les six prédictions : le double toucher sur la table vide remet le paquet
 		await page.doubleTap(CENTRE);
 		await attendre(page, dansLeTour(`!document.querySelector('#paquet').classList.contains('vide') && document.querySelectorAll('#paquet .carte.sortie').length === 0`), 'paquet remis', 3000);
 		expect(await page.evaluate<boolean>(`location.hash.startsWith('#/tours/six-predictions')`), 'le double toucher a quitté le tour').toBeTruthy();
+		await appuiLong(page);
+		await attendreLeMenu(page);
+	});
+}, TIMEOUT);
+
+test('Les cinq cartes : chaque carte touchée se retourne dès le premier toucher, la dernière retournée est la Dame de cœur ; ensuite on ne peut que les retourner', async () => {
+	await withApp(async (page) => {
+		await ouvrir(page, 'cinq-cartes', `document.querySelectorAll('#rangee .carte').length === 5`);
+		// Le tour se joue téléphone tenu en largeur : la scène est pivotée d'un quart de tour, son haut à
+		// droite de l'écran.
+		expect(await page.evaluate(dansLeTour(`document.querySelector('#app').dataset.rotation`)), 'les cartes ne sont pas en paysage').toBe('90');
+		/*
+		 * Le point de l'écran où se trouve, sur la carte `i`, le point à `gauche` et `haut` (en
+		 * fractions de la carte, dans le repère de la scène) : un repère posé sur la carte, mesuré par
+		 * le navigateur, suit la rotation de l'app.
+		 */
+		const point = (i: number, gauche = .5, haut = .5): Promise<Point> => page.evaluate<Point>(dansLeTour(`(() => {
+			const repere = document.createElement('i');
+			repere.style.cssText = 'position:absolute;width:0;height:0;left:${gauche * 100}%;top:${haut * 100}%';
+			document.querySelectorAll('#rangee .carte')[${i}].appendChild(repere);
+			const r = repere.getBoundingClientRect();
+			repere.remove();
+			return { x: r.x, y: r.y };
+		})()`));
+		const retournees = `[...document.querySelectorAll('#rangee .carte')].flatMap((c, i) => c.classList.contains('retournee') ? [i] : [])`;
+		const toucher = async (p: Point): Promise<void> => {
+			await page.tap(p);
+			// Deux touchers rapprochés sur des cartes voisines ne sont pas un double toucher.
+			await sleep(500);
+		};
+		// 4 + 8 = 12, la Dame : dès le premier toucher, la carte touchée se retourne, blanche.
+		await toucher(await point(2));
+		expect(await page.evaluate(dansLeTour(retournees)), 'le premier toucher n’a pas retourné la carte').toStrictEqual([2]);
+		await toucher(await point(3));
+		// La cinquième, touchée en haut à droite (cœur), se retourne aussi.
+		await toucher(await point(4, .8, .2));
+		expect(await page.evaluate(dansLeTour(retournees))).toStrictEqual([2, 3, 4]);
+		await toucher(await point(0));
+		expect(await page.evaluate(dansLeTour(`document.querySelectorAll('#rangee .retournee .face-carte').length`)), 'une carte retournée n’est pas blanche').toBe(0);
+		await toucher(await point(1));
+		await attendre(page, dansLeTour(`${retournees}.length === 5`), 'cinq cartes retournées', 3000);
+		expect(await page.evaluate(dansLeTour(`(() => { const f = document.querySelectorAll('#rangee .carte')[1].querySelector('.face-carte'); return f && [f.dataset.valeur, f.dataset.couleur]; })()`))).toStrictEqual(['12', 'coeur']);
+		await sleep(800);
+		// La routine finie, on ne peut que les retourner : un double toucher retourne la carte puis la remet.
+		await toucher(await point(1));
+		await attendre(page, dansLeTour(`${retournees}.join() === '0,2,3,4'`), 'la Dame remise face cachée', 3000);
+		await page.doubleTap(await point(0));
+		await sleep(800);
+		expect(await page.evaluate(dansLeTour(retournees)), 'le double toucher a relancé la routine').toStrictEqual([0, 2, 3, 4]);
+		expect(await page.evaluate<boolean>(`location.hash.startsWith('#/tours/cinq-cartes')`), 'le double toucher a quitté le tour').toBe(true);
 		await appuiLong(page);
 		await attendreLeMenu(page);
 	});
@@ -552,6 +602,7 @@ test('écrou ⚙ : les réglages du tour s’ouvrent seuls, « Fermer » ramène
 			['morpion', '#menu'],
 			['princesse', '#menu'],
 			['six-predictions', '#menu'],
+			['cinq-cartes', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
 			await ouvrir(page, dossier, `Boolean(document.querySelector('${panneau}')) && !document.querySelector('${panneau}').hidden`, true);
@@ -583,6 +634,7 @@ test('écrou ⚙ : une croix en haut à droite ferme les réglages, plus de bout
 			['morpion', '#menu'],
 			['princesse', '#menu'],
 			['six-predictions', '#menu'],
+			['cinq-cartes', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
 			await ouvrir(page, dossier, `Boolean(document.querySelector('${panneau}')) && !document.querySelector('${panneau}').hidden`, true);
@@ -617,6 +669,7 @@ test('écrou ⚙ : tous les réglages ont la même structure, le nom du tour en 
 			['morpion', '#menu'],
 			['princesse', '#menu'],
 			['six-predictions', '#menu'],
+			['cinq-cartes', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
 			await ouvrir(page, dossier, `Boolean(document.querySelector('${panneau}')) && !document.querySelector('${panneau}').hidden`, true);
@@ -800,10 +853,11 @@ test('chaque tour reçoit les marges de l’écran : rien sous la caméra fronta
 			['morpion', `Boolean(document.querySelector('#table .papier'))`],
 			['princesse', `document.querySelectorAll('#jeu .carte').length === 5`],
 			['six-predictions', `document.querySelectorAll('#paquet .carte').length === 6`],
+			['cinq-cartes', `document.querySelectorAll('#rangee .carte').length === 5`],
 			['analyseur-q', `Boolean(document.querySelector('.slide.current'))`],
 		] as const) {
 			await ouvrir(page, dossier, pret);
-			const [haut, bas] = dossier === 'carte-de-visite' || dossier === 'princesse' ? ['--safe-l', '--safe-r'] : ['--safe-t', '--safe-b'];
+			const [haut, bas] = dossier === 'carte-de-visite' || dossier === 'princesse' || dossier === 'cinq-cartes' ? ['--safe-l', '--safe-r'] : ['--safe-t', '--safe-b'];
 			expect(await page.evaluate(dansLeTour(marge(haut, bas))), `${dossier} : marges de l’écran`).toStrictEqual(['40px', '20px']);
 			await page.evaluate(`history.back()`);
 			await attendreLeMenu(page);

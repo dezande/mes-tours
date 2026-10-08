@@ -1,0 +1,24 @@
+// Les couleurs et typographies du tour : celles des tours de cartes (abstracts/_tokens-cartes.scss).
+@forward "../../abstracts/tokens-cartes";
+
+// L'allure de Balatro (_balatro.scss) : le tourbillon de la table, le carton des cartes, les
+// enseignes et les boutons.
+$balatro-fond: #1e2a4a;
+$balatro-rouge: #e0473c;
+$balatro-violet: #4a2f7a;
+$balatro-bleu: #2b4f9e;
+$balatro-sarcelle: #1f6f6a;
+$balatro-carton: #f2eee3;
+$balatro-coeur: #f03464;
+$balatro-carreau: #f06b3f;
+$balatro-pique: #403995;
+$balatro-trefle: #235955;
+$balatro-bleu-dos: #2f6ee0;
+$balatro-bleu-bouton: #0f8fe6;
+$balatro-orange: #f39c1f;
+
+// La face des cartes : un carton blanc, comme une carte à jouer ; l'encre rouge et noire des couleurs.
+$carton: #fbfaf6;
+$carton-ombre: #e9e6dc;
+$rouge: #c4162a;
+$noir: #16161d;

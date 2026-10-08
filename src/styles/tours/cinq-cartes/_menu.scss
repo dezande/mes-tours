@@ -1,0 +1,51 @@
+@use "tokens" as *;
+@use "../../components/panneau-reglages" as panneau;
+@use "../../components/cartes";
+
+// Le panneau de réglages, sobre, sur le tapis (components/_panneau-reglages.scss).
+@include panneau.panneau-reglages($fond: $bg, $texte: $ink, $texte-doux: $ink-soft,
+	$filet: $ink-faint, $accent: $accent, $carte: $panel, $serif: $serif);
+
+// Choix du dos et de la couleur (components/_cartes.scss) : six dessins sur deux rangées de trois,
+// et les quatre couleurs sur une seule rangée, comme les dessins.
+@include cartes.vignettes($colonnes: 3, $colonnes-couleurs: 4);
+
+// Le mode entraînement et le test des zones, dans la carte des aides à la répétition.
+.aide-btn {
+	width: 100%;
+	margin-top: 12px;
+}
+
+// Le rappel du codage : un paragraphe par temps de la routine.
+#codage .hint + .hint {
+	margin-top: 8px;
+}
+
+// Le bord d'où part le codage : deux boutons côte à côte, les valeurs dans ce sens, puis le nom.
+#sens-choix {
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.sens {
+	display: grid;
+	gap: 4px;
+	padding: 6px 0;
+	text-align: center;
+}
+
+.sens-places {
+	font-size: 20px;
+	font-weight: 600;
+	letter-spacing: .08em;
+	white-space: nowrap;
+	color: $accent;
+}
+
+.sens-nom {
+	font-size: 13px;
+	color: $ink;
+}
+
+.slider-hint {
+	margin: 6px 0 0;
+}

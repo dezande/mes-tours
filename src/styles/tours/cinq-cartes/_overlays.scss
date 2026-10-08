@@ -1,0 +1,5 @@
+@use "tokens" as *;
+@use "../../components/jauge";
+
+// Jauge de l'appui long, jusqu'au retour au menu (components/_jauge.scss).
+@include jauge.jauge($prefixe: "cinq", $couleur: $accent, $piste: rgba($ink, .18));

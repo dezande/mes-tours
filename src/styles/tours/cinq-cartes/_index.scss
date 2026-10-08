@@ -1,0 +1,24 @@
+/*
+ * Les cinq cartes (src/tours/cinq-cartes/) : tous ses styles sont rangés sous .scene-cinq-cartes,
+ * la page du tour (src/pages/PageTour.tsx). Ses animations sont préfixées « cinq- » : les
+ * @keyframes, eux, valent pour toute l'app.
+ */
+@use "sass:meta";
+@use "tokens";
+
+// Le fond derrière #app quand elle pivote, et sous la barre du téléphone.
+html[data-tour="cinq-cartes"],
+html[data-tour="cinq-cartes"] body {
+	background: tokens.$balatro-fond;
+}
+
+.scene-cinq-cartes {
+	@include meta.load-css("base");
+	@include meta.load-css("table");
+	@include meta.load-css("cartes");
+	@include meta.load-css("overlays");
+	@include meta.load-css("aides");
+	// En dernier : l'allure de Balatro reprend les couleurs et les ombres des autres partiels.
+	@include meta.load-css("balatro");
+	@include meta.load-css("menu");
+}

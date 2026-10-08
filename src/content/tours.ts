@@ -50,6 +50,11 @@ export const TOURS: readonly Tour[] = [
 		nom: { fr: 'Les six prédictions', en: 'The six predictions' },
 	},
 	{
+		// Cinq cartes face cachée : toutes blanches, sauf celle du spectateur, codée en les touchant.
+		dossier: 'cinq-cartes',
+		nom: { fr: 'Les cinq cartes', en: 'The five cards' },
+	},
+	{
 		// « Analyseur Q » est le nom de l'appareil : le même dans les deux langues, comme dans le tour.
 		dossier: 'analyseur-q',
 		nom: { fr: 'Analyseur Q', en: 'Analyseur Q' },
