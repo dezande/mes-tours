@@ -23,8 +23,6 @@
  *   sw/          le service worker (sw.ts), compilé à part en dist/sw.js
  */
 
-// Rotation calculée avant tout le reste : l'app reste en portrait, et #app doit déjà exister.
-import './appareil/orientation.ts';
 import { render } from 'preact';
 import { App } from './App.tsx';
 import { requestPersistentStorage } from './appareil/stockage.ts';

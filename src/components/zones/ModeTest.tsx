@@ -47,7 +47,7 @@ export function ModeTest({ zones, noms, valeurs, libellesPhases, phase, scene, e
 			if (element) setTaille({ largeur: element.clientWidth, hauteur: element.clientHeight });
 		};
 		mesurer();
-		// Rotation de l'écran, passage en paysage (hooks/usePaysage.ts relance un « resize »), barre
+		// Rotation de l'écran, passage en paysage (appareil/Orientation.tsx relance un « resize »), barre
 		// d'adresse qui apparaît… : les zones suivent la scène.
 		window.addEventListener('resize', mesurer);
 		return () => window.removeEventListener('resize', mesurer);

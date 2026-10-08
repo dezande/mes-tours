@@ -34,7 +34,7 @@
 	overscroll-behavior: contain;
 	-webkit-overflow-scrolling: touch;
 	// Pas « pan-y » : cette direction se lit par rapport à l'écran, et bloquerait le défilement
-	// quand l'app est pivotée en paysage (appareil/orientation.ts).
+	// quand l'app est pivotée en paysage (appareil/Orientation.tsx).
 	touch-action: manipulation;
 	padding: calc(var(--safe-t) + #{$marge-haut}) calc(var(--safe-r) + #{$marge-cote}) calc(var(--safe-b) + 32px) calc(var(--safe-l) + #{$marge-cote});
 }

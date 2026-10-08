@@ -1,7 +1,7 @@
 /*
  * Ce que jsdom n'a pas et que l'app attend du navigateur, posé avant chaque fichier de tests des
  * composants (jest.config.js, setupFiles) :
- *   - #app, que le verrou portrait (appareil/orientation.ts) cherche dès son import ;
+ *   - #app, où l'app est rendue, et que l'orientation (appareil/Orientation.tsx) fait pivoter ;
  *   - matchMedia (pointeur grossier, mode d'affichage) ;
  *   - la lecture des vidéos, que le maintien de l'écran allumé (appareil/EcranAllume.tsx) lance.
  */

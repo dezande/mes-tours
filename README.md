@@ -56,15 +56,16 @@ L'adresse après le « # » ne change pas la page demandée au serveur : le serv
 index.html              la page de l'app (Preact s'y monte dans #app)
 vite.config.ts          le build
 src/
-  main.tsx              démarrage : verrou portrait, mises à jour, rendu de <App />
-  App.tsx               le menu, ou le tour demandé par l'adresse ; l'écran allumé (<EcranAllume />)
+  main.tsx              démarrage : stockage persistant, mises à jour, rendu de <App />
+  App.tsx               le menu, ou le tour demandé par l'adresse ; l'orientation (<Orientation>)
+                        et l'écran allumé (<EcranAllume />)
   routeur.ts            le routeur maison : suit l'adresse, navigue dans l'historique
   pages/                Menu.tsx (le menu 16 bits), PageTour.tsx (la page qui accueille un tour)
   components/           les briques des tours (voir « Ajouter un tour ») : PanneauReglages,
                         JaugeAppui, BoutonTactile, PixelArt ; cartes/ (tours à cartes),
                         zones/ (tours à zones : TourAZones, prêt à l'emploi)
   hooks/                appui long, clavier, gestes, réglages enregistrés, ajustement du texte…
-  logic/                logique pure partagée, testée sous Node : langues, gestes, zones, paysage
+  logic/                logique pure partagée, testée sous Node : langues, gestes, zones, orientation
   langue/               la langue FR / EN, pour le menu et tous les tours (LangueContext)
   content/              LA LISTE DES TOURS (tours.ts), le texte du menu, les dessins en pixels
   tours/
@@ -112,7 +113,7 @@ Chaque fichier commence par un commentaire qui dit à quoi il sert et comment s'
 | Pas de transition à l'ouverture | `useSansAnimation()` | [`hooks/useSansAnimation.ts`](src/hooks/useSansAnimation.ts) |
 | Un texte qui remplit sa place | `plusGrandeEchelle()`, `useReajustement()` | [`logic/ajustement.ts`](src/logic/ajustement.ts), [`hooks/useReajustement.ts`](src/hooks/useReajustement.ts) |
 | Les deux langues | `t()`, `isTexte()`, types `Lang`, `Texte` | [`logic/i18n.ts`](src/logic/i18n.ts) |
-| Un tour joué en largeur | `usePaysage()` | [`hooks/usePaysage.ts`](src/hooks/usePaysage.ts) |
+| Un tour joué en largeur | `useVerrouPaysage()` | [`appareil/Orientation.tsx`](src/appareil/Orientation.tsx) |
 
 **Un tour à double toucher** (comme Pile ou face, Les six prédictions) : `useGestesDoubleToucher()` donne le tap, le double toucher et l'appui de 3 s sur la scène ([`hooks/useGestesDoubleToucher.ts`](src/hooks/useGestesDoubleToucher.ts)). Avec des cartes : `<DosDeCarte>`, `<Soulignement>`, `<ChoixIllustre>` et `<Vignette>` ([`components/cartes/`](src/components/cartes/)).
 

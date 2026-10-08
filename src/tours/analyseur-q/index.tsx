@@ -31,7 +31,7 @@ import { useAppuiLong } from '../../hooks/useAppuiLong.ts';
 import { useClavier } from '../../hooks/useClavier.ts';
 import { useQuandLAppSeCache } from '../../hooks/useQuandLAppSeCache.ts';
 import { useReglagesEnregistres } from '../../hooks/useReglagesEnregistres.ts';
-import { appPoint } from '../../appareil/orientation.ts';
+import { useOrientation } from '../../appareil/Orientation.tsx';
 import { usePont } from '../pont.tsx';
 import { Cadre } from './components/Cadre.tsx';
 import { Deck } from './components/Deck.tsx';
@@ -67,7 +67,8 @@ export default function AnalyseurQ() {
 	// La jauge n'apparaît qu'après la durée d'un tap : un toucher de la routine ne la montre jamais.
 	const appui = useAppuiLong({ dureeMs: GESTURE.holdMs, delaiJaugeMs: GESTURE.tapMaxMs, jaugeVisible: reglages.showHoldRing });
 
-	// Coordonnées dans le repère de l'app, qui peut être pivotée (appareil/orientation.ts).
+	// Coordonnées dans le repère de l'app, qui peut être pivotée (appareil/Orientation.tsx).
+	const { appPoint } = useOrientation();
 	const surAppui = (event: TargetedPointerEvent<HTMLElement>): void => {
 		if (event.pointerType === 'mouse' && event.button !== 0) return;
 		doigtsPoses.current += 1;

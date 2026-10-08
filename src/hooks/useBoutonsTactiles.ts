@@ -14,7 +14,7 @@
  */
 
 import type { RefObject } from 'preact';
-import { useEffect, useRef } from 'preact/hooks';
+import { useLayoutEffect, useRef } from 'preact/hooks';
 
 /** Ce qui se touche comme un bouton dans un panneau de réglages. */
 const TOUCHABLE = 'button, label, a, [role="radio"], input[type="checkbox"], summary';
@@ -73,6 +73,7 @@ export function boutonsTactiles(panneau: HTMLElement): () => void {
 /** Les boutons contenus dans l'élément de la référence renvoyée agissent au lever du doigt. */
 export function useBoutonsTactiles<T extends HTMLElement>(): RefObject<T | null> {
 	const ref = useRef<T>(null);
-	useEffect(() => (ref.current ? boutonsTactiles(ref.current) : undefined), []);
+	// Branché avant l'affichage, et non après : un bouton qu'on voit répond déjà.
+	useLayoutEffect(() => (ref.current ? boutonsTactiles(ref.current) : undefined), []);
 	return ref;
 }

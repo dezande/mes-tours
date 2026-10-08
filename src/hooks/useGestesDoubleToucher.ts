@@ -10,12 +10,12 @@
  *   <JaugeAppui jauge={jauge} />
  *
  * `surGeste` reçoit « tap » ou « double » (un double suit toujours un tap, annoncé tout de suite),
- * et le point du doigt levé dans le repère de #app (qui peut être pivotée : appareil/orientation.ts).
+ * et le point du doigt levé dans le repère de #app (qui peut être pivotée : appareil/Orientation.tsx).
  */
 
 import type { TargetedMouseEvent, TargetedPointerEvent } from 'preact';
 import { useRef, useState } from 'preact/hooks';
-import { appPoint } from '../appareil/orientation.ts';
+import { useOrientation } from '../appareil/Orientation.tsx';
 import { GESTURE, GestureTracker } from '../logic/double-toucher.ts';
 import { usePont } from '../tours/pont.tsx';
 import { useAppuiLong } from './useAppuiLong.ts';
@@ -25,6 +25,7 @@ export type GesteDoubleToucher = 'tap' | 'double';
 
 export function useGestesDoubleToucher(jaugeVisible: boolean, surGeste: (geste: GesteDoubleToucher, point: { x: number; y: number }) => void) {
 	const { quitter } = usePont();
+	const { appPoint } = useOrientation();
 	const [gestes] = useState(() => new GestureTracker());
 	// La jauge n'apparaît qu'après la durée d'un tap : un toucher de la routine ne la montre jamais.
 	const appui = useAppuiLong({ dureeMs: GESTURE.holdMs, delaiJaugeMs: GESTURE.tapMaxMs, jaugeVisible });

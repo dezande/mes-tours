@@ -286,6 +286,32 @@ test('Carte de visite : un coin la retourne sur son numéro, le double toucher l
 	});
 }, TIMEOUT);
 
+test('Verrou portrait : téléphone tourné, l’app pivote pour rester droite ; la carte de visite quittée, le menu revient en portrait', async () => {
+	await withApp(async (page) => {
+		const etat = `(() => { const app = document.querySelector('#app'); return { rotation: app.dataset.rotation, largeur: app.style.getPropertyValue('--app-w'), hauteur: app.style.getPropertyValue('--app-h') }; })()`;
+		expect(await page.evaluate(etat), 'menu au démarrage').toStrictEqual({ rotation: '0', largeur: `${SCREEN.width}px`, hauteur: `${SCREEN.height}px` });
+
+		// Téléphone tourné vers la gauche : l'écran passe en paysage, l'app pivote de -90° et garde sa taille portrait.
+		await page.send('Emulation.setDeviceMetricsOverride', { width: SCREEN.height, height: SCREEN.width, deviceScaleFactor: 3, mobile: true, screenOrientation: { type: 'landscapePrimary', angle: 90 } });
+		await attendre(page, `document.querySelector('#app').dataset.rotation === '-90'`, 'l’app n’a pas pivoté');
+		expect(await page.evaluate(etat), 'menu, téléphone tourné').toStrictEqual({ rotation: '-90', largeur: `${SCREEN.width}px`, hauteur: `${SCREEN.height}px` });
+		// Une tuile touchée à l'écran, là où elle s'affiche une fois pivotée, ouvre bien son tour.
+		await ouvrir(page, 'boule-de-cristal', `Boolean(document.querySelector('#number'))`);
+		expect(await page.evaluate(dansLeTour(`document.querySelector('#app').dataset.rotation`)), 'le tour ne reste pas droit').toBe('-90');
+		await page.send('Emulation.setDeviceMetricsOverride', { ...SCREEN, deviceScaleFactor: 3, mobile: true, screenOrientation: { type: 'portraitPrimary', angle: 0 } });
+		await attendre(page, `document.querySelector('#app').dataset.rotation === '0'`, 'l’app n’est pas revenue droite');
+		await appuiLong(page);
+		await attendreLeMenu(page);
+
+		// La carte de visite se joue en largeur ; quittée, le menu revient en portrait.
+		await ouvrir(page, 'carte-de-visite', `Boolean(document.querySelector('#carte .verso #number'))`);
+		expect(await page.evaluate(dansLeTour(`document.querySelector('#app').dataset.rotation`)), 'la carte n’est pas en paysage').toBe('90');
+		await appuiLong(page);
+		await attendreLeMenu(page);
+		expect(await page.evaluate(etat), 'menu après la carte de visite').toStrictEqual({ rotation: '0', largeur: `${SCREEN.width}px`, hauteur: `${SCREEN.height}px` });
+	});
+}, TIMEOUT);
+
 test('Analyseur Q : « suivante » sur la dernière slide ne quitte pas le tour', async () => {
 	await withApp(async (page) => {
 		await ouvrir(page, 'analyseur-q', `document.querySelector('.slide.current')?.dataset.index === '0'`);
