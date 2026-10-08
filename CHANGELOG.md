@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.2.0] | 40 | 2026-10-08 | Princesse, nouveau tour ; le kit repris dans l'app ; orientation et écran allumé en composants |
 | [1.1.0] | 34 | 2026-10-07 | Morpion, nouveau tour ; la première prédiction gardée jusqu'au menu ; le menu aux fonds des tours |
 | [1.0.1] | 30 | 2026-10-04 | Analyseur Q : l'appui de 3 s ramène au menu, même le doigt sur une image |
 | [1.0.0] | 27 | 2026-10-03 | L'app réécrite en composants (Preact), styles et images regroupés, tests avec Jest |
@@ -33,7 +34,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.2.0] — 2026-10-08
+
+40 commits
 
 - **Le kit commun n'est plus une dépendance** : le code de [kit-scene](https://github.com/dezande/kit-scene) (v1.3.1) est repris dans `src/kit/`, comme le reste de l'app, à la place du sous-module git. Plus de `git submodule update` après un clone, plus de second dépôt à pousser avant de déployer. Rien ne change pour l'artiste.
   - **Tous les tests avec Jest** : ceux du kit (vérification du build et du journal, numéro de version et cache, serveur local, rotation) passent de `node --test` à Jest, dans `tests/kit/`, et tournent avec `npm test`.
@@ -288,6 +291,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.2.0]: https://github.com/dezande/mes-tours/releases/tag/v1.2.0
 [1.1.0]: https://github.com/dezande/mes-tours/releases/tag/v1.1.0
 [1.0.1]: https://github.com/dezande/mes-tours/releases/tag/v1.0.1
 [1.0.0]: https://github.com/dezande/mes-tours/releases/tag/v1.0.0
