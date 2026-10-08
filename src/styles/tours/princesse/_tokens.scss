@@ -1,0 +1,30 @@
+// Les couleurs et typographies du tour : celles des tours de cartes (abstracts/_tokens-cartes.scss),
+// et celles d'un jeu de cartes à dos bleu.
+@forward "../../abstracts/tokens-cartes";
+
+// Les dos, couleur par couleur (réglage « couleur ») :
+//   clair, fonce  le fond du dos (le champ, puis les médaillons du dos façon Bicycle) ;
+//   filet         les traits du dos façon Bicycle : blancs, comme sur un vrai jeu, à l'encre sur un dos blanc ;
+//   trait         le dessin des autres dos, doré sur fond sombre (comme dans les autres tours de cartes).
+$dos-blanc: #fbfbf7;
+$dos-couleurs: (
+	"bleu": (clair: #1f4d9c, fonce: #173d7e, filet: $dos-blanc, trait: #ddc88c),
+	"rouge": (clair: #b3242b, fonce: #8c1a21, filet: $dos-blanc, trait: #e8ca88),
+	"noir": (clair: #26272e, fonce: #121318, filet: $dos-blanc, trait: #c8a15a),
+	"blanc": (clair: #f4eee2, fonce: #e2d9c4, filet: #2f3442, trait: #2f3442),
+);
+
+// La face : un carton blanc, l'encre rouge et l'encre noire des enseignes.
+$carton: #fdfdfa;
+$carton-ombre: #e9e7df;
+$rouge: #c8102e;
+$noir: #15151a;
+
+// Les couleurs du valet.
+$valet-rouge: #c8102e;
+$valet-bleu: #1f4d9c;
+$valet-jaune: #f1b82d;
+$valet-peau: #f8dcc2;
+
+// L'index des coins : un caractère à empattements, gras, comme sur un vrai jeu.
+$index: "Georgia", "Times New Roman", "Noto Serif", serif;

@@ -1,0 +1,55 @@
+@use "tokens" as *;
+@use "../../components/panneau-reglages" as panneau;
+@use "../../components/cartes";
+
+// Le panneau de réglages, sobre, sur le tapis (components/_panneau-reglages.scss).
+@include panneau.panneau-reglages($fond: $bg, $texte: $ink, $texte-doux: $ink-soft,
+	$filet: $ink-faint, $accent: $accent, $carte: $panel, $serif: $serif);
+
+// Curseur de la durée : la valeur est écrite à droite de son nom.
+.slider-label {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 12px;
+
+	output {
+		color: $accent;
+		font-variant-numeric: tabular-nums;
+	}
+}
+
+// Choix du dos et de sa couleur (components/_cartes.scss) : les quatre couleurs sur une rangée. Les
+// couleurs des vignettes sont celles des cartes (_cartes.scss).
+@include cartes.vignettes($colonnes: 4, $colonnes-couleurs: 4);
+
+@include panneau.curseur($accent);
+
+.slider-hint {
+	margin: 6px 0 0;
+}
+
+// Le sens de comptage : deux boutons côte à côte, les places numérotées dans ce sens, puis le nom.
+#sens-choix {
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.sens {
+	display: grid;
+	gap: 4px;
+	padding: 6px 0;
+	text-align: center;
+}
+
+.sens-places {
+	font-size: 20px;
+	font-weight: 600;
+	letter-spacing: .08em;
+	white-space: nowrap;
+	color: $accent;
+}
+
+.sens-nom {
+	font-size: 13px;
+	color: $ink;
+}

@@ -122,8 +122,8 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 	width: 100%;
 	max-width: 520px;
 	display: grid;
-	// Six tuiles tiennent sur un écran de téléphone, sans faire défiler (tests dans Chrome).
-	gap: 12px;
+	// Sept tuiles tiennent sur un écran de téléphone, sans faire défiler (tests dans Chrome).
+	gap: 8px;
 	// La place de la main, qui déborde à gauche des tuiles.
 	padding-left: 14px;
 	// L'écart minimal avec le bandeau d'installation, quand le menu défile.
@@ -176,6 +176,7 @@ $fonds-des-tours: (
 		radial-gradient(90% 55% at 50% 18%, rgba(255, 255, 255, .45), transparent 70%),
 		linear-gradient(180deg, morpion.$ciel-haut, morpion.$ciel 55%, morpion.$ciel-bas),
 	),
+	"princesse": radial-gradient(130% 95% at 50% 42%, cartes.$tapis-clair, cartes.$tapis 45%, cartes.$tapis-sombre 100%),
 	"six-predictions": radial-gradient(130% 95% at 50% 42%, cartes.$tapis-clair, cartes.$tapis 45%, cartes.$tapis-sombre 100%),
 	"analyseur-q": (
 		radial-gradient(70% 60% at 50% 45%, rgba(247, 147, 30, .2), transparent 75%),
@@ -203,8 +204,8 @@ $fonds-des-tours: (
 	display: flex;
 	align-items: center;
 	gap: 14px;
-	min-height: 92px;
-	padding: 10px 12px;
+	min-height: 80px;
+	padding: 8px 12px;
 	text-align: left;
 }
 

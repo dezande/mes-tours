@@ -102,7 +102,7 @@ async function pressKey(page: Page, key: string): Promise<void> {
 
 /* ================= Le menu principal ================= */
 
-test('le menu 16 bits montre les six tours, chacun avec son icône et son écrou ⚙', async () => {
+test('le menu 16 bits montre les sept tours, chacun avec son icône et son écrou ⚙', async () => {
 	await withApp(async (page) => {
 		const tuiles = await page.evaluate<{ nom: string; icone: boolean; ecrou: string | null }[]>(`[...document.querySelectorAll('#tours .tour')].map((t) => ({
 			nom: t.querySelector('.tour-nom').textContent,
@@ -204,6 +204,57 @@ test('Morpion : le double toucher remet le papier sur « Prédiction », qui se 
 		await ouvrir(page, 'morpion', `Boolean(document.querySelector('#table .papier .recto .mot'))`);
 		await page.tap({ x: CENTRE.x, y: SCREEN.height * .8 });
 		await attendre(page, dansLeTour(`document.querySelector('#table .papier').dataset.cote === 'bas' && document.querySelector('#table .papier').classList.contains('retourne')`), 'l’autre prédiction', 3000);
+	});
+}, TIMEOUT);
+
+test('Princesse : en paysage, une carte disparaît ; la première retournée cache sa carte, ou le valet au double toucher ; les cartes se retournent dans les deux sens, et rien ne relance le tour', async () => {
+	// Joué en paysage, la scène pivote d'un quart de tour : les cinq places, de gauche à droite,
+	// vont du haut au bas de l'écran.
+	const carte = (place: number): Point => ({ x: CENTRE.x, y: SCREEN.height * [.12, .31, .5, .69, .88][place]! });
+	const visibles = `[...document.querySelectorAll('#jeu .carte.retournee:not(.disparue)')].map((c) => c.dataset.carte).sort().join()`;
+	const retournee = (place: number): string => `document.querySelector('#jeu .carte[data-place="${place}"]').classList.contains('retournee')`;
+	/** Montre les cartes, attend le mélange, fait disparaître une carte, retourne la première (double : deux touchers), puis les autres. */
+	async function routine(page: Page, disparait: number, premiere: number, double: boolean): Promise<string> {
+		await page.tap(CENTRE);
+		await attendre(page, dansLeTour(`document.querySelectorAll('#jeu .carte.retournee').length === 5`), 'cartes montrées', 3000);
+		await attendre(page, dansLeTour(`document.querySelector('#jeu').dataset.phase === 'pret'`), 'cartes mélangées', 12_000);
+		await page.tap(carte(disparait));
+		await attendre(page, dansLeTour(`document.querySelector('#jeu .carte.disparue')?.dataset.place === '${disparait}'`), `carte ${disparait + 1} disparue`, 3000);
+		await sleep(800);
+		if (double) await page.doubleTap(carte(premiere));
+		else await page.tap(carte(premiere));
+		await attendre(page, dansLeTour(retournee(premiere)), 'première carte retournée', 3000);
+		for (const autre of [0, 1, 2, 3, 4].filter((p) => p !== disparait && p !== premiere)) {
+			await sleep(800);
+			await page.tap(carte(autre));
+		}
+		await attendre(page, dansLeTour(`document.querySelectorAll('#jeu .carte.retournee:not(.disparue)').length === 4`), 'quatre cartes retournées', 3000);
+		return page.evaluate<string>(dansLeTour(visibles));
+	}
+	await withApp(async (page) => {
+		await ouvrir(page, 'princesse', `document.querySelectorAll('#jeu .carte').length === 5`);
+		expect(await page.evaluate(dansLeTour(`document.querySelector('#app').dataset.rotation`))).toBe('90');
+		// La troisième disparaît ; la première retournée est la deuxième des restantes : pas de 8 de cœur.
+		expect(await routine(page, 2, 1, false)).toBe('0,2,3,4');
+		// Touchée encore, une carte se remet face en bas, puis se retourne.
+		await sleep(800);
+		await page.tap(carte(0));
+		await attendre(page, dansLeTour(`!${retournee(0)}`), 'carte remise face en bas', 3000);
+		await sleep(800);
+		await page.tap(carte(0));
+		await attendre(page, dansLeTour(retournee(0)), 'carte retournée à nouveau', 3000);
+		// Un double toucher ne relance pas le tour : la carte disparue le reste.
+		await sleep(800);
+		await page.doubleTap(CENTRE);
+		await sleep(1500);
+		expect(await page.evaluate(dansLeTour(`document.querySelector('#jeu').dataset.phase === 'revele' && Boolean(document.querySelector('#jeu .carte.disparue'))`)), 'le tour a été relancé').toBe(true);
+		// Seul l'appui de 3 s ramène au menu ; rouvert, le tour repart à zéro.
+		await appuiLong(page);
+		await attendreLeMenu(page);
+		expect(await page.evaluate(`document.querySelector('#app').dataset.rotation ?? '0'`)).toBe('0');
+		await ouvrir(page, 'princesse', `document.querySelectorAll('#jeu .carte').length === 5 && !document.querySelector('#jeu .carte.disparue')`);
+		// Un double toucher sur la première retournée : c'est le valet de carreau qui n'est jamais montré.
+		expect(await routine(page, 0, 3, true)).toBe('0,1,2,3');
 	});
 }, TIMEOUT);
 
@@ -499,6 +550,7 @@ test('écrou ⚙ : les réglages du tour s’ouvrent seuls, « Fermer » ramène
 			['carte-de-visite', '#settings'],
 			['pile-ou-face', '#menu'],
 			['morpion', '#menu'],
+			['princesse', '#menu'],
 			['six-predictions', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
@@ -529,6 +581,7 @@ test('écrou ⚙ : une croix en haut à droite ferme les réglages, plus de bout
 			['carte-de-visite', '#settings'],
 			['pile-ou-face', '#menu'],
 			['morpion', '#menu'],
+			['princesse', '#menu'],
 			['six-predictions', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
@@ -562,6 +615,7 @@ test('écrou ⚙ : tous les réglages ont la même structure, le nom du tour en 
 			['carte-de-visite', '#settings'],
 			['pile-ou-face', '#menu'],
 			['morpion', '#menu'],
+			['princesse', '#menu'],
 			['six-predictions', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
@@ -736,19 +790,20 @@ test('chaque tour reçoit les marges de l’écran : rien sous la caméra fronta
 	// reçoit les vraies marges de l'écran.
 	await withApp(async (page) => {
 		await page.send('Emulation.setSafeAreaInsetsOverride', { insets: { top: 40, topMax: 40, bottom: 20, bottomMax: 20 } });
-		// Le haut et le bas de l'écran ; pour la carte de visite, pivotée en paysage (son haut à droite de
-		// l'écran), ce sont la gauche et la droite de la scène.
+		// Le haut et le bas de l'écran ; pour la carte de visite et la princesse, pivotées en paysage (leur
+		// haut à droite de l'écran), ce sont la gauche et la droite de la scène.
 		const marge = (haut: string, bas: string): string => `(() => { const s = document.createElement('div'); s.style.paddingTop = 'var(${haut})'; s.style.paddingBottom = 'var(${bas})'; document.querySelector('#app').appendChild(s); const c = getComputedStyle(s); const r = [c.paddingTop, c.paddingBottom]; s.remove(); return r; })()`;
 		for (const [dossier, pret] of [
 			['boule-de-cristal', `Boolean(document.querySelector('#number'))`],
 			['carte-de-visite', `Boolean(document.querySelector('#number'))`],
 			['pile-ou-face', `Boolean(document.querySelector('#table .carte'))`],
 			['morpion', `Boolean(document.querySelector('#table .papier'))`],
+			['princesse', `document.querySelectorAll('#jeu .carte').length === 5`],
 			['six-predictions', `document.querySelectorAll('#paquet .carte').length === 6`],
 			['analyseur-q', `Boolean(document.querySelector('.slide.current'))`],
 		] as const) {
 			await ouvrir(page, dossier, pret);
-			const [haut, bas] = dossier === 'carte-de-visite' ? ['--safe-l', '--safe-r'] : ['--safe-t', '--safe-b'];
+			const [haut, bas] = dossier === 'carte-de-visite' || dossier === 'princesse' ? ['--safe-l', '--safe-r'] : ['--safe-t', '--safe-b'];
 			expect(await page.evaluate(dansLeTour(marge(haut, bas))), `${dossier} : marges de l’écran`).toStrictEqual(['40px', '20px']);
 			await page.evaluate(`history.back()`);
 			await attendreLeMenu(page);

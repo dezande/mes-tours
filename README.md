@@ -8,6 +8,7 @@ Tous mes accessoires de scène dans **une seule application** : https://dezande.
 | Carte de visite (Arcane Système : 17, 19, 21, 23 aux 4 coins) | double toucher sur la carte retournée : elle revient sur son recto, prête pour un nouveau numéro | — (créé ici, d'après l'ancienne routine Arcane Système de la boule) |
 | Pile ou face | double toucher après la carte retournée : elle revient face cachée, et se retourne ensuite toujours sur la même prédiction, jusqu'au retour au menu | [pile-ou-face](https://github.com/dezande/pile-ou-face) |
 | Morpion | double toucher sur le papier retourné : il revient sur « Prédiction », et se retourne ensuite toujours sur la même grille, jusqu'au retour au menu | — (créé ici) |
+| Princesse (5 cartes : 4♣, 8♥, 5♦, 10♦, V♦), en paysage | aucune : après la disparition, les cartes se retournent dans les deux sens au toucher, et aucun geste ne relance le tour (l'appui de 3 s ramène au menu, la touche R remet les cartes) | — (créé ici, d'après « The Princess Card Trick ») |
 | Les six prédictions | double toucher sur la table vide : le paquet revient, faces en bas | [six-predictions](https://github.com/dezande/six-predictions) |
 | Analyseur Q | « suivante » après la dernière slide : rien, on reste sur la dernière slide | [analyseur-q](https://github.com/dezande/analyseur-q) |
 
@@ -115,7 +116,7 @@ Chaque fichier commence par un commentaire qui dit à quoi il sert et comment s'
 | Les deux langues | `t()`, `isTexte()`, types `Lang`, `Texte` | [`logic/i18n.ts`](src/logic/i18n.ts) |
 | Un tour joué en largeur | `useVerrouPaysage()` | [`appareil/Orientation.tsx`](src/appareil/Orientation.tsx) |
 
-**Un tour à double toucher** (comme Pile ou face, Les six prédictions) : `useGestesDoubleToucher()` donne le tap, le double toucher et l'appui de 3 s sur la scène ([`hooks/useGestesDoubleToucher.ts`](src/hooks/useGestesDoubleToucher.ts)). Avec des cartes : `<DosDeCarte>`, `<Soulignement>`, `<ChoixIllustre>` et `<Vignette>` ([`components/cartes/`](src/components/cartes/)).
+**Un tour à double toucher** (comme Pile ou face, Les six prédictions) : `useGestesDoubleToucher()` donne le tap, le double toucher et l'appui de 3 s sur la scène ([`hooks/useGestesDoubleToucher.ts`](src/hooks/useGestesDoubleToucher.ts)) ; joué en paysage (comme la Princesse), le tour demande le paysage avec `useVerrouPaysage()`. Avec des cartes : `<DosDeCarte>`, `<Soulignement>`, `<ChoixIllustre>` et `<Vignette>` ([`components/cartes/`](src/components/cartes/)).
 
 **Un tour à zones** (comme la Boule de cristal, la Carte de visite) : [`<TourAZones>`](src/components/zones/TourAZones.tsx) fait tout — gestes, clavier, phases, réglages, test des zones, paysage. Le tour ne donne que ses zones, ses valeurs, ses mots et son décor :
 
