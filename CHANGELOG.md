@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.4.0] | 46 | 2026-10-08 | Les cinq cartes : le mode entraînement demande la carte à coder |
 | [1.3.1] | 44 | 2026-10-08 | Un fond à chaque tour de cartes : guilloché, velours damassé, cuir |
 | [1.3.0] | 42 | 2026-10-08 | Les cinq cartes, nouveau tour à l'allure de Balatro ; huit tuiles au menu |
 | [1.2.0] | 40 | 2026-10-08 | Princesse, nouveau tour ; le kit repris dans l'app ; orientation et écran allumé en composants |
@@ -36,7 +37,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.4.0] — 2026-10-08
+
+46 commits
 
 - **Les cinq cartes, le mode entraînement demande la carte à coder** : une carte tirée au hasard parmi les 52 s'affiche dans la barre du haut (« À coder : Dame de cœur »), nouvelle à chaque ouverture, à chaque « Recommencer » et à chaque R au clavier. Le codage fini, la barre dit si c'est la bonne carte (en vert), ou laquelle a été codée (en rouge).
 
@@ -309,6 +312,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.4.0]: https://github.com/dezande/mes-tours/releases/tag/v1.4.0
 [1.3.1]: https://github.com/dezande/mes-tours/releases/tag/v1.3.1
 [1.3.0]: https://github.com/dezande/mes-tours/releases/tag/v1.3.0
 [1.2.0]: https://github.com/dezande/mes-tours/releases/tag/v1.2.0
