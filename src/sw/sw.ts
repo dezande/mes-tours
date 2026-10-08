@@ -1,12 +1,13 @@
 /*
  * Service worker : tout est mis en cache à l'installation, puis servi hors-ligne.
- * Compilé en dist/sw.js par l'app ; les valeurs __…__ sont remplacées au build par node/stamp-build.ts.
+ * Compilé en dist/sw.js (src/sw/tsconfig.json) ; les valeurs __…__ sont remplacées au build par
+ * outils/stamp-build.ts.
  */
 
 // Script classique (pas de module) : les service workers modules ne sont pas lus partout.
 const sw = self as unknown as ServiceWorkerGlobalScope;
 
-// Préfixe de l'app (node/config.ts) et empreinte du contenu du build : chaque modification
+// Préfixe de l'app (outils/config.ts) et empreinte du contenu du build : chaque modification
 // publiée, numéro de version compris, renomme le cache et met à jour les appareils.
 const CACHE = '__CACHE_PREFIX__-__BUILD_HASH__';
 // Toutes les apps de dezande.github.io partagent le même espace de caches (même origine) :

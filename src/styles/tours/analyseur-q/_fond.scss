@@ -5,7 +5,7 @@
  * Fond de l'app, derrière les slides : une trame d'écran d'instrument et une lueur centrale,
  * pour que l'écran ne soit pas un rectangle noir vide. Purement décoratif et sans animation :
  * deux pseudo-éléments posés sur la scène du tour, qui remplit #app (elle pivote avec le
- * téléphone, kit/styles/_app.scss),
+ * téléphone, styles/_app.scss),
  * donc rien à mesurer pour l'ajustement du texte et rien à repeindre pendant la routine.
  *
  * Tout s'éteint vers les bords et reste très peu contrasté : le texte des slides, le cadre

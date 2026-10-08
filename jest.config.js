@@ -2,7 +2,7 @@
  * Les tests, tous avec Jest, en trois projets :
  *
  *   unitaires   la logique pure, sous Node (tests/logic/, tests/tours/), et les scripts du build,
- *               le serveur local et les calculs de rotation du kit (tests/kit/) ;
+ *               le serveur local (tests/scripts/) ;
  *   composants  les composants Preact dans un DOM simulé (jsdom), avec Preact Testing Library
  *               (tests/composants/) ;
  *   e2e         l'app compilée (dist/) dans un vrai Chrome sans interface, sur un écran de
@@ -40,7 +40,7 @@ export default {
 			...commun,
 			displayName: 'unitaires',
 			testEnvironment: 'node',
-			testMatch: ['<rootDir>/tests/logic/**/*.test.ts', '<rootDir>/tests/tours/**/*.test.ts', '<rootDir>/tests/kit/**/*.test.ts'],
+			testMatch: ['<rootDir>/tests/logic/**/*.test.ts', '<rootDir>/tests/tours/**/*.test.ts', '<rootDir>/tests/scripts/**/*.test.ts'],
 		},
 		{
 			...commun,

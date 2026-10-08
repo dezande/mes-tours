@@ -7,8 +7,8 @@
 // d'Android et le hors-ligne de l'ensemble.
 import { existsSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { Browser, SCREEN, type Page, type Point } from '../../src/kit/node/chrome.ts';
-import { startStaticServer, type StaticServer } from '../../src/kit/node/static-server.ts';
+import { Browser, SCREEN, type Page, type Point } from '../../outils/chrome.ts';
+import { startStaticServer, type StaticServer } from '../../outils/static-server.ts';
 import { TOURS } from '../../src/content/tours.ts';
 import { APP_VERSION } from '../../src/version.ts';
 

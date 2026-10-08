@@ -5,7 +5,7 @@
  */
 
 import { deviceLang, isLang, type Lang } from '../logic/i18n.ts';
-import { readStored, writeStored } from '../kit/web/storage.ts';
+import { readStored, writeStored } from '../appareil/stockage.ts';
 
 const CLE = 'mes-tours:langue';
 

@@ -1,31 +1,18 @@
 // Finalise le build de l'app (lancé depuis sa racine, après la compilation) :
-// 1. inscrit dans kit/web/build.js le numéro de version (nombre de commits) et le commit court ;
+// 1. inscrit dans version.js le numéro de version (nombre de commits) et le commit court ;
 // 2. inscrit dans sw.js la liste de tous les fichiers de dist/ à mettre en cache, et le préfixe
 //    de cache de l'app (config.ts) ;
 // 3. nomme le cache hors-ligne d'après le contenu de ces fichiers, numéro de version compris.
 //    Toute nouvelle version change ce nom, donc les appareils où l'app est installée se mettent
 //    à jour ; sans modification, rien n'est retéléchargé.
-import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join, sep } from 'node:path';
+import { fail, git } from './commun.ts';
 import { APP } from './config.ts';
 
 const DIST = 'dist';
-const BUILD_FILE = 'kit/web/build.js';
-
-function fail(message: string): never {
-	console.error(message);
-	process.exit(1);
-}
-
-function git(args: string[]): string | null {
-	try {
-		return execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-	} catch {
-		return null;
-	}
-}
+const BUILD_FILE = 'version.js';
 
 function replaceIn(file: string, placeholder: string, value: string): void {
 	const path = join(DIST, file);

@@ -31,8 +31,8 @@ import { useAppuiLong } from '../../hooks/useAppuiLong.ts';
 import { useClavier } from '../../hooks/useClavier.ts';
 import { useQuandLAppSeCache } from '../../hooks/useQuandLAppSeCache.ts';
 import { useReglagesEnregistres } from '../../hooks/useReglagesEnregistres.ts';
-import { appPoint } from '../../kit/web/orientation.ts';
-import { keepScreenAwake } from '../../kit/web/wake-lock.ts';
+import { appPoint } from '../../appareil/orientation.ts';
+import { keepScreenAwake } from '../../appareil/ecran-allume.ts';
 import { usePont } from '../pont.tsx';
 import { Cadre } from './components/Cadre.tsx';
 import { Deck } from './components/Deck.tsx';
@@ -68,7 +68,7 @@ export default function AnalyseurQ() {
 	// La jauge n'apparaît qu'après la durée d'un tap : un toucher de la routine ne la montre jamais.
 	const appui = useAppuiLong({ dureeMs: GESTURE.holdMs, delaiJaugeMs: GESTURE.tapMaxMs, jaugeVisible: reglages.showHoldRing });
 
-	// Coordonnées dans le repère de l'app, qui peut être pivotée (kit/web/orientation.ts).
+	// Coordonnées dans le repère de l'app, qui peut être pivotée (appareil/orientation.ts).
 	const surAppui = (event: TargetedPointerEvent<HTMLElement>): void => {
 		if (event.pointerType === 'mouse' && event.button !== 0) return;
 		void keepScreenAwake();

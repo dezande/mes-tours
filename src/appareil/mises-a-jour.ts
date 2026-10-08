@@ -1,5 +1,5 @@
 /*
- * Hors-ligne et mises à jour : enregistre le service worker (sw/sw.ts) et installe les nouvelles
+ * Hors-ligne et mises à jour : enregistre le service worker (src/sw/sw.ts) et installe les nouvelles
  * versions publiées.
  *
  * Une nouvelle version est cherchée à l'ouverture et à chaque retour au premier plan. Quand elle

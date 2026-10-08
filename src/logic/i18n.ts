@@ -26,6 +26,17 @@ export function t(value: Texte | undefined, lang: Lang): string | undefined {
 	return typeof value === 'string' ? value : value[lang];
 }
 
+/**
+ * La fonction ui() d'un tour, à partir de ses textes d'interface (content/interface.ts) : le texte
+ * d'une clé dans la langue demandée. Les clés sont vérifiées par TypeScript.
+ */
+export function textesInterface<Cle extends string>(textes: Readonly<Record<Cle, Texte>>): (cle: Cle, lang: Lang) => string {
+	return (cle, lang) => {
+		const value: Texte = textes[cle];
+		return typeof value === 'string' ? value : value[lang];
+	};
+}
+
 /** Le champ est-il un texte utilisable : une chaîne, ou une traduction par langue, sans langue vide ? */
 export function isTexte(value: unknown): value is Texte {
 	if (typeof value === 'string') return true;

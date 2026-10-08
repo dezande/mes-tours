@@ -14,7 +14,7 @@
  */
 
 import { useEffect, useRef } from 'preact/hooks';
-import { keepScreenAwake } from '../kit/web/wake-lock.ts';
+import { keepScreenAwake } from '../appareil/ecran-allume.ts';
 import { usePont } from '../tours/pont.tsx';
 
 export function useClavier<A extends string>(keyAction: (key: string) => A | 'menu' | null, surAction: (action: A) => void, reglagesOuverts?: boolean): void {

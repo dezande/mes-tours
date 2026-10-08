@@ -34,7 +34,7 @@ import { usePaysage } from '../../hooks/usePaysage.ts';
 import { isArmed, isLocked, usePhasesZones, type EtatZones, type Phase } from '../../hooks/usePhasesZones.ts';
 import { useQuandLAppSeCache } from '../../hooks/useQuandLAppSeCache.ts';
 import { useReglagesEnregistres } from '../../hooks/useReglagesEnregistres.ts';
-import { keepScreenAwake } from '../../kit/web/wake-lock.ts';
+import { keepScreenAwake } from '../../appareil/ecran-allume.ts';
 import { DOUBLE_TAP, GestureTracker, HOLD, type PointerId } from '../../logic/gestes-zones.ts';
 import type { ReglagesZones as Reglages } from '../../logic/reglages-zones.ts';
 import { zoneIndexForPoint } from '../../logic/zones.ts';
@@ -118,7 +118,7 @@ export function TourAZones({ cleReglages, valider, zones, noms, valeurs, libelle
 			// Contact déjà terminé.
 		}
 
-		// Coordonnées dans le repère de la scène, qui peut être pivotée (portrait du kit, ou paysage),
+		// Coordonnées dans le repère de la scène, qui peut être pivotée (portrait de toute l'app, ou paysage),
 		// comme attendu par src/logic/zones.ts : « haut » reste le haut de la scène.
 		const point = appPoint(event.clientX, event.clientY);
 		// Tout doigt posé peut devenir l'appui long : sortie de secours, retour au menu principal.

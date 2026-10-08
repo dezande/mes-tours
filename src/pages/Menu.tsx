@@ -13,14 +13,14 @@ import { ECROU, ICONES, MAIN } from '../content/pixels.ts';
 import { TEXTES } from '../content/textes.ts';
 import { LANGS } from '../logic/i18n.ts';
 import { TOURS } from '../content/tours.ts';
-import { BUILD } from '../kit/web/build.ts';
+import { BUILD } from '../version.ts';
 import { useLangue } from '../langue/LangueContext.tsx';
 import { adresseDuTour } from '../logic/adresses.ts';
 import { naviguer } from '../routeur.ts';
 import { Installation } from './Installation.tsx';
 import { APP_VERSION } from '../version.ts';
 
-/** Le build et le commit, inscrits au build par le kit ; en développement (npm run dev), rien d'inscrit. */
+/** Le build et le commit, inscrits au build (outils/stamp-build.ts) ; en développement (npm run dev), rien d'inscrit. */
 const DETAIL_DU_BUILD = BUILD.version.startsWith('__') ? 'développement' : `build ${BUILD.version} (${BUILD.commit})`;
 
 export function Menu() {

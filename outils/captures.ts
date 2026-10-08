@@ -7,8 +7,8 @@
  */
 import { writeFileSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { Browser, SCREEN } from '../src/kit/node/chrome.ts';
-import { startStaticServer } from '../src/kit/node/static-server.ts';
+import { Browser, SCREEN } from './chrome.ts';
+import { startStaticServer } from './static-server.ts';
 
 const serveur = await startStaticServer('dist', 0);
 const navigateur = await Browser.launch();

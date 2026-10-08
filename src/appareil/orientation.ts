@@ -8,10 +8,10 @@
  * - convertir les coordonnées des touchers avec appPoint() ;
  * - mesurer ses zones avec la taille de ses éléments (clientWidth…), pas celle de la fenêtre ;
  * - importer ce module avant ceux qui mesurent l'écran au démarrage.
- * Calculs : orientation-logic.ts.
+ * Calculs : logic/orientation.ts.
  */
 
-import { appSize, portraitRotation, toAppPoint, type Rotation, type Viewport } from './orientation-logic.ts';
+import { appSize, portraitRotation, toAppPoint, type Rotation, type Viewport } from '../logic/orientation.ts';
 
 const app = document.getElementById('app') ?? (() => {
 	throw new Error('Élément introuvable : #app');

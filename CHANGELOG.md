@@ -39,6 +39,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
   - **Tous les tests avec Jest** : ceux du kit (vérification du build et du journal, numéro de version et cache, serveur local, rotation) passent de `node --test` à Jest, dans `tests/kit/`, et tournent avec `npm test`.
   - **Le kit allégé de ce qui ne servait qu'aux autres apps** : l'état du maintien de l'écran et ses textes (jamais affichés ici), l'état du stockage persistant, la liste des caches, les options inutilisées des mises à jour, les anciens préfixes de cache, le module `dom.ts`. Les réglages de l'app (nom, préfixe du cache, fichiers attendus dans `dist/`) quittent le champ `kit` de `package.json` pour une constante dans `src/kit/node/config.ts`.
   - **Deux fichiers de moins à charger** : le maintien de l'écran et les mises à jour rejoignent `app.js` ; seul le numéro de version garde son fichier (`kit/web/build.js`), que le déploiement relit sur le site.
+- **Le dossier `src/kit/` réparti dans l'app**, là où chaque fichier a sa place : `src/appareil/` (orientation, écran allumé, stockage, mises à jour), le service worker dans `src/sw/`, les calculs d'orientation dans `src/logic/orientation.ts` (avec ceux du verrou paysage, autrefois dans `paysage.ts`), le numéro de build dans `src/version.ts` (publié en `dist/version.js`), les styles de `#app` dans `src/styles/`, les scripts du build et du déploiement dans `outils/` (leurs tests dans `tests/scripts/`).
+  - La fonction `ui()` des textes, recopiée dans quatre tours, vient d'une seule fonction (`textesInterface`, `src/logic/i18n.ts`) ; `fail()` et `git()` des scripts, d'`outils/commun.ts`.
+  - **Déploiement** : la vérification du site publié lisait le commit avec des guillemets simples, alors que le fichier minifié l'écrit entre accents graves : elle ne pouvait jamais aboutir. Elle accepte maintenant les trois formes (test ajouté).
 
 ## [1.1.0] — 2026-10-07
 

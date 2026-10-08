@@ -1,11 +1,11 @@
-// Vérification du journal des versions (src/kit/node/check-changelog.ts) : la forme du fichier,
+// Vérification du journal des versions (outils/check-changelog.ts) : la forme du fichier,
 // et l'obligation de décrire ce qu'on change, dans un dépôt git temporaire.
 import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
-const SCRIPT = resolve('src/kit/node/check-changelog.ts');
+const SCRIPT = resolve('outils/check-changelog.ts');
 
 const VALID = `# Journal des versions
 

@@ -34,7 +34,7 @@ jobs:
 
       # Chaque changement doit s'accompagner d'une entrée dans CHANGELOG.md.
       - name: Journal des versions
-        run: node src/kit/node/check-changelog.ts --base "${{ github.event.pull_request.base.sha || github.event.before }}"
+        run: node outils/check-changelog.ts --base "${{ github.event.pull_request.base.sha || github.event.before }}"
 
       - run: npm ci
 

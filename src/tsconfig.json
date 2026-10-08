@@ -11,5 +11,5 @@
 		"types": ["vite/client"]
 	},
 	"include": ["**/*.ts", "**/*.tsx", "../vite.config.ts"],
-	"exclude": ["sw", "kit/node", "kit/sw"]
+	"exclude": ["sw"]
 }

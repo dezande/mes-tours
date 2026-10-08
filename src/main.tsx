@@ -18,18 +18,18 @@
  *                pure, testée sous Node), content/ (textes) ; registre.ts les relie au menu
  *   styles/      TOUTES les feuilles de style Sass (main.scss), un dossier par tour
  *   assets/      polices, images et icône de l'app
- *   kit/         code commun des accessoires de scène (repris de kit-scene)
+ *   appareil/    ce qui touche au téléphone : orientation, écran allumé, stockage, mises à jour
  *   version.ts   numéro de version de l'app (semver), affiché en bas du menu
- *   sw/          compilation du service worker du kit (kit/sw/sw.ts)
+ *   sw/          le service worker (sw.ts), compilé à part en dist/sw.js
  */
 
 // Rotation calculée avant tout le reste : l'app reste en portrait, et #app doit déjà exister.
-import './kit/web/orientation.ts';
+import './appareil/orientation.ts';
 import { render } from 'preact';
 import { App } from './App.tsx';
-import { requestPersistentStorage } from './kit/web/storage.ts';
-import { setupUpdates } from './kit/web/updates.ts';
-import { keepScreenAwake } from './kit/web/wake-lock.ts';
+import { requestPersistentStorage } from './appareil/stockage.ts';
+import { setupUpdates } from './appareil/mises-a-jour.ts';
+import { keepScreenAwake } from './appareil/ecran-allume.ts';
 import { estDansUnTour } from './tours/registre.ts';
 import './styles/main.scss';
 

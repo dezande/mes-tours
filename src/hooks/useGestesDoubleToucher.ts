@@ -10,13 +10,13 @@
  *   <JaugeAppui jauge={jauge} />
  *
  * `surGeste` reçoit « tap » ou « double » (un double suit toujours un tap, annoncé tout de suite),
- * et le point du doigt levé dans le repère de #app (qui peut être pivotée : kit/web/orientation.ts).
+ * et le point du doigt levé dans le repère de #app (qui peut être pivotée : appareil/orientation.ts).
  */
 
 import type { TargetedMouseEvent, TargetedPointerEvent } from 'preact';
 import { useRef, useState } from 'preact/hooks';
-import { appPoint } from '../kit/web/orientation.ts';
-import { keepScreenAwake } from '../kit/web/wake-lock.ts';
+import { appPoint } from '../appareil/orientation.ts';
+import { keepScreenAwake } from '../appareil/ecran-allume.ts';
 import { GESTURE, GestureTracker } from '../logic/double-toucher.ts';
 import { usePont } from '../tours/pont.tsx';
 import { useAppuiLong } from './useAppuiLong.ts';
