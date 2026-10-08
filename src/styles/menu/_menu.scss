@@ -2,7 +2,9 @@
 // bleues en dégradé bordées de blanc, police pixel, icônes ombrées, et la main qui montre la tuile
 // touchée. Tout est rangé sous #menu-principal (src/pages/Menu.tsx) : rien ne déborde sur les tours.
 @use "../abstracts/mixins" as *;
-@use "../abstracts/tokens-cartes" as cartes;
+@use "../tours/pile-ou-face/tokens" as pile-ou-face;
+@use "../tours/princesse/tokens" as princesse;
+@use "../tours/six-predictions/tokens" as six-predictions;
 @use "../tours/morpion/tokens" as morpion;
 @use "../tours/cinq-cartes/tokens" as cinq;
 @use "../tours/analyseur-q/tokens" as analyseur;
@@ -159,9 +161,9 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 
 /*
  * Le fond de chaque tuile (et de son écrou) : celui de son tour, en petit. Le velours de la boule,
- * le chêne de la carte de visite, le tapis vert des tours de cartes, le ciel du morpion, le
- * tourbillon des cinq cartes, l'écran de l'analyseur. Touchée, la tuile s'éclaire au lieu de
- * passer au bleu.
+ * le chêne de la carte de visite, le bleu gravé de pile ou face, le velours pourpre de la
+ * princesse, le cuir des six prédictions, le ciel du morpion, le tourbillon des cinq cartes,
+ * l'écran de l'analyseur. Touchée, la tuile s'éclaire au lieu de passer au bleu.
  */
 $fonds-des-tours: (
 	"boule-de-cristal": (
@@ -173,13 +175,13 @@ $fonds-des-tours: (
 		repeating-linear-gradient(180deg, transparent 0 30px, rgba(10, 4, 2, .8) 30px 32px),
 		linear-gradient(180deg, #5a3518 0%, #3d2210 55%, #2a1407 100%),
 	),
-	"pile-ou-face": radial-gradient(130% 95% at 50% 42%, cartes.$tapis-clair, cartes.$tapis 45%, cartes.$tapis-sombre 100%),
+	"pile-ou-face": pile-ou-face.$fond,
 	"morpion": (
 		radial-gradient(90% 55% at 50% 18%, rgba(255, 255, 255, .45), transparent 70%),
 		linear-gradient(180deg, morpion.$ciel-haut, morpion.$ciel 55%, morpion.$ciel-bas),
 	),
-	"princesse": radial-gradient(130% 95% at 50% 42%, cartes.$tapis-clair, cartes.$tapis 45%, cartes.$tapis-sombre 100%),
-	"six-predictions": radial-gradient(130% 95% at 50% 42%, cartes.$tapis-clair, cartes.$tapis 45%, cartes.$tapis-sombre 100%),
+	"princesse": princesse.$fond,
+	"six-predictions": six-predictions.$fond,
 	// Le tourbillon de la table des cinq cartes, à l'arrêt (styles/tours/cinq-cartes/_balatro.scss).
 	"cinq-cartes": (
 		radial-gradient(120% 90% at 50% 50%, transparent 50%, rgba(0, 0, 0, .45) 100%),

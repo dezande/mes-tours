@@ -1,4 +1,6 @@
 @use "../../components/cartes";
+@use "tokens" as *;
 
-// Le tapis de jeu, et la scène qui reçoit les touchers (components/_cartes.scss).
-@include cartes.tapis;
+// Le tapis de jeu, et la scène qui reçoit les touchers (components/_cartes.scss). Son fond, le
+// tourbillon de Balatro, est peint par-dessus dans _balatro.scss.
+@include cartes.tapis($balatro-fond);

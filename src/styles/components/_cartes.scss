@@ -1,5 +1,5 @@
-// Ce que partagent les tours de cartes sur le tapis (pile ou face, six prédictions) : le tapis de
-// jeu, les cartes qui se retournent, leur dos (src/components/cartes/DosDeCarte.tsx), leur avant
+// Ce que partagent les tours de cartes sur le tapis (pile ou face, princesse, six prédictions) : le
+// tapis de jeu, les cartes qui se retournent, leur dos (src/components/cartes/DosDeCarte.tsx), leur avant
 // écrit à la main et souligné (src/components/cartes/Soulignement.tsx), et les vignettes des dos
 // dans le panneau de réglages. Les valeurs par défaut sont les couleurs des tours de cartes
 // (abstracts/_tokens-cartes.scss).
@@ -7,7 +7,7 @@
 // Dans un nouveau tour de cartes, dans ses partiels (chargés sous .scene-<dossier>) :
 //
 //   @use "../../components/cartes";
-//   @include cartes.tapis;                                          // _table.scss
+//   @include cartes.tapis($fond);                                   // _table.scss, $fond dans _tokens.scss
 //   @include cartes.cartes($marge-texte: clamp(6px, 2.5%, 14px));   // _cartes.scss
 //   @include cartes.vignettes($colonnes: 3, $colonnes-couleurs: 4); // _menu.scss
 //
@@ -18,18 +18,12 @@
 @use "../abstracts/mixins" as *;
 @use "../abstracts/tokens-cartes" as t;
 
-// Le tapis : un feutre vert de table de jeu, éclairé au centre et qui s'assombrit vers les bords,
-// avec un grain fin pour la texture du drap. Décor seulement — rien ne bouge pendant la routine,
-// et tout reste assez sombre pour que les cartes claires s'en détachent.
-@mixin tapis($tapis: t.$tapis, $tapis-clair: t.$tapis-clair, $tapis-sombre: t.$tapis-sombre) {
+// Le tapis : le fond propre à chaque tour ($fond, dans son _tokens.scss), que le menu reprend sur
+// sa tuile. Décor seulement — rien ne bouge pendant la routine, et tout reste assez sombre pour que
+// les cartes claires s'en détachent.
+@mixin tapis($fond) {
 	& {
-		background:
-			// Le grain du feutre : deux trames croisées, à peine visibles.
-			repeating-linear-gradient(58deg, rgba(255, 255, 255, .022) 0 1px, transparent 1px 3px),
-			repeating-linear-gradient(-58deg, rgba(0, 0, 0, .05) 0 1px, transparent 1px 3px),
-			// La lumière au-dessus de la table.
-			radial-gradient(90% 62% at 50% 34%, rgba(255, 246, 214, .13), transparent 70%),
-			radial-gradient(130% 95% at 50% 42%, $tapis-clair, $tapis 45%, $tapis-sombre 100%);
+		background: $fond;
 	}
 
 	// La scène reçoit tous les touchers : « none » pour qu'aucun défilement ni zoom ne s'y glisse.

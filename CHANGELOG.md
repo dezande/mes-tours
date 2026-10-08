@@ -35,6 +35,10 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **Un fond à chaque tour de cartes, au lieu du même tapis vert pour trois.** Pile ou face se joue sur un bleu nuit gravé comme une pièce de monnaie (deux rosaces d'anneaux fins qui se croisent en moiré, le guilloché des billets) ; Princesse, sur un velours pourpre de salle du trône, damassé de losanges dorés avec un fleuron dans chacun ; Les six prédictions, sur le sous-main de cuir bordeaux d'un bureau, marbré, cerné de deux filets dorés au fer. Les cinq cartes gardent leur tourbillon façon Balatro, et leur panneau de réglages passe du vert au bleu nuit. Les tuiles du menu prennent chacune le fond de leur tour. Tout reste immobile et assez sombre pour que les cartes s'en détachent. Le mixin `cartes.tapis` reçoit maintenant le fond du tour (`$fond`, dans son `_tokens.scss`).
+
 ## [1.3.0] — 2026-10-08
 
 42 commits
