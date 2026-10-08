@@ -152,6 +152,8 @@ Un tour à cartes ajoute `cartes.tapis`, `cartes.cartes(…)` et `cartes.vignett
 
 `main` protégée : pull request, fusion en rebase (historique linéaire), branche à jour, CI verte (« Types, tests, build et tests dans Chrome »), une ligne dans le [journal des versions](CHANGELOG.md) pour chaque changement. Chaque fusion sur `main` publie le site.
 
+**La correction automatique (Auto-fix) est obligatoire sur toutes les pull requests**, quel que soit le flux qui les ouvre : elle est activée dès la création de la PR, et un commentaire sur la PR le signale. Une vérification GitHub qui échoue, un conflit avec `main` ou un commentaire de relecture est alors corrigé, vérifié et poussé sur la branche de la PR. La fusion, elle, reste manuelle.
+
 **Le build** (Vite) compile Preact et Sass en `dist/app.js` et `dist/style.css`, chaque tour dans son propre fichier (chargé à sa première ouverture), polices et images dans `dist/assets/`. La fin du build (`outils/`) : le service worker, la vérification de `dist/` et le numéro de version (`dist/version.js`, que Vite garde à part : le déploiement le relit sur le site publié). La Content-Security-Policy n'est ajoutée qu'au build : le serveur de développement de Vite injecte ses styles en ligne.
 
 **Les tests, tous avec [Jest](https://jestjs.io/)** (compilés par SWC, configuration dans [`jest.config.js`](jest.config.js)) : la logique pure sous Node, les composants dans jsdom avec [Preact Testing Library](https://testing-library.com/docs/preact-testing-library/intro/), et l'app compilée dans un vrai Chrome sans interface. `expect(valeur, 'message')` dit ce qui a échoué ([jest-expect-message](https://github.com/mattphillips/jest-expect-message)).
