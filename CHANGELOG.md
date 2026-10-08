@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.3.1] | 44 | 2026-10-08 | Un fond à chaque tour de cartes : guilloché, velours damassé, cuir |
 | [1.3.0] | 42 | 2026-10-08 | Les cinq cartes, nouveau tour à l'allure de Balatro ; huit tuiles au menu |
 | [1.2.0] | 40 | 2026-10-08 | Princesse, nouveau tour ; le kit repris dans l'app ; orientation et écran allumé en composants |
 | [1.1.0] | 34 | 2026-10-07 | Morpion, nouveau tour ; la première prédiction gardée jusqu'au menu ; le menu aux fonds des tours |
@@ -35,7 +36,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.3.1] — 2026-10-08
+
+44 commits
 
 - **Un fond à chaque tour de cartes, au lieu du même tapis vert pour trois.** Pile ou face se joue sur un bleu nuit gravé comme une pièce de monnaie (deux rosaces d'anneaux fins qui se croisent en moiré, le guilloché des billets) ; Princesse, sur un velours pourpre de salle du trône, damassé de losanges dorés avec un fleuron dans chacun ; Les six prédictions, sur le sous-main de cuir bordeaux d'un bureau, marbré, cerné de deux filets dorés au fer. Les cinq cartes gardent leur tourbillon façon Balatro, et leur panneau de réglages passe du vert au bleu nuit. Les tuiles du menu prennent chacune le fond de leur tour. Tout reste immobile et assez sombre pour que les cartes s'en détachent. Le mixin `cartes.tapis` reçoit maintenant le fond du tour (`$fond`, dans son `_tokens.scss`).
 
@@ -302,6 +305,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.3.1]: https://github.com/dezande/mes-tours/releases/tag/v1.3.1
 [1.3.0]: https://github.com/dezande/mes-tours/releases/tag/v1.3.0
 [1.2.0]: https://github.com/dezande/mes-tours/releases/tag/v1.2.0
 [1.1.0]: https://github.com/dezande/mes-tours/releases/tag/v1.1.0
