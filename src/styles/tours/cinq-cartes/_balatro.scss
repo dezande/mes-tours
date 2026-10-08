@@ -1,0 +1,304 @@
+@use "sass:color";
+@use "tokens" as *;
+
+/*
+ * L'allure du tour, dans l'esprit du jeu vidéo Balatro : un tourbillon de peinture qui tourne
+ * lentement derrière la table, les lignes d'un écran cathodique, des cartes qui flottent et
+ * rebondissent quand elles se retournent, des index en police pixel et des enseignes vives. Tout
+ * est dessiné ici (dégradés, pixels du dos « Arcade ») : aucune image du jeu.
+ *
+ * Chargé après les autres partiels du tour : il en reprend les couleurs et les ombres. Les
+ * animations sont préfixées « cinq- » ; sans mouvement demandé par le téléphone (prefers-reduced-
+ * motion), tout reste immobile.
+ */
+
+// ---------- La table : le tourbillon, l'écran cathodique ----------
+
+& {
+	background: $balatro-fond;
+}
+
+#stage {
+	overflow: hidden;
+
+	// Le tourbillon de peinture : un dégradé en cône et des taches de couleur, bien plus grands que
+	// l'écran, qui tournent en sens inverse. Une transformation seulement : le téléphone n'a rien à repeindre.
+	&::before,
+	&::after {
+		content: "";
+		position: absolute;
+		z-index: -2;
+		left: 50%;
+		top: 50%;
+		width: 260vmax;
+		height: 260vmax;
+		margin: -130vmax 0 0 -130vmax;
+		pointer-events: none;
+	}
+
+	&::before {
+		background:
+			conic-gradient(from 0deg, $balatro-rouge, $balatro-violet 18%, $balatro-bleu 34%, $balatro-sarcelle 50%, $balatro-bleu 62%, $balatro-violet 78%, $balatro-rouge);
+		animation: cinq-tourbillon 60s linear infinite;
+	}
+
+	// Par-dessus, des taches de peinture qui tournent dans l'autre sens : le mélange tourbillonne.
+	&::after {
+		z-index: -1;
+		background:
+			radial-gradient(14% 14% at 42% 44%, rgba(224, 71, 60, .75), transparent 70%),
+			radial-gradient(16% 16% at 58% 54%, rgba(43, 79, 158, .8), transparent 70%),
+			radial-gradient(11% 11% at 52% 40%, rgba(31, 111, 106, .7), transparent 70%),
+			radial-gradient(12% 12% at 45% 60%, rgba(74, 47, 122, .8), transparent 70%);
+		animation: cinq-tourbillon 40s linear infinite reverse;
+	}
+}
+
+// L'écran cathodique, par-dessus tout : les lignes de balayage et le bord assombri. Il ne prend
+// aucun toucher.
+#rangee::before {
+	content: "";
+	position: fixed;
+	z-index: 50;
+	inset: 0;
+	pointer-events: none;
+	background:
+		repeating-linear-gradient(0deg, rgba(0, 0, 0, .16) 0 1px, transparent 1px 3px),
+		radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0, 0, 0, .55) 100%);
+}
+
+@keyframes cinq-tourbillon {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+// ---------- Les cartes : elles flottent, et rebondissent en se retournant ----------
+
+.carte-pivot {
+	// Chaque carte flotte à son rythme (--x la décale d'une demi-seconde par place).
+	animation: cinq-flotte 3.2s ease-in-out infinite alternate;
+	animation-delay: calc(var(--x) * -.55s);
+	// Le retournement dépasse un peu, puis revient : le rebond des cartes de Balatro.
+	transition: transform .5s cubic-bezier(.3, 1.45, .55, 1);
+}
+
+@keyframes cinq-flotte {
+	from {
+		translate: 0 -3px;
+		rotate: -1.2deg;
+	}
+
+	to {
+		translate: 0 3px;
+		rotate: 1.2deg;
+	}
+}
+
+// Une carte qui se retourne grossit un instant.
+.carte.retournee {
+	animation: cinq-saute .45s ease-out;
+}
+
+@keyframes cinq-saute {
+	40% {
+		scale: 1.12;
+	}
+}
+
+// Les faces et les dos : un bord plus franc, et l'ombre portée sans flou, décalée vers le bas.
+.carte-face {
+	border-radius: calc(var(--rayon) * .7);
+	box-shadow:
+		0 0 0 2px rgba(20, 16, 40, .55),
+		0 7px 0 rgba(10, 8, 25, .45);
+}
+
+.avant {
+	background: $balatro-carton;
+	box-shadow:
+		inset 0 0 0 3px $balatro-carton,
+		inset 0 0 0 4px rgba(40, 30, 60, .14),
+		0 0 0 2px rgba(20, 16, 40, .55),
+		0 7px 0 rgba(10, 8, 25, .45);
+}
+
+// Les index et les figures en police pixel, les enseignes dans leurs couleurs vives.
+.face-carte {
+	font-family: "Pixelify Sans", ui-monospace, monospace;
+	font-weight: 700;
+
+	&[data-couleur="coeur"] {
+		color: $balatro-coeur;
+	}
+
+	&[data-couleur="carreau"] {
+		color: $balatro-carreau;
+	}
+
+	&[data-couleur="pique"] {
+		color: $balatro-pique;
+	}
+
+	&[data-couleur="trefle"] {
+		color: $balatro-trefle;
+	}
+}
+
+// Les couleurs des personnages des figures (components/FaceDeCarte.tsx, logic/figures.ts) ; les
+// habits sont dans la couleur de l'enseigne.
+.face-carte {
+	--fig-o: #2a2340;
+	--fig-p: #f5c9a0;
+	--fig-y: #f3b72f;
+	--fig-h: #7a3e1d;
+	--fig-b: #e8e4d8;
+	--fig-e: #2a2340;
+	--fig-w: #ffffff;
+}
+
+// ---------- Le dos « Arcade » (components/DosArcade.tsx) ----------
+
+.dos[data-motif="arcade"],
+.vignette[data-motif="arcade"] {
+	--arcade-fond: #{$balatro-rouge};
+	--arcade-sombre: #{color.adjust($balatro-rouge, $lightness: -16%)};
+	--arcade-clair: #{$balatro-carton};
+	background: var(--arcade-fond);
+	box-shadow:
+		0 0 0 2px rgba(20, 16, 40, .55),
+		0 7px 0 rgba(10, 8, 25, .45);
+
+	&[data-couleur="bleu"] {
+		--arcade-fond: #{$balatro-bleu-dos};
+		--arcade-sombre: #{color.adjust($balatro-bleu-dos, $lightness: -16%)};
+	}
+
+	&[data-couleur="noir"] {
+		--arcade-fond: #3a3d52;
+		--arcade-sombre: #23253a;
+	}
+
+	&[data-couleur="blanc"] {
+		--arcade-fond: #{$balatro-carton};
+		--arcade-sombre: #c9c2ae;
+		--arcade-clair: #{$balatro-rouge};
+	}
+
+	.dos-arcade {
+		position: absolute;
+		inset: 0;
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.vignette[data-motif="arcade"] {
+	box-shadow: none;
+}
+
+// ---------- Les barres des aides : de gros boutons, comme dans le jeu ----------
+
+.barre-aide {
+	gap: 8px;
+	padding: 6px;
+	border-radius: 10px;
+	background: rgba(20, 16, 40, .88);
+	border: 2px solid rgba(255, 255, 255, .18);
+	font: 600 15px/1 "Pixelify Sans", ui-monospace, monospace;
+	color: #fff;
+
+	button {
+		min-height: 38px;
+		padding: 0 14px;
+		border: none;
+		border-radius: 8px;
+		color: #fff;
+		background: $balatro-bleu-bouton;
+		box-shadow: 0 4px 0 color.adjust($balatro-bleu-bouton, $lightness: -18%);
+		text-shadow: 0 2px 0 rgba(0, 0, 0, .3);
+
+		&:active {
+			translate: 0 3px;
+			box-shadow: 0 1px 0 color.adjust($balatro-bleu-bouton, $lightness: -18%);
+		}
+	}
+
+	// « Recommencer » et « Quitter » en rouge, comme les boutons qui défaussent.
+	#entrainement-recommencer,
+	#test-quitter {
+		background: $balatro-rouge;
+		box-shadow: 0 4px 0 color.adjust($balatro-rouge, $lightness: -18%);
+
+		&:active {
+			box-shadow: 0 1px 0 color.adjust($balatro-rouge, $lightness: -18%);
+		}
+	}
+}
+
+// Les zones du test, aux couleurs de la table.
+.zone-colonne,
+.zone-coin {
+	border: 2px dashed rgba(255, 255, 255, .45);
+	background: rgba(255, 255, 255, .04);
+
+	.tag {
+		border: none;
+		border-radius: 8px;
+		background: $balatro-orange;
+		box-shadow: 0 3px 0 color.adjust($balatro-orange, $lightness: -18%);
+		font: 700 18px/1 "Pixelify Sans", ui-monospace, monospace;
+		color: #fff;
+	}
+}
+
+.zone-coin {
+	.tag {
+		background: $balatro-carton;
+		box-shadow: 0 3px 0 #b9b19c;
+		color: $balatro-pique;
+	}
+
+	&[data-couleur="coeur"] .tag {
+		color: $balatro-coeur;
+	}
+
+	&[data-couleur="carreau"] .tag {
+		color: $balatro-carreau;
+	}
+
+	&[data-couleur="trefle"] .tag {
+		color: $balatro-trefle;
+	}
+}
+
+.zone-colonne.couleur {
+	border-color: transparent;
+	background: none;
+}
+
+@keyframes cinq-hit-balatro {
+	from {
+		background: rgba(255, 255, 255, .4);
+	}
+
+	to {
+		background: rgba(255, 255, 255, .04);
+	}
+}
+
+.zone-colonne.hit,
+.zone-coin.hit {
+	animation: cinq-hit-balatro .8s ease-out;
+}
+
+// Sans mouvement : le tourbillon s'arrête, les cartes ne flottent plus.
+@media (prefers-reduced-motion: reduce) {
+	#stage::before,
+	#stage::after,
+	.carte-pivot,
+	.carte.retournee {
+		animation: none;
+	}
+}

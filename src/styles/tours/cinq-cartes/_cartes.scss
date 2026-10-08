@@ -1,0 +1,92 @@
+@use "tokens" as *;
+@use "../../abstracts/mixins" as *;
+@use "../../components/cartes";
+
+/*
+ * Les cinq cartes côte à côte au centre du tapis, comme dans Princesse, téléphone tenu en largeur.
+ *
+ * Trois transformations se superposent, chacune sur son élément pour ne pas se gêner :
+ *   .carte        pose la carte (--x, --y, --rot), un peu de travers ;
+ *   .carte-pivot  la retourne (rotateY) ;
+ *   .carte-face   le dos et l'avant, dos à dos (backface-visibility).
+ */
+
+#rangee {
+	/*
+	 * La rangée de Princesse : la carte prend la plus grande taille qui tienne, cinq cartes côte à
+	 * côte séparées par un écart de --ecart de leur largeur. La rangée entière tient en largeur, et la
+	 * carte ne dépasse pas 70 % de la hauteur libre (en paysage, c'est la hauteur qui commande ; le
+	 * reste laisse la place au désordre de la rangée).
+	 */
+	// Assez d'écart pour que deux voisines, un peu de travers, ne se touchent jamais (logic/disposition.ts).
+	--ecart: .22;
+	--dispo-w: calc(var(--app-w) - var(--safe-l) - var(--safe-r) - 40px);
+	--dispo-h: calc(var(--app-h) - var(--safe-t) - var(--safe-b) - 32px);
+	--carte-w: min(calc(var(--dispo-w) / (5 + 4 * var(--ecart))), calc(var(--dispo-h) * .7 / 1.4), 300px);
+	--carte-h: calc(var(--carte-w) * 1.4);
+	// D'une carte à la suivante : l'écart entre leurs centres.
+	--pas: calc(var(--carte-w) * (1 + var(--ecart)));
+	--rayon: calc(var(--carte-w) * .055);
+	// Marge de papier du bord des dos. En longueur absolue : un pourcentage n'est pas admis
+	// dans l'étalement d'une ombre, et rendrait toute la déclaration invalide.
+	--marge: clamp(4px, calc(var(--carte-w) * .045), 12px);
+	position: relative;
+	// Exactement la largeur des cinq places : une colonne par carte, celle que l'artiste touche
+	// (logic/table.ts : boitesDeLaRangee).
+	width: calc(var(--pas) * 5);
+	height: var(--carte-h);
+}
+
+// Les couleurs de dos, le retournement, le dos et l'avant (components/_cartes.scss).
+@include cartes.cartes($marge-texte: 0px);
+
+.carte {
+	// Écrites par components/Rangee.tsx (logic/disposition.ts) : la position de la carte, en places
+	// depuis le milieu de la rangée (--x), en hauteurs de carte (--y), et son inclinaison (--rot).
+	--x: 0;
+	--y: 0;
+	--rot: 0;
+	position: absolute;
+	top: 0;
+	left: calc(50% - var(--carte-w) / 2);
+	width: var(--carte-w);
+	height: var(--carte-h);
+	// Chaque carte tourne autour de son propre centre, dans son propre espace 3D.
+	perspective: 900px;
+	transform:
+		translate(calc(var(--x) * var(--pas)), calc(var(--y) * var(--carte-h)))
+		rotate(calc(var(--rot) * 1deg));
+}
+
+// L'avant : un carton blanc, vide — sauf celui de la carte du spectateur.
+.avant {
+	padding: 0;
+	background: radial-gradient(120% 90% at 50% 30%, #fff, $carton 60%, $carton-ombre 150%);
+	box-shadow:
+		inset 0 0 0 1px rgba(0, 0, 0, .1),
+		0 1px 2px rgba(0, 0, 0, .5),
+		0 18px 36px rgba(0, 0, 0, .45);
+}
+
+// La carte du spectateur (components/FaceDeCarte.tsx), dessinée jusqu'aux bords.
+.face-carte {
+	@include cover;
+	display: block;
+	width: 100%;
+	height: 100%;
+	font-family: $serif;
+	font-weight: 700;
+
+	&.rouge {
+		color: $rouge;
+	}
+
+	&.noire {
+		color: $noir;
+	}
+}
+
+// À l'ouverture et à chaque remise en place, les cartes se retrouvent face cachée d'un coup.
+#rangee.no-anim .carte-pivot {
+	transition: none;
+}

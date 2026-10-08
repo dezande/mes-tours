@@ -224,6 +224,31 @@ def eventail():
             if (x+y)%5: t[y][x]=encre
     return contour(t,'#160a10')
 
+# ---------- Les cinq cartes : cinq cartes en ligne, blanches, sauf la dernière, un cœur ----------
+def cinq_cartes():
+    t=toile()
+    blancs=['#e6dcc4','#fbf6ea','#ffffff']
+    rouges=['#7a1c2c','#b13e53']
+    def carte(x0,y0,w,h):
+        for y in range(y0,y0+h):
+            for x in range(x0,x0+w):
+                if (x in (x0,x0+w-1)) and (y in (y0,y0+h-1)): continue   # coins arrondis
+                v=0.9-0.5*((x-x0)/w)-0.25*((y-y0)/h)
+                t[y][x]=ramp(v,blancs,x,y)
+    # quatre cartes blanches qui se chevauchent, de gauche à droite, puis la carte du spectateur
+    for i,(x0,y0,w,h) in enumerate(((1,10,9,14),(6,9,9,14),(11,8,9,14),(16,9,9,14),(19,7,12,18))):
+        carte(x0,y0,w,h)
+        # le bord gauche de la carte, posé sur la précédente
+        if i:
+            for y in range(y0+1,y0+h-1): t[y][x0]='#160a10'
+    # le cœur au milieu de la carte du spectateur, et son index en haut à gauche
+    coeur=[".XX.XX.","XXXXXXX","XXXXXXX",".XXXXX.","..XXX..","...X..."]
+    for v,l in enumerate(coeur):
+        for u,c in enumerate(l):
+            if c=='X': t[13+v][22+u]=rouges[1] if (u+v)%5 else rouges[0]
+    for (u,v) in ((0,0),(0,1),(1,0),(1,1),(0,2)): t[9+v][21+u]=rouges[0]
+    return contour(t,'#160a10')
+
 # ---------- Analyseur Q : le pique dans son orbite ----------
 def analyseur():
     t=toile()
@@ -297,7 +322,7 @@ def en_grille(t):
         lignes.append(l)
     return lignes
 
-icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'morpion':morpion(),'princesse':princesse(),'six-predictions':eventail(),'analyseur-q':analyseur()}
+icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'morpion':morpion(),'princesse':princesse(),'six-predictions':eventail(),'cinq-cartes':cinq_cartes(),'analyseur-q':analyseur()}
 gear=ecrou()
 # palette commune
 couleurs=[]
@@ -322,5 +347,7 @@ corps=''
 for i,(k,v) in enumerate(out['icones'].items()):
     corps+=svg(v,out['palette'],20+i*180,20,5)
 corps+=svg(out['ecrou'],out['palette'],20+len(out['icones'])*180,40,5)
-open(__import__('os').path.join(__import__('os').path.dirname(__file__) or '.', 'apercu.svg'),'w').write(f'<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="200" shape-rendering="crispEdges"><rect width="1440" height="200" fill="#20306a"/>{corps}</svg>')
+# toutes les icônes et l'écrou, quel que soit leur nombre
+largeur=20+len(out['icones'])*180+140
+open(__import__('os').path.join(__import__('os').path.dirname(__file__) or '.', 'apercu.svg'),'w').write(f'<svg xmlns="http://www.w3.org/2000/svg" width="{largeur}" height="200" shape-rendering="crispEdges"><rect width="{largeur}" height="200" fill="#20306a"/>{corps}</svg>')
 print(len(couleurs),'couleurs')

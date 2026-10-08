@@ -10,6 +10,7 @@ Tous mes accessoires de scène dans **une seule application** : https://dezande.
 | Morpion | double toucher sur le papier retourné : il revient sur « Prédiction », et se retourne ensuite toujours sur la même grille, jusqu'au retour au menu | — (créé ici) |
 | Princesse (5 cartes : 4♣, 8♥, 5♦, 10♦, V♦), en paysage | aucune : après la disparition, les cartes se retournent dans les deux sens au toucher, et aucun geste ne relance le tour (l'appui de 3 s ramène au menu, la touche R remet les cartes) | — (créé ici, d'après « The Princess Card Trick ») |
 | Les six prédictions | double toucher sur la table vide : le paquet revient, faces en bas | [six-predictions](https://github.com/dezande/six-predictions) |
+| Les cinq cartes (codage : cartes 1, 2, 4, 8 depuis le bord réglé, puis le coin de la 5e pour la couleur ; chaque carte touchée se retourne) | rien : les cinq retournées, on ne peut plus que les retourner, dans un sens ou dans l'autre ; l'appui de 3 s ramène au menu, d'où le tour rouvre neuf (au clavier, R remet les cinq dos) | — (créé ici) |
 | Analyseur Q | « suivante » après la dernière slide : rien, on reste sur la dernière slide | [analyseur-q](https://github.com/dezande/analyseur-q) |
 
 ## Utilisation
@@ -24,7 +25,7 @@ Tous mes accessoires de scène dans **une seule application** : https://dezande.
 | **Geste retour** d'Android | Retour au menu |
 | Touche **R** (télécommande) | Remise en place du tour ; **Échap** ou **M** : retour au menu |
 
-**Les réglages des cinq tours ont la même structure**, chacun dans ses couleurs : une barre d'en-tête qui reste en haut quand on fait défiler — « Réglages » et, dessous, le nom du tour, avec la croix qui ferme —, puis les réglages propres au tour, les aides à la répétition (le test des zones de la boule et de la carte de visite y est), et « Rétablir les réglages par défaut ». Plus de version, d'état de l'écran, d'aide des gestes ni d'informations techniques : la version de l'app est en bas du menu principal.
+**Les réglages des cinq tours ont la même structure**, chacun dans ses couleurs : une barre d'en-tête qui reste en haut quand on fait défiler — « Réglages » et, dessous, le nom du tour, avec la croix qui ferme —, puis les réglages propres au tour, les aides à la répétition (le test des zones de la boule, de la carte de visite et des cinq cartes y est, et le mode entraînement des cinq cartes), et « Rétablir les réglages par défaut ». Plus de version, d'état de l'écran, d'aide des gestes ni d'informations techniques : la version de l'app est en bas du menu principal.
 
 **La langue se choisit une fois, dans le menu principal** : les tours n'ont plus de choix de langue à eux (ni dans leurs réglages, ni sur la première slide de l'analyseur). En anglais, Pile ou face écrit « 0.20 euro / tails » et « heads ». La boule de cristal et la carte de visite n'ont qu'une interface en français ; ce qu'elles montrent au public, un nombre dans une boule ou au dos de la carte du Théâtre Robert-Houdin, n'a pas à changer de langue. À la toute première ouverture, l'app suit la langue du téléphone.
 
