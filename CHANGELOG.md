@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.3.0] | 42 | 2026-10-08 | Les cinq cartes, nouveau tour à l'allure de Balatro ; huit tuiles au menu |
 | [1.2.0] | 40 | 2026-10-08 | Princesse, nouveau tour ; le kit repris dans l'app ; orientation et écran allumé en composants |
 | [1.1.0] | 34 | 2026-10-07 | Morpion, nouveau tour ; la première prédiction gardée jusqu'au menu ; le menu aux fonds des tours |
 | [1.0.1] | 30 | 2026-10-04 | Analyseur Q : l'appui de 3 s ramène au menu, même le doigt sur une image |
@@ -34,7 +35,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.3.0] — 2026-10-08
+
+42 commits
 
 - **Les cinq cartes, un nouveau tour**, joué en largeur sur le tapis : cinq cartes face cachée, côte à côte comme dans Princesse, chacune un peu de travers sans jamais toucher sa voisine. Chaque carte touchée se retourne dès le premier toucher. Le codage : les quatre premières cartes valent, depuis le bord réglé, 1, 2, 4 et 8 (toucher celles dont la somme fait la valeur, de l'As au Roi ; elles se retournent, blanches, et une carte touchée deux fois ne compte qu'une fois), puis toucher la cinquième dans un coin la retourne aussi et donne la couleur : en haut à gauche pique, en haut à droite cœur, en bas à gauche trèfle, en bas à droite carreau. Ensuite chaque toucher retourne la carte touchée : elles sont toutes blanches, sauf la dernière retournée, quelle qu'elle soit, qui est la carte du spectateur (dessinée en SVG : grands index en police pixel, V D R en français, J Q K en anglais ; le Valet, la Dame et le Roi ont leur personnage en pixels, tête-bêche, habillé de la couleur de l'enseigne). Une fois les cinq retournées, on ne peut plus que les retourner, dans un sens ou dans l'autre, chacune gardant sa face : aucun geste ne relance la routine (au clavier seulement, R remet les cinq dos), l'appui de 3 s ramène au menu. **L'allure du jeu vidéo Balatro**, sans aucune de ses images : un tourbillon de peinture qui tourne lentement derrière les cartes, les lignes d'un écran cathodique, des cartes qui flottent et rebondissent en se retournant, des enseignes vives, un nouveau dos « Arcade » en pixels (rouge par défaut), de gros boutons en police pixel ; immobile si le téléphone demande moins de mouvement. Le toucher se fait par colonne, sur toute la hauteur de l'écran, comme dans Princesse. Réglages : le bord d'où part le « 1 », à gauche (par défaut) ou à droite (tout le codage en miroir, la carte de la couleur au bord gauche, ses coins inchangés), dos et couleur des cartes, le rappel du codage, et deux aides à la répétition : le **mode entraînement** (la routine, avec « Recommencer » et « Retour aux réglages ») et le **test des zones**, comme pour la boule de cristal (les colonnes et leur valeur, les quatre coins de la carte de la couleur, la zone touchée qui s'allume ; « Réglages » et « Quitter »). Son icône en pixels ; les tuiles du menu resserrées (icônes de 56 px au lieu de 64) pour que huit tiennent. Tests de la routine, des touchers, des faces, des aides, des composants, et test dans Chrome de toute la routine en paysage.
 
@@ -295,6 +298,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.3.0]: https://github.com/dezande/mes-tours/releases/tag/v1.3.0
 [1.2.0]: https://github.com/dezande/mes-tours/releases/tag/v1.2.0
 [1.1.0]: https://github.com/dezande/mes-tours/releases/tag/v1.1.0
 [1.0.1]: https://github.com/dezande/mes-tours/releases/tag/v1.0.1
