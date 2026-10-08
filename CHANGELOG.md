@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.6.0] | 52 | 2026-10-09 | Les trois paquets, nouveau tour : huit cartes forcées, trois paquets de sept, la carte pensée disparaît |
 | [1.5.0] | 50 | 2026-10-08 | Chaque tour de cartes a son dos, seule la couleur se règle ; un vrai valet de carreau pour la Princesse |
 | [1.4.0] | 46 | 2026-10-08 | Les cinq cartes : le mode entraînement demande la carte à coder |
 | [1.3.1] | 44 | 2026-10-08 | Un fond à chaque tour de cartes : guilloché, velours damassé, cuir |
@@ -38,7 +39,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.6.0] — 2026-10-09
+
+52 commits
 
 - **Les trois paquets, un nouveau tour** (neuvième tuile du menu, sur un feutre vert de casino) : huit cartes à forcer (2♣, 4♣, 8♥, 5♦, 10♦, valet de ♦, 10♠, dame de ♠, de code 0 à 7), trois paquets de sept, et la carte pensée qui disparaît. Sept panneaux, de l'un à l'autre en balayant : deux mélanges, puis 1, 2, 2, 2, 3 ; le tour se joue téléphone tenu en largeur, comme la Princesse.
   - **D'abord deux mélanges** : quarante cartes du jeu en tas, faces en l'air ou en bas, tirées au sort, sur toute la table et bien réparties (peu de tapis visible) : le tas déborde de l'écran.
@@ -339,6 +342,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.6.0]: https://github.com/dezande/mes-tours/releases/tag/v1.6.0
 [1.5.0]: https://github.com/dezande/mes-tours/releases/tag/v1.5.0
 [1.4.0]: https://github.com/dezande/mes-tours/releases/tag/v1.4.0
 [1.3.1]: https://github.com/dezande/mes-tours/releases/tag/v1.3.1
