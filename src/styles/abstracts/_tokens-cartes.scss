@@ -1,12 +1,8 @@
-// Couleurs et typographies des tours de cartes sur le tapis (pile ou face, six prédictions), figées
-// à la compilation. Chacun les reprend dans son _tokens.scss (@forward), et peut y en ajouter.
+// Couleurs et typographies des tours de cartes sur le tapis (pile ou face, princesse, six
+// prédictions), figées à la compilation. Chacun les reprend dans son _tokens.scss (@forward), et y
+// ajoute son tapis : le fond de la scène ($fond) et sa couleur la plus sombre ($bg), à chacun le sien.
 // L'échelle du texte de chaque prédiction (--fit) est calculée à l'exécution : voir components/Carte.tsx.
 
-// Le tapis de jeu : un feutre vert sombre, comme une table de casino.
-$tapis: #10361f;
-$tapis-clair: #1a5130;
-$tapis-sombre: #071a0f;
-$bg: $tapis-sombre;
 $ink: #f1ede4;
 $ink-soft: rgba(241, 237, 228, .6);
 $ink-faint: rgba(241, 237, 228, .14);

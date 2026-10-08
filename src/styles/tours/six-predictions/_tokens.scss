@@ -1,2 +1,21 @@
 // Les couleurs et typographies du tour : celles des tours de cartes (abstracts/_tokens-cartes.scss).
 @forward "../../abstracts/tokens-cartes";
+
+// Le tapis : le sous-main de cuir bordeaux d'un bureau, où l'on pose les prédictions écrites. Le
+// cuir est marbré de taches plus claires et plus sombres, d'un grain très fin, et cerné de deux
+// filets dorés au fer (le cadre, dessiné dans _table.scss : le menu ne reprend que le cuir).
+$cuir: #4b1a1e;
+$cuir-clair: #6e2a2c;
+$cuir-sombre: #1c0709;
+$dorure: #d6aa60;
+$bg: $cuir-sombre;
+$fond: (
+	radial-gradient(120% 88% at 50% 45%, transparent 50%, rgba(10, 2, 3, .7) 100%),
+	repeating-linear-gradient(73deg, rgba(255, 255, 255, .018) 0 1px, transparent 1px 4px),
+	repeating-linear-gradient(-31deg, rgba(0, 0, 0, .06) 0 1px, transparent 1px 5px),
+	radial-gradient(38% 26% at 22% 18%, rgba(0, 0, 0, .16), transparent 70%),
+	radial-gradient(34% 30% at 80% 68%, rgba(0, 0, 0, .14), transparent 70%),
+	radial-gradient(30% 22% at 70% 26%, rgba(255, 200, 170, .05), transparent 70%),
+	radial-gradient(90% 62% at 50% 38%, rgba(255, 228, 190, .11), transparent 70%),
+	radial-gradient(130% 95% at 50% 44%, $cuir-clair, $cuir 45%, $cuir-sombre 100%),
+);

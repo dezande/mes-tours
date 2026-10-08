@@ -2,6 +2,23 @@
 // et celles d'un jeu de cartes à dos bleu.
 @forward "../../abstracts/tokens-cartes";
 
+// Le tapis : un velours pourpre de salle du trône, damassé. Un treillis de losanges dorés à peine
+// visible, un fleuron au cœur de chaque losange, et le reflet du velours en biais.
+$pourpre: #3b1342;
+$pourpre-clair: #5a2263;
+$pourpre-sombre: #14051a;
+$damas: #e8c478;
+$bg: $pourpre-sombre;
+$fond: (
+	radial-gradient(115% 95% at 50% 48%, transparent 50%, rgba(8, 1, 12, .72) 100%),
+	linear-gradient(112deg, transparent 28%, rgba(255, 255, 255, .045) 46%, transparent 64%),
+	radial-gradient(circle, rgba($damas, .13) 0 1.5px, rgba($damas, .05) 2px 3.5px, transparent 4px) center / 34px 34px,
+	linear-gradient(45deg, transparent calc(50% - .6px), rgba($damas, .07) 50%, transparent calc(50% + .6px)) center / 34px 34px,
+	linear-gradient(-45deg, transparent calc(50% - .6px), rgba($damas, .07) 50%, transparent calc(50% + .6px)) center / 34px 34px,
+	radial-gradient(90% 70% at 50% 40%, rgba(255, 225, 240, .09), transparent 70%),
+	radial-gradient(130% 95% at 50% 46%, $pourpre-clair, $pourpre 45%, $pourpre-sombre 100%),
+);
+
 // Les dos, couleur par couleur (réglage « couleur ») :
 //   clair, fonce  le fond du dos (le champ, puis les médaillons du dos façon Bicycle) ;
 //   filet         les traits du dos façon Bicycle : blancs, comme sur un vrai jeu, à l'encre sur un dos blanc ;

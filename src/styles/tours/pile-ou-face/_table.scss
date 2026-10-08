@@ -1,4 +1,5 @@
 @use "../../components/cartes";
+@use "tokens" as *;
 
 // Le tapis de jeu, et la scène qui reçoit les touchers (components/_cartes.scss).
-@include cartes.tapis;
+@include cartes.tapis($fond);
