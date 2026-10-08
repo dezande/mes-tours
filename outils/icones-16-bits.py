@@ -249,6 +249,28 @@ def cinq_cartes():
     for (u,v) in ((0,0),(0,1),(1,0),(1,1),(0,2)): t[9+v][21+u]=rouges[0]
     return contour(t,'#160a10')
 
+# ---------- Les trois paquets : trois paquets de cartes en colonnes, l'index de chacune visible ----------
+def trois_paquets():
+    t=toile()
+    blancs=['#e6dcc4','#fbf6ea','#ffffff']
+    rouge='#c8102e'; noir='#0b0b12'; filet='#160a10'
+    def carte(x0,y0,w,h):
+        for y in range(y0,y0+h):
+            for x in range(x0,x0+w):
+                if (x in (x0,x0+w-1)) and (y in (y0,y0+h-1)): continue   # coins arrondis
+                v=0.9-0.5*((x-x0)/w)-0.25*((y-y0)/h)
+                t[y][x]=ramp(v,blancs,x,y)
+        # le bord haut de la carte, posé sur la précédente
+        for x in range(x0+1,x0+w-1): t[y0][x]=filet
+    # trois paquets, chacun de quatre cartes qui descendent ; l'index de chaque carte dans son coin
+    for p,x0 in enumerate((1,11,21)):
+        for i in range(4):
+            y0=4+i*4+(p%2)*2
+            carte(x0,y0,9,9 if i<3 else 12)
+            c=rouge if (p+i)%2==0 else noir
+            for (u,v) in ((0,0),(0,1),(1,1),(0,2)): t[y0+1+v][x0+1+u]=c
+    return contour(t,'#04230f')
+
 # ---------- Analyseur Q : le pique dans son orbite ----------
 def analyseur():
     t=toile()
@@ -322,7 +344,7 @@ def en_grille(t):
         lignes.append(l)
     return lignes
 
-icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'morpion':morpion(),'princesse':princesse(),'six-predictions':eventail(),'cinq-cartes':cinq_cartes(),'analyseur-q':analyseur()}
+icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'morpion':morpion(),'princesse':princesse(),'six-predictions':eventail(),'cinq-cartes':cinq_cartes(),'trois-paquets':trois_paquets(),'analyseur-q':analyseur()}
 gear=ecrou()
 # palette commune
 couleurs=[]

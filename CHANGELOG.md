@@ -38,6 +38,19 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **Les trois paquets, un nouveau tour** (neuvième tuile du menu, sur un feutre vert de casino) : huit cartes à forcer (2♣, 4♣, 8♥, 5♦, 10♦, valet de ♦, 10♠, dame de ♠, de code 0 à 7), trois paquets de sept, et la carte pensée qui disparaît. Sept panneaux, de l'un à l'autre en balayant : deux mélanges, puis 1, 2, 2, 2, 3 ; le tour se joue téléphone tenu en largeur, comme la Princesse.
+  - **D'abord deux mélanges** : quarante cartes du jeu en tas, faces en l'air ou en bas, tirées au sort, sur toute la table et bien réparties (peu de tapis visible) : le tas déborde de l'écran.
+  - **Panneau 1, la salade** : un tas de cartes aux dos Bicycle (la photo du dos Rider de la Princesse) ; les huit cartes à forcer sont faces en l'air, certaines en partie sous d'autres cartes (jamais leur index), aux faces Bicycle de la Princesse (son valet de carreau américain compris), et une dame et un roi dessinés pour l'occasion (le roi : grande couronne, barbe dorée, col d'hermine, épée levée). D'autres cartes sont faces en l'air entre les rangées, mais deux dos les couvrent : on n'en voit qu'une bande blanche du bord, ni valeur ni enseigne. Chaque carte à forcer a son double, plus au fond (sous les cartes à forcer, la moitié du bas sous un dos), loin d'elle et des autres doubles.
+  - **Panneau 2, les trois paquets**, montré trois fois à l'identique (mêmes cartes, même ordre) : chaque carte à forcer est dans les paquets que dit son code en binaire (paquet 1 → 1, paquet 2 → 2, paquet 3 → 4 : le 2♣, code 0, n'est dans aucun, le 4♣ que dans le premier, le valet de ♦ dans le premier et le troisième), elle-même ou un sosie de même valeur, tiré au sort ; les sosies des deux 10 gardent leur couleur, pour qu'on ne les confonde pas. Chaque paquet est complété par trois cartes de valeurs qu'aucune carte à forcer n'a (as, 3, 6, 7, 9, roi). Aucune carte en double. Toucher les paquets où le spectateur voit sa carte les note, sans que rien ne se voie ; chaque copie a ses notes, et la dernière copie où quelque chose est noté donne le code.
+  - **Panneau 3, la fin** : trois colonnes de sept, comme les paquets ; les cartes du panneau 2 qui ne sont pas à forcer, un sosie de chaque carte à forcer, d'autres cartes de remplissage s'il en manque, et au milieu de la colonne du milieu une carte face en bas, qui disparaît au toucher. Aucune carte à forcer n'y est, ni aucune carte de la valeur pensée d'après les paquets notés (aucun paquet noté : le 2♣, donc aucun 2). Une fois la carte disparue, le tour est figé : plus aucun balayage, ni vers les paquets, ni vers une nouvelle routine ; l'appui de 3 s ramène au menu, d'où le tour rouvre neuf (au clavier, R le remet).
+  - Les colonnes (les paquets, la fin) sont un peu de travers, chaque carte décalée et penchée comme posée à la main, à la façon de la Princesse ; les trois copies des paquets gardent le même désordre.
+  - Les cartes ont la même taille dans les trois panneaux, et aucune ne déborde sur le panneau voisin.
+  - Réglages : la couleur du dos (bleu, rouge, noir) et la jauge de l'appui long. Tests du tirage (sur 400 tirages), de la routine, des gestes, des composants et dans Chrome.
+  - Le menu tient toujours sans défiler : les tuiles passent à 64 px de haut, leurs icônes à 50 px. Le test des marges de l'écran fait défiler le menu jusqu'à la tuile à toucher.
+- **README : chaque tour a son propre fond**, jamais celui d'un autre tour (le menu le reprend sur sa tuile).
+
 ## [1.5.0] — 2026-10-08
 
 50 commits

@@ -1,0 +1,11 @@
+@use "tokens" as *;
+@use "../../components/panneau-reglages" as panneau;
+@use "../../components/cartes";
+
+// Le panneau de réglages, sobre, sur le tapis (components/_panneau-reglages.scss).
+@include panneau.panneau-reglages($fond: $bg, $texte: $ink, $texte-doux: $ink-soft,
+	$filet: $ink-faint, $accent: $accent, $carte: $panel, $serif: $serif);
+
+// Choix de la couleur du dos (components/_cartes.scss) : les trois couleurs sur une rangée, chacune
+// montrée sur la photo du dos, teinte comme les cartes (styles/tours/princesse/_cartes.scss).
+@include cartes.vignettes($colonnes: 3, $colonnes-couleurs: 3);

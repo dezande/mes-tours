@@ -1,0 +1,120 @@
+@use "tokens" as *;
+
+/*
+ * Les cinq panneaux, côte à côte sur une bande qui glisse de l'un à l'autre (components/Panneaux.tsx),
+ * et leurs cartes. Les faces, le dos et le retournement sont ceux de la Princesse
+ * (styles/tours/princesse/_cartes.scss) ; ici, chaque carte est posée à sa place, ce qui remplace la
+ * rangée de la Princesse.
+ */
+
+#panneaux {
+	// Le panneau montré (0 à 4), écrit par components/Panneaux.tsx.
+	--panneau: 0;
+	// Les cartes ont la même taille dans les trois panneaux : celle où trois colonnes de sept tiennent
+	// (les paquets, la fin), d'une carte à la suivante de quoi lire l'index (27 % de la hauteur). 100cqw
+	// et 100cqh se mesurent à l'endroit où la carte est posée : la place d'un panneau, marges ôtées.
+	--ecart: 14px;
+	--carte-w: min((100cqw - 2 * var(--ecart)) / 3, 100cqh / (1 + 6 * .27) / 1.4, 180px);
+	--carte-h: calc(var(--carte-w) * 1.4);
+	position: absolute;
+	inset: 0;
+}
+
+.panneau {
+	position: absolute;
+	inset: 0;
+	padding: calc(var(--safe-t) + 16px) calc(var(--safe-r) + 16px) calc(var(--safe-b) + 16px) calc(var(--safe-l) + 16px);
+	// Les tailles des cartes se mesurent sur la place du panneau, marges ôtées (100cqw, 100cqh).
+	container-type: size;
+	// Une carte penchée près du bord ne déborde jamais sur le panneau voisin (la bande glisse : ce
+	// qui dépasse du panneau 1 se verrait sur le panneau 2).
+	overflow: hidden;
+	transform: translateX(calc((var(--i) - var(--panneau)) * 100%));
+	// --i, sa place sur la bande, est écrite par components/Panneaux.tsx.
+	transition: transform .45s cubic-bezier(.3, .1, .25, 1);
+}
+
+// Les cartes, sans la rangée de la Princesse : chacune posée par son conteneur.
+.carte {
+	--rayon: calc(var(--carte-w) * .055);
+	position: absolute;
+	width: var(--carte-w);
+	height: var(--carte-h);
+	transition: none;
+}
+
+// ---------- La salade (panneaux 1 et 3) : une grille lâche sur un tas, logic/disposition.ts ----------
+
+.table {
+	position: relative;
+	width: 100%;
+	height: 100%;
+
+	.carte {
+		// Écrites par components/Panneaux.tsx : la position dans la place libre (0 à 1), l'inclinaison,
+		// le rang d'empilement, et un décalage le long de la carte penchée (--dx en largeurs, --dy en
+		// hauteurs de carte : les dos qui cachent une face, logic/disposition.ts).
+		--x: .5;
+		--y: .5;
+		--rot: 0;
+		--z: 0;
+		--dx: 0;
+		--dy: 0;
+		top: calc(var(--y) * (100cqh - var(--carte-h)));
+		left: calc(var(--x) * (100cqw - var(--carte-w)));
+		z-index: var(--z);
+		transform: rotate(calc(var(--rot) * 1deg)) translate(calc(var(--dx) * var(--carte-w)), calc(var(--dy) * var(--carte-h)));
+	}
+}
+
+// ---------- Les trois colonnes (les paquets, la fin) : sept cartes chacune, de haut en bas ----------
+
+.paquets,
+.fin {
+	display: grid;
+	place-items: center;
+}
+
+.colonnes {
+	// Trois colonnes de cartes, réparties sur la largeur ; d'une carte à la suivante, de quoi lire
+	// l'index du coin (22 % de la hauteur) et un peu plus, sans que la colonne dépasse de l'écran.
+	--pas: min(var(--carte-h) * .4, (100cqh - var(--carte-h)) / 6);
+	display: grid;
+	grid-template-columns: repeat(3, var(--carte-w));
+	justify-content: space-evenly;
+	align-content: center;
+	gap: var(--ecart);
+	width: 100%;
+	height: 100%;
+}
+
+.paquet {
+	position: relative;
+	height: calc(var(--carte-h) + 6 * var(--pas));
+
+	.carte {
+		// Écrites par components/Panneaux.tsx : le rang dans la colonne, et un peu de désordre, comme
+		// posée à la main (logic/disposition.ts : desordreDesColonnes).
+		--rang: 0;
+		--dx: 0;
+		--dy: 0;
+		--rot: 0;
+		top: calc(var(--rang) * var(--pas));
+		left: 0;
+		z-index: var(--rang);
+		transform: translate(calc(var(--dx) * var(--carte-w)), calc(var(--dy) * var(--carte-h))) rotate(calc(var(--rot) * 1deg));
+	}
+}
+
+// ---------- La carte qui disparaît (panneau 3) ----------
+
+// Elle part d'un coup, sans transition : la règle de la Princesse (.carte.disparue) s'applique.
+
+// À l'ouverture et à chaque nouvelle routine, le panneau 1 est là d'un coup.
+#panneaux.no-anim {
+	.panneau,
+	.carte,
+	.carte-pivot {
+		transition: none;
+	}
+}
