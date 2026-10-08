@@ -13,7 +13,7 @@
  * Les cartes sont posées comme dans Princesse : côte à côte, un peu de travers, sans se toucher.
  *
  * Depuis les réglages (écrou ⚙), deux aides à la répétition : le mode entraînement (la routine,
- * avec « Recommencer » et « Retour aux réglages ») et le test des zones (les zones de touchers
+ * une carte à coder tirée au hasard, « Recommencer » et « Retour aux réglages ») et le test des zones (les zones de touchers
  * dessinées sur la scène, comme pour la boule de cristal).
  *
  * Organisation du dossier :
@@ -47,7 +47,7 @@ import { Reglages } from './components/Reglages.tsx';
 import { TestDesZones, type Eclair } from './components/TestDesZones.tsx';
 import { keyAction, toucheDeCarte } from './logic/keys.ts';
 import { nouveauSemis, rangee, type Position } from './logic/disposition.ts';
-import { DEPART, DERNIERE, NOMBRE, toucher, type Couleur, type Etat } from './logic/routine.ts';
+import { carteAuHasard, DEPART, DERNIERE, NOMBRE, toucher, type CarteJouee, type Couleur, type Etat } from './logic/routine.ts';
 import { rangDeLaPlace, sanitizeSettings } from './logic/settings.ts';
 import { boitesDeLaRangee, carteDuPoint, couleurDuPoint, type Boite } from './logic/table.ts';
 
@@ -140,11 +140,21 @@ export default function CinqCartes() {
 	/** La dernière zone touchée, pendant le test des zones. */
 	const [eclair, setEclair] = useState<Eclair | null>(null);
 
+	/** La carte que le mode entraînement demande de coder : nouvelle à chaque ouverture et à chaque « Recommencer ». */
+	const [demandee, setDemandee] = useState<CarteJouee>(() => carteAuHasard());
+
 	/** Ouvre une aide (ou revient au panneau, null) : chacune commence sur cinq dos. */
 	const ouvrirAide = (suivante: Aide): void => {
 		remettre();
 		setEclair(null);
+		if (suivante === 'entrainement') setDemandee(carteAuHasard());
 		setAide(suivante);
+	};
+
+	/** « Recommencer », ou R, dans le mode entraînement : cinq dos, et une nouvelle carte à coder. */
+	const recommencer = (): void => {
+		remettre();
+		setDemandee(carteAuHasard());
 	};
 
 	/* ---------- Gestes sur la scène, clavier ---------- */
@@ -173,7 +183,8 @@ export default function CinqCartes() {
 	// Le panneau de réglages ouvert, seules Échap et M comptent ; le test des zones ne retourne rien.
 	useClavier(keyAction, (action) => {
 		if (action === 'remettre') {
-			remettre();
+			if (aide === 'entrainement') recommencer();
+			else remettre();
 			return;
 		}
 		if (aide === 'zones') return;
@@ -195,7 +206,7 @@ export default function CinqCartes() {
 			<JaugeAppui jauge={jauge} />
 
 			{/* Les aides à la répétition, ouvertes depuis les réglages. */}
-			{enReglages && aide === 'entrainement' && <Entrainement langue={langue} surRecommencer={remettre} surRetour={() => ouvrirAide(null)} />}
+			{enReglages && aide === 'entrainement' && <Entrainement langue={langue} demandee={demandee} etat={etat} surRecommencer={recommencer} surRetour={() => ouvrirAide(null)} />}
 			{enReglages && aide === 'zones' && <TestDesZones langue={langue} mesurer={mesurer} eclair={eclair} surReglages={() => ouvrirAide(null)} surQuitter={quitter} />}
 
 			{/* Ouvert par l'écrou ⚙ : les réglages, que l'on ferme pour revenir au menu. */}

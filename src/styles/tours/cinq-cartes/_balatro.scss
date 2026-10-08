@@ -209,6 +209,17 @@
 	font: 600 15px/1 "Pixelify Sans", ui-monospace, monospace;
 	color: #fff;
 
+	// La carte à coder du mode entraînement ; le codage fini, verte si c'est elle, rouge sinon.
+	#entrainement-carte {
+		&[data-resultat="juste"] {
+			color: #6fe08a;
+		}
+
+		&[data-resultat="faux"] {
+			color: #ff7a70;
+		}
+	}
+
 	button {
 		min-height: 38px;
 		padding: 0 14px;

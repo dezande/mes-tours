@@ -1,6 +1,6 @@
 // La routine : chaque carte touchée se retourne aussitôt ; le codage des quatre premières cartes et
 // du coin de la cinquième, puis la révélation.
-import { DEPART, estRetournee, faceDe, poids, toucher, toutesRetournees, valeurDeLaSomme, type Couleur, type Etat } from '../../../src/tours/cinq-cartes/logic/routine.ts';
+import { carteAuHasard, DEPART, estRetournee, faceDe, memeCarte, poids, toucher, toutesRetournees, valeurDeLaSomme, type Couleur, type Etat } from '../../../src/tours/cinq-cartes/logic/routine.ts';
 
 /** Touche les cartes `indexes` pendant le codage, puis la cinquième dans le coin de `couleur`. */
 const coder = (indexes: number[], couleur: Couleur): Etat =>
@@ -101,4 +101,20 @@ test('la routine finie, chaque toucher retourne la carte dans un sens ou dans l�
 	// La carte du spectateur reste la dernière retournée ; les autres restent blanches.
 	expect(faceDe(encore, 3)).toStrictEqual({ valeur: 3, couleur: 'carreau' });
 	expect(faceDe(encore, 0)).toBeNull();
+});
+
+test('la carte du mode entraînement est tirée parmi les 52, de l’As de pique au Roi de carreau', () => {
+	expect(carteAuHasard(() => 0)).toStrictEqual({ valeur: 1, couleur: 'pique' });
+	expect(carteAuHasard(() => .999999)).toStrictEqual({ valeur: 13, couleur: 'carreau' });
+	for (let i = 0; i < 200; i++) {
+		const { valeur, couleur } = carteAuHasard();
+		expect(valeur >= 1 && valeur <= 13 && Number.isInteger(valeur)).toBe(true);
+		expect(['pique', 'coeur', 'trefle', 'carreau']).toContain(couleur);
+	}
+});
+
+test('deux cartes sont la même si elles ont la même valeur et la même couleur', () => {
+	expect(memeCarte({ valeur: 5, couleur: 'pique' }, { valeur: 5, couleur: 'pique' })).toBe(true);
+	expect(memeCarte({ valeur: 5, couleur: 'pique' }, { valeur: 5, couleur: 'coeur' })).toBe(false);
+	expect(memeCarte({ valeur: 5, couleur: 'pique' }, { valeur: 6, couleur: 'pique' })).toBe(false);
 });
