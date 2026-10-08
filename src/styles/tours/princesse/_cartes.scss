@@ -226,6 +226,10 @@
 		stroke-width: .6;
 	}
 
+	.figure .trait.bleu {
+		stroke: $valet-bleu;
+	}
+
 	.figure .trait.rouge {
 		stroke: $valet-rouge;
 	}
