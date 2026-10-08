@@ -33,6 +33,13 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **Le kit commun n'est plus une dépendance** : le code de [kit-scene](https://github.com/dezande/kit-scene) (v1.3.1) est repris dans `src/kit/`, comme le reste de l'app, à la place du sous-module git. Plus de `git submodule update` après un clone, plus de second dépôt à pousser avant de déployer. Rien ne change pour l'artiste.
+  - **Tous les tests avec Jest** : ceux du kit (vérification du build et du journal, numéro de version et cache, serveur local, rotation) passent de `node --test` à Jest, dans `tests/kit/`, et tournent avec `npm test`.
+  - **Le kit allégé de ce qui ne servait qu'aux autres apps** : l'état du maintien de l'écran et ses textes (jamais affichés ici), l'état du stockage persistant, la liste des caches, les options inutilisées des mises à jour, les anciens préfixes de cache, le module `dom.ts`. Les réglages de l'app (nom, préfixe du cache, fichiers attendus dans `dist/`) quittent le champ `kit` de `package.json` pour une constante dans `src/kit/node/config.ts`.
+  - **Deux fichiers de moins à charger** : le maintien de l'écran et les mises à jour rejoignent `app.js` ; seul le numéro de version garde son fichier (`kit/web/build.js`), que le déploiement relit sur le site.
+
 ## [1.1.0] — 2026-10-07
 
 34 commits

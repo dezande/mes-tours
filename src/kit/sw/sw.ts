@@ -1,0 +1,59 @@
+/*
+ * Service worker : tout est mis en cache à l'installation, puis servi hors-ligne.
+ * Compilé en dist/sw.js par l'app ; les valeurs __…__ sont remplacées au build par node/stamp-build.ts.
+ */
+
+// Script classique (pas de module) : les service workers modules ne sont pas lus partout.
+const sw = self as unknown as ServiceWorkerGlobalScope;
+
+// Préfixe de l'app (node/config.ts) et empreinte du contenu du build : chaque modification
+// publiée, numéro de version compris, renomme le cache et met à jour les appareils.
+const CACHE = '__CACHE_PREFIX__-__BUILD_HASH__';
+// Toutes les apps de dezande.github.io partagent le même espace de caches (même origine) :
+// on ne supprime que les anciens caches de cette app, jamais ceux des autres apps.
+const OWN_CACHE_PREFIX = '__CACHE_PREFIX__-';
+// Tous les fichiers du build, sauf ce service worker.
+const ASSETS: string[] = ['__ASSETS__'];
+
+sw.addEventListener('install', (event) => {
+	event.waitUntil(
+		caches.open(CACHE)
+			.then((cache) => cache.addAll(ASSETS.map((url) => new Request(url, { cache: 'reload' }))))
+			.then(() => sw.skipWaiting())
+	);
+});
+
+sw.addEventListener('activate', (event) => {
+	event.waitUntil(
+		caches.keys()
+			.then((keys) => Promise.all(keys
+				.filter((key) => key !== CACHE && key.startsWith(OWN_CACHE_PREFIX))
+				.map((key) => caches.delete(key))))
+			.then(() => sw.clients.claim())
+	);
+});
+
+/** L'adresse est-elle la page de l'app (son dossier, ou son index.html), et non une autre app du site ? */
+function isAppPage(url: URL): boolean {
+	const scope = new URL(sw.registration.scope).pathname;
+	return url.pathname === scope || url.pathname === `${scope}index.html`;
+}
+
+sw.addEventListener('fetch', (event) => {
+	const { request } = event;
+	if (request.method !== 'GET' || new URL(request.url).origin !== sw.location.origin) return;
+
+	event.respondWith((async () => {
+		const cache = await caches.open(CACHE);
+		const cached = await cache.match(request, { ignoreSearch: true });
+		if (cached) return cached;
+		// La page de l'app hors-ligne, mais seulement pour l'adresse de l'app elle-même : une app
+		// publiée à la racine du site (« Mes tours ») contrôle aussi les dossiers des autres apps,
+		// et leur renverrait sinon sa propre page au lieu de les laisser se charger.
+		if (request.mode === 'navigate' && isAppPage(new URL(request.url))) {
+			const shell = await cache.match('./index.html');
+			if (shell) return shell;
+		}
+		return fetch(request);
+	})());
+});

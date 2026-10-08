@@ -59,22 +59,6 @@ export const INTERFACE = {
 	'transition.glisse': { fr: 'Glisse', en: 'Slide' },
 	'transition.aucune': { fr: 'Aucune', en: 'None' },
 
-	// États affichés en bas du menu.
-	'etat.cacheInactif': { fr: 'inactif', en: 'inactive' },
-	'etat.installee': { fr: 'app installée', en: 'installed app' },
-	'etat.navigateur': { fr: 'navigateur', en: 'browser' },
-	'etat.persistant': { fr: 'persistant', en: 'persistent' },
-	'etat.nonGaranti': { fr: 'non garanti', en: 'not guaranteed' },
-	'etat.inconnu': { fr: 'inconnu', en: 'unknown' },
-
-	// Maintien de l'écran allumé (kit/web/wake-lock.ts donne l'état, le texte est ici).
-	'ecran.actif': { fr: 'Écran : verrou actif', en: 'Screen: lock active' },
-	'ecran.inactif': { fr: 'Écran : verrou inactif', en: 'Screen: lock inactive' },
-	'ecran.lockVideo': { fr: 'Screen Wake Lock API + vidéo muette en boucle', en: 'Screen Wake Lock API + looping muted video' },
-	'ecran.lock': 'Screen Wake Lock API',
-	'ecran.video': { fr: 'Vidéo muette en boucle', en: 'Looping muted video' },
-	'ecran.rien': { fr: 'Touchez l\'écran pour le réactiver', en: 'Touch the screen to turn it back on' },
-
 	// Titre court d'une slide sans texte, dans la liste du menu.
 	'slide.chargement': { fr: 'Chargement', en: 'Loading' },
 } as const satisfies Record<string, Texte>;

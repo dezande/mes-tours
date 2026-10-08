@@ -3,14 +3,6 @@
 	"private": true,
 	"type": "module",
 	"homepage": "https://dezande.github.io/mes-tours/",
-	"kit": {
-		"name": "Mes tours",
-		"cachePrefix": "mes-tours",
-		"requiredFiles": [
-			"fonts/OFL.txt",
-			"fonts/OFL-pixelify-sans.txt"
-		]
-	},
 	"engines": {
 		"node": ">=24 <25"
 	},

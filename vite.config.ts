@@ -8,14 +8,14 @@
  * (node/stamp-build.ts). D'où quelques noms fixes :
  *   dist/app.js                 le point d'entrée ;
  *   dist/style.css              toutes les feuilles de style, en une seule ;
- *   dist/kit/web/build.js       le numéro de version du kit, que stamp-build.ts inscrit au build ;
- *   dist/kit/web/wake-lock.js   et updates.js, que check-dist.ts attend.
+ *   dist/kit/web/build.js       le numéro de version, que stamp-build.ts inscrit au build et que
+ *                               le déploiement (node/deploy.ts) relit sur le site publié.
  */
 import preact from '@preact/preset-vite';
 import { defineConfig, type Plugin } from 'vite';
 
-/** Les modules du kit qui gardent leur propre fichier, à leur nom. */
-const KIT = ['build', 'wake-lock', 'updates'];
+/** Le numéro de version garde son propre fichier, à ce nom fixe. */
+const BUILD = 'kit/web/build';
 
 /** Seuls les fichiers de l'app sont autorisés : rien ne se charge d'ailleurs, l'app est hors-ligne. */
 const CSP = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self' data:; connect-src 'self'; font-src 'self'; manifest-src 'self'; worker-src 'self'";
@@ -40,12 +40,9 @@ export default defineConfig({
 		rollupOptions: {
 			output: {
 				entryFileNames: 'app.js',
-				chunkFileNames: (chunk) => (chunk.name.startsWith('kit/') ? '[name].js' : 'assets/[name]-[hash].js'),
+				chunkFileNames: (chunk) => (chunk.name === BUILD ? '[name].js' : 'assets/[name]-[hash].js'),
 				assetFileNames: (asset) => (asset.names.some((name) => name.endsWith('.css')) ? 'style.css' : 'assets/[name]-[hash][extname]'),
-				manualChunks: (id) => {
-					const nom = KIT.find((module) => id.endsWith(`/src/kit/web/${module}.ts`));
-					return nom ? `kit/web/${nom}` : undefined;
-				},
+				manualChunks: (id) => (id.endsWith('/src/kit/web/build.ts') ? BUILD : undefined),
 			},
 		},
 	},

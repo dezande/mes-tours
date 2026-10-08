@@ -10,5 +10,5 @@
 		"noEmit": true,
 		"types": ["node", "jest", "jest-expect-message", "@testing-library/jest-dom", "vite/client"]
 	},
-	"include": ["tests/**/*.ts", "tests/**/*.tsx", "outils/**/*.ts"]
+	"include": ["tests/**/*.ts", "tests/**/*.tsx", "outils/**/*.ts", "src/kit/node/**/*.ts"]
 }
