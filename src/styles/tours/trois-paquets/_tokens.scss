@@ -1,0 +1,17 @@
+// Les couleurs et typographies du tour : celles des tours de cartes (abstracts/_tokens-cartes.scss).
+@forward "../../abstracts/tokens-cartes";
+
+// Le tapis : le feutre vert d'une table de casino, où l'on étale les cartes. Les fibres du feutre,
+// très fines, croisées ; la lumière de la lampe au-dessus de la table, au centre ; les bords dans
+// l'ombre. Aucun autre tour n'a ce fond (README : « Ajouter un tour »).
+$feutre: #136b3c;
+$feutre-clair: #1d8a4f;
+$feutre-sombre: #04230f;
+$bg: $feutre-sombre;
+$fond: (
+	radial-gradient(120% 90% at 50% 45%, transparent 48%, rgba(1, 14, 6, .75) 100%),
+	repeating-linear-gradient(33deg, rgba(255, 255, 255, .025) 0 1px, transparent 1px 3px),
+	repeating-linear-gradient(-57deg, rgba(0, 0, 0, .05) 0 1px, transparent 1px 4px),
+	radial-gradient(75% 55% at 50% 38%, rgba(230, 255, 220, .13), transparent 72%),
+	radial-gradient(130% 100% at 50% 42%, $feutre-clair, $feutre 48%, $feutre-sombre 100%),
+);

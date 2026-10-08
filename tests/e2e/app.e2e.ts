@@ -77,7 +77,8 @@ async function attendre(page: Page, expression: string, quoi: string, timeoutMs 
 /** Touche la tuile du tour (ou son écrou ⚙), puis attend que la page du tour soit prête. */
 async function ouvrir(page: Page, dossier: string, pret: string, reglages = false): Promise<void> {
 	const bouton = `#tours .tour[data-dossier="${dossier}"] ${reglages ? '.tour-reglages' : '.tour-lancer'}`;
-	const centre = await page.evaluate<Point>(`(() => { const r = document.querySelector('${bouton}').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()`);
+	// Le menu défile : avec les marges d'une caméra frontale, la dernière tuile peut être sous le bord.
+	const centre = await page.evaluate<Point>(`(() => { const b = document.querySelector('${bouton}'); b.scrollIntoView({ block: 'nearest' }); const r = b.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()`);
 	await page.tap(centre);
 	await attendre(page, dansLeTour(pret), `${dossier} prêt`, 10_000);
 	expect(await page.evaluate<boolean>(`location.hash.startsWith('#/tours/${dossier}')`), `${dossier} : ce n’est pas sa page qui s’est ouverte`).toBeTruthy();
@@ -102,7 +103,7 @@ async function pressKey(page: Page, key: string): Promise<void> {
 
 /* ================= Le menu principal ================= */
 
-test('le menu 16 bits montre les huit tours, chacun avec son icône et son écrou ⚙', async () => {
+test('le menu 16 bits montre les neuf tours, chacun avec son icône et son écrou ⚙', async () => {
 	await withApp(async (page) => {
 		const tuiles = await page.evaluate<{ nom: string; icone: boolean; ecrou: string | null }[]>(`[...document.querySelectorAll('#tours .tour')].map((t) => ({
 			nom: t.querySelector('.tour-nom').textContent,
@@ -319,6 +320,72 @@ test('Les cinq cartes : chaque carte touchée se retourne dès le premier touche
 		await sleep(800);
 		expect(await page.evaluate(dansLeTour(retournees)), 'le double toucher a relancé la routine').toStrictEqual([0, 2, 3, 4]);
 		expect(await page.evaluate<boolean>(`location.hash.startsWith('#/tours/cinq-cartes')`), 'le double toucher a quitté le tour').toBe(true);
+		await appuiLong(page);
+		await attendreLeMenu(page);
+	});
+}, TIMEOUT);
+
+test('Les trois paquets : on balaie d’un panneau à l’autre (deux mélanges, puis 1, 2, 2, 2, 3) ; les paquets touchés ôtent la valeur pensée de la fin, la carte face en bas disparaît au toucher, et le tour est figé', async () => {
+	/**
+	 * Un balayage de vrai doigt, du milieu de l'écran vers la gauche de la scène (ou sa droite). La
+	 * scène est pivotée d'un quart de tour, son haut à droite de l'écran : sa gauche est en haut.
+	 */
+	async function balayer(page: Page, versLaGauche = true): Promise<void> {
+		const dy = versLaGauche ? -1 : 1;
+		await page.touchStart(CENTRE);
+		for (let pas = 1; pas <= 5; pas++) {
+			await page.touchMove({ x: CENTRE.x - pas * 3, y: CENTRE.y + dy * pas * 40 });
+			await sleep(30);
+		}
+		await page.touchEnd();
+		await sleep(600);
+	}
+	const panneau = `document.querySelector('#panneaux').dataset.panneau`;
+	await withApp(async (page) => {
+		await ouvrir(page, 'trois-paquets', `document.querySelectorAll('.salade .carte[data-carte="D-pique"]').length === 2`);
+		// En largeur, comme la Princesse : la scène est pivotée d'un quart de tour.
+		expect(await page.evaluate(dansLeTour(`document.querySelector('#app').dataset.rotation`))).toBe('90');
+		// Les deux mélanges, la salade, puis les paquets.
+		for (const attendu of ['1', '2', '3']) {
+			await balayer(page);
+			expect(await page.evaluate(dansLeTour(panneau))).toBe(attendu);
+		}
+		// Rien de la salade ne déborde sur les paquets : partout sur l'écran, sous chaque point (le
+		// panneau 2 couvre tout l'écran, ses voisins passeraient dessous), aucune carte d'un autre panneau.
+		const intrus = await page.evaluate<string[]>(dansLeTour(`(() => {
+			const vus = new Set();
+			for (let x = 2; x < innerWidth; x += 12) for (let y = 2; y < innerHeight; y += 12) {
+				for (const e of document.elementsFromPoint(x, y)) {
+					const p = e.closest('.carte')?.closest('.panneau');
+					if (p && !p.classList.contains('paquets')) vus.add(p.className);
+				}
+			}
+			return [...vus];
+		})()`));
+		expect(intrus, 'des cartes d’un autre panneau débordent sur les paquets').toStrictEqual([]);
+		// Le deuxième paquet : le 8, le 10 noir, la dame (2, 6, 7) ; touché seul, il dit le 8 de cœur.
+		const milieu = await page.evaluate<Point>(dansLeTour(`(() => { const r = document.querySelectorAll('.panneau.paquets[data-copie="1"] .paquet')[1].getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()`));
+		await page.tap(milieu);
+		await sleep(500);
+		// Les paquets encore, deux fois (1, 2, 2, 2, 3), puis la fin.
+		for (const attendu of ['4', '5', '6']) {
+			await balayer(page);
+			expect(await page.evaluate(dansLeTour(panneau))).toBe(attendu);
+		}
+		const fin = await page.evaluate<string[]>(dansLeTour(`[...document.querySelectorAll('.fin .carte.retournee')].map((c) => c.dataset.carte)`));
+		expect(fin.some((carte) => carte.startsWith('8-')), 'un 8 dans la fin').toBe(false);
+		expect(fin.some((carte) => ['2-trefle', '4-trefle', '10-carreau', 'V-carreau', '10-pique', 'D-pique', '5-carreau'].includes(carte)), 'une carte à forcer dans la fin').toBe(false);
+		await page.tap(CENTRE);
+		await attendre(page, dansLeTour(`document.querySelector('#derniere').classList.contains('disparue')`), 'la carte face en bas n’a pas disparu', 3000);
+		// La carte disparue, le tour est figé : aucun balayage ne fait plus rien, dans un sens ni dans l'autre.
+		await balayer(page);
+		await balayer(page, false);
+		expect(await page.evaluate(dansLeTour(panneau)), 'un balayage a bougé le tour figé').toBe('6');
+		expect(await page.evaluate<boolean>(`location.hash.startsWith('#/tours/trois-paquets')`), 'le balayage a quitté le tour').toBe(true);
+		// Seul l'appui de 3 s ramène au menu ; rouvert, le tour repart neuf, au premier mélange.
+		await appuiLong(page);
+		await attendreLeMenu(page);
+		await ouvrir(page, 'trois-paquets', `document.querySelector('#panneaux').dataset.panneau === '0' && !document.querySelector('#derniere').classList.contains('disparue')`);
 		await appuiLong(page);
 		await attendreLeMenu(page);
 	});
@@ -603,6 +670,7 @@ test('écrou ⚙ : les réglages du tour s’ouvrent seuls, « Fermer » ramène
 			['princesse', '#menu'],
 			['six-predictions', '#menu'],
 			['cinq-cartes', '#menu'],
+			['trois-paquets', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
 			await ouvrir(page, dossier, `Boolean(document.querySelector('${panneau}')) && !document.querySelector('${panneau}').hidden`, true);
@@ -635,6 +703,7 @@ test('écrou ⚙ : une croix en haut à droite ferme les réglages, plus de bout
 			['princesse', '#menu'],
 			['six-predictions', '#menu'],
 			['cinq-cartes', '#menu'],
+			['trois-paquets', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
 			await ouvrir(page, dossier, `Boolean(document.querySelector('${panneau}')) && !document.querySelector('${panneau}').hidden`, true);
@@ -670,6 +739,7 @@ test('écrou ⚙ : tous les réglages ont la même structure, le nom du tour en 
 			['princesse', '#menu'],
 			['six-predictions', '#menu'],
 			['cinq-cartes', '#menu'],
+			['trois-paquets', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
 			await ouvrir(page, dossier, `Boolean(document.querySelector('${panneau}')) && !document.querySelector('${panneau}').hidden`, true);
@@ -840,7 +910,7 @@ test('chaque tour reçoit les marges de l’écran : rien sous la caméra fronta
 	// reçoit les vraies marges de l'écran.
 	await withApp(async (page) => {
 		await page.send('Emulation.setSafeAreaInsetsOverride', { insets: { top: 40, topMax: 40, bottom: 20, bottomMax: 20 } });
-		// Le haut et le bas de l'écran ; pour la carte de visite et la princesse, pivotées en paysage (leur
+		// Le haut et le bas de l'écran ; pour les tours pivotés en paysage (leur
 		// haut à droite de l'écran), ce sont la gauche et la droite de la scène.
 		const marge = (haut: string, bas: string): string => `(() => { const s = document.createElement('div'); s.style.paddingTop = 'var(${haut})'; s.style.paddingBottom = 'var(${bas})'; document.querySelector('#app').appendChild(s); const c = getComputedStyle(s); const r = [c.paddingTop, c.paddingBottom]; s.remove(); return r; })()`;
 		for (const [dossier, pret] of [
@@ -851,10 +921,11 @@ test('chaque tour reçoit les marges de l’écran : rien sous la caméra fronta
 			['princesse', `document.querySelectorAll('#jeu .carte').length === 5`],
 			['six-predictions', `document.querySelectorAll('#paquet .carte').length === 6`],
 			['cinq-cartes', `document.querySelectorAll('#rangee .carte').length === 5`],
+			['trois-paquets', `document.querySelectorAll('.salade .carte[data-carte="D-pique"]').length === 2`],
 			['analyseur-q', `Boolean(document.querySelector('.slide.current'))`],
 		] as const) {
 			await ouvrir(page, dossier, pret);
-			const [haut, bas] = dossier === 'carte-de-visite' || dossier === 'princesse' || dossier === 'cinq-cartes' ? ['--safe-l', '--safe-r'] : ['--safe-t', '--safe-b'];
+			const [haut, bas] = dossier === 'carte-de-visite' || dossier === 'princesse' || dossier === 'cinq-cartes' || dossier === 'trois-paquets' ? ['--safe-l', '--safe-r'] : ['--safe-t', '--safe-b'];
 			expect(await page.evaluate(dansLeTour(marge(haut, bas))), `${dossier} : marges de l’écran`).toStrictEqual(['40px', '20px']);
 			await page.evaluate(`history.back()`);
 			await attendreLeMenu(page);

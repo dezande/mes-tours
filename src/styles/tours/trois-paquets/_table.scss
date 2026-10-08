@@ -1,0 +1,12 @@
+@use "../../components/cartes";
+@use "tokens" as *;
+
+// Le tapis de jeu, et la scène qui reçoit les touchers (components/_cartes.scss).
+@include cartes.tapis($fond);
+
+// Les panneaux remplissent toute la scène : chacun garde ses marges, et la bande qui glisse de l'un à
+// l'autre ne déborde jamais de l'écran.
+#stage {
+	padding: 0;
+	overflow: hidden;
+}

@@ -5,8 +5,8 @@ import { LANGS } from '../../src/logic/i18n.ts';
 import { REGISTRE } from '../../src/tours/registre.ts';
 import { TOURS } from '../../src/content/tours.ts';
 
-test('les huit tours, chacun une seule fois', () => {
-	expect(TOURS.map((tour) => tour.dossier)).toStrictEqual(['boule-de-cristal', 'carte-de-visite', 'pile-ou-face', 'morpion', 'princesse', 'six-predictions', 'cinq-cartes', 'analyseur-q']);
+test('les neuf tours, chacun une seule fois', () => {
+	expect(TOURS.map((tour) => tour.dossier)).toStrictEqual(['boule-de-cristal', 'carte-de-visite', 'pile-ou-face', 'morpion', 'princesse', 'six-predictions', 'cinq-cartes', 'trois-paquets', 'analyseur-q']);
 });
 
 test('chaque tour a un dossier valide et un nom dans les deux langues', () => {
@@ -37,4 +37,28 @@ test('le registre et la liste des tours nomment exactement les mêmes tours', ()
 	// Un tour en préparation reste hors des deux : seul ce qui est au registre est compilé et publié,
 	// et seul ce qui est dans la liste a une tuile et une adresse.
 	expect(Object.keys(REGISTRE).sort()).toStrictEqual(TOURS.map((tour) => tour.dossier).sort());
+});
+
+test('chaque tour a son propre fond, repris par sa tuile du menu : jamais deux tours avec le même', () => {
+	const menu = readFileSync('src/styles/menu/_menu.scss', 'utf8');
+	const carte = menu.slice(menu.indexOf('$fonds-des-tours: ('), menu.indexOf('\n);', menu.indexOf('$fonds-des-tours: (')));
+	const fonds = TOURS.map((tour) => {
+		const debut = carte.indexOf(`"${tour.dossier}":`);
+		expect(debut, `${tour.dossier} : pas de fond dans $fonds-des-tours (src/styles/menu/_menu.scss)`).toBeGreaterThan(-1);
+		const suite = carte.slice(debut + tour.dossier.length + 3);
+		// Le fond est écrit dans la tuile, ou repris d'un tour (son $fond, dans son _tokens.scss, que
+		// le menu charge sous un alias : @use "../tours/<dossier>/tokens" as <alias>).
+		const alias = /^\s*([\w-]+)\.\$fond,/.exec(suite)?.[1];
+		if (alias) {
+			const dossier = new RegExp(`@use "\\.\\./tours/([\\w-]+)/tokens" as ${alias};`).exec(menu)?.[1];
+			expect(dossier, `${tour.dossier} : alias « ${alias} » inconnu du menu`).toBeDefined();
+			const jetons = readFileSync(`src/styles/tours/${dossier}/_tokens.scss`, 'utf8');
+			const fond = /^\$fond: \(([\s\S]*?)^\);/m.exec(jetons);
+			expect(fond, `${dossier} : $fond introuvable dans son _tokens.scss`).not.toBeNull();
+			return fond![1]!.replace(/\s+/g, ' ').trim();
+		}
+		return suite.slice(0, suite.search(/\n\t\),?\n|\n\t"/)).replace(/\s+/g, ' ').trim();
+	});
+	const doublons = TOURS.filter((_, i) => fonds.indexOf(fonds[i]!) !== i).map((tour) => tour.dossier);
+	expect(doublons, 'des tours partagent le même fond').toStrictEqual([]);
 });

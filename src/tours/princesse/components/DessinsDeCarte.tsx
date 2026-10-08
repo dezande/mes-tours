@@ -26,14 +26,14 @@ export function Dos() {
 }
 
 /** Une enseigne de `taille` de large, centrée en (x, y), tête-bêche si demandé. */
-function EnseigneEn({ enseigne, x, y, taille, retourne = false }: { enseigne: Enseigne; x: number; y: number; taille: number; retourne?: boolean }) {
+export function EnseigneEn({ enseigne, x, y, taille, retourne = false }: { enseigne: Enseigne; x: number; y: number; taille: number; retourne?: boolean }) {
 	const echelle = taille / 100;
 	const transformation = `translate(${x} ${y})${retourne ? ' rotate(180)' : ''} scale(${echelle}) translate(-50 -50)`;
 	return <path className="enseigne" d={ENSEIGNE[enseigne]} transform={transformation} />;
 }
 
 /** L'index d'un coin : la valeur, et l'enseigne en petit dessous. */
-function Index({ carte }: { carte: Carte }) {
+export function Index({ carte }: { carte: Carte }) {
 	const texte = indexDeCarte(carte.valeur);
 	return (
 		<g className="index">

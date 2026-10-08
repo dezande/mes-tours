@@ -55,6 +55,11 @@ export const TOURS: readonly Tour[] = [
 		nom: { fr: 'Les cinq cartes', en: 'The five cards' },
 	},
 	{
+		// Sept cartes à forcer, trois paquets de sept : la carte pensée, dite par ses paquets, disparaît.
+		dossier: 'trois-paquets',
+		nom: { fr: 'Les trois paquets', en: 'The three packets' },
+	},
+	{
 		// « Analyseur Q » est le nom de l'appareil : le même dans les deux langues, comme dans le tour.
 		dossier: 'analyseur-q',
 		nom: { fr: 'Analyseur Q', en: 'Analyseur Q' },
