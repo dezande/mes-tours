@@ -42,6 +42,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 - **Le dossier `src/kit/` réparti dans l'app**, là où chaque fichier a sa place : `src/appareil/` (orientation, écran allumé, stockage, mises à jour), le service worker dans `src/sw/`, les calculs d'orientation dans `src/logic/orientation.ts` (avec ceux du verrou paysage, autrefois dans `paysage.ts`), le numéro de build dans `src/version.ts` (publié en `dist/version.js`), les styles de `#app` dans `src/styles/`, les scripts du build et du déploiement dans `outils/` (leurs tests dans `tests/scripts/`).
   - La fonction `ui()` des textes, recopiée dans quatre tours, vient d'une seule fonction (`textesInterface`, `src/logic/i18n.ts`) ; `fail()` et `git()` des scripts, d'`outils/commun.ts`.
   - **Déploiement** : la vérification du site publié lisait le commit avec des guillemets simples, alors que le fichier minifié l'écrit entre accents graves : elle ne pouvait jamais aboutir. Elle accepte maintenant les trois formes (test ajouté).
+- **L'écran allumé devient un composant Preact** (`<EcranAllume />`, posé une fois dans `App`) : la vidéo muette est rendue par Preact, et le verrou est redemandé à chaque toucher ou touche, n'importe où dans l'app, au lieu d'un appel dans chaque tour (cinq endroits). Un tour ne peut plus l'oublier, et le menu le réveille aussi. Tests du composant, et test dans Chrome : la vidéo joue au menu comme dans un tour, en un seul exemplaire.
 
 ## [1.1.0] — 2026-10-07
 

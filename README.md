@@ -56,8 +56,8 @@ L'adresse après le « # » ne change pas la page demandée au serveur : le serv
 index.html              la page de l'app (Preact s'y monte dans #app)
 vite.config.ts          le build
 src/
-  main.tsx              démarrage : verrou portrait, écran allumé, mises à jour, rendu de <App />
-  App.tsx               le menu, ou le tour demandé par l'adresse
+  main.tsx              démarrage : verrou portrait, mises à jour, rendu de <App />
+  App.tsx               le menu, ou le tour demandé par l'adresse ; l'écran allumé (<EcranAllume />)
   routeur.ts            le routeur maison : suit l'adresse, navigue dans l'historique
   pages/                Menu.tsx (le menu 16 bits), PageTour.tsx (la page qui accueille un tour)
   components/           les briques des tours (voir « Ajouter un tour ») : PanneauReglages,

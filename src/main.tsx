@@ -6,7 +6,7 @@
  * l'appui de 3 s pendant un tour ramène au menu.
  *
  * Organisation de src/ :
- *   main.tsx     ce fichier : démarrage, écran allumé, mises à jour automatiques
+ *   main.tsx     ce fichier : démarrage, stockage persistant, mises à jour automatiques
  *   App.tsx      les pages : le menu (#/) et chaque tour (#/tours/<dossier>)
  *   routeur.ts   le routeur maison : suit l'adresse, navigue dans l'historique
  *   pages/       le menu principal, et la page qui accueille un tour
@@ -29,11 +29,9 @@ import { render } from 'preact';
 import { App } from './App.tsx';
 import { requestPersistentStorage } from './appareil/stockage.ts';
 import { setupUpdates } from './appareil/mises-a-jour.ts';
-import { keepScreenAwake } from './appareil/ecran-allume.ts';
 import { estDansUnTour } from './tours/registre.ts';
 import './styles/main.scss';
 
-void keepScreenAwake();
 // Les réglages des tours et le cache hors-ligne ne doivent jamais être effacés par le navigateur.
 void requestPersistentStorage();
 

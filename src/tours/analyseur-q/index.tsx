@@ -32,7 +32,6 @@ import { useClavier } from '../../hooks/useClavier.ts';
 import { useQuandLAppSeCache } from '../../hooks/useQuandLAppSeCache.ts';
 import { useReglagesEnregistres } from '../../hooks/useReglagesEnregistres.ts';
 import { appPoint } from '../../appareil/orientation.ts';
-import { keepScreenAwake } from '../../appareil/ecran-allume.ts';
 import { usePont } from '../pont.tsx';
 import { Cadre } from './components/Cadre.tsx';
 import { Deck } from './components/Deck.tsx';
@@ -71,7 +70,6 @@ export default function AnalyseurQ() {
 	// Coordonnées dans le repère de l'app, qui peut être pivotée (appareil/orientation.ts).
 	const surAppui = (event: TargetedPointerEvent<HTMLElement>): void => {
 		if (event.pointerType === 'mouse' && event.button !== 0) return;
-		void keepScreenAwake();
 		doigtsPoses.current += 1;
 		// Toucher sur le bouton d'une slide : le navigateur en fait un clic (components/Slide.tsx),
 		// ce n'est pas un geste du diaporama.

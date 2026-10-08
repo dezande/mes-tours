@@ -3,7 +3,7 @@
  * composants (jest.config.js, setupFiles) :
  *   - #app, que le verrou portrait (appareil/orientation.ts) cherche dès son import ;
  *   - matchMedia (pointeur grossier, mode d'affichage) ;
- *   - la lecture des vidéos, que le maintien de l'écran allumé (appareil/ecran-allume.ts) lance.
+ *   - la lecture des vidéos, que le maintien de l'écran allumé (appareil/EcranAllume.tsx) lance.
  */
 
 const app = document.createElement('div');

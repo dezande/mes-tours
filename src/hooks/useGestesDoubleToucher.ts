@@ -16,7 +16,6 @@
 import type { TargetedMouseEvent, TargetedPointerEvent } from 'preact';
 import { useRef, useState } from 'preact/hooks';
 import { appPoint } from '../appareil/orientation.ts';
-import { keepScreenAwake } from '../appareil/ecran-allume.ts';
 import { GESTURE, GestureTracker } from '../logic/double-toucher.ts';
 import { usePont } from '../tours/pont.tsx';
 import { useAppuiLong } from './useAppuiLong.ts';
@@ -38,7 +37,6 @@ export function useGestesDoubleToucher(jaugeVisible: boolean, surGeste: (geste: 
 	const scene = {
 		onPointerDown: (event: TargetedPointerEvent<HTMLElement>): void => {
 			if (event.pointerType === 'mouse' && event.button !== 0) return;
-			void keepScreenAwake();
 			const { x, y } = appPoint(event.clientX, event.clientY);
 			if (!gestes.press(event.pointerId, x, y, performance.now())) {
 				appui.arreter();

@@ -4,8 +4,8 @@
  * testée sous Node) ; l'action « menu » (Échap, M) est commune : elle ramène au menu principal.
  *
  * Réglages ouverts (écrou ⚙), seule l'action « menu » compte : les autres ne touchent pas au tour
- * caché dessous. Ctrl, Alt et Cmd laissent passer les raccourcis du navigateur. Chaque touche
- * reconnue réveille aussi le maintien de l'écran allumé.
+ * caché dessous. Ctrl, Alt et Cmd laissent passer les raccourcis du navigateur. (L'écran allumé,
+ * lui, est redemandé à chaque touche par appareil/EcranAllume.tsx.)
  *
  *   useClavier(keyAction, (action) => (action === 'remettre' ? remettre() : toucher()));
  *
@@ -14,7 +14,6 @@
  */
 
 import { useEffect, useRef } from 'preact/hooks';
-import { keepScreenAwake } from '../appareil/ecran-allume.ts';
 import { usePont } from '../tours/pont.tsx';
 
 export function useClavier<A extends string>(keyAction: (key: string) => A | 'menu' | null, surAction: (action: A) => void, reglagesOuverts?: boolean): void {
@@ -33,7 +32,6 @@ export function useClavier<A extends string>(keyAction: (key: string) => A | 'me
 			if (!action) return;
 			if (reglagesOuverts && action !== 'menu') return;
 			event.preventDefault();
-			void keepScreenAwake();
 			if (action === 'menu') partir();
 			else agir(action);
 		};
