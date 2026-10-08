@@ -15,7 +15,7 @@
  */
 
 import type { RefObject } from 'preact';
-import { useEffect, useRef } from 'preact/hooks';
+import { useLayoutEffect, useRef } from 'preact/hooks';
 
 /** Distance au-delà de laquelle le doigt a glissé : ce n'est plus un appui sur le bouton. */
 const GLISSEMENT_PX = 24;
@@ -117,7 +117,8 @@ export function useSurToucher<T extends HTMLElement>(action: () => void): RefObj
 	const derniere = useRef(action);
 	derniere.current = action;
 
-	useEffect(() => {
+	// Branché avant l'affichage, et non après : un bouton qu'on voit répond déjà.
+	useLayoutEffect(() => {
 		const bouton = ref.current;
 		if (!bouton) return undefined;
 		return surToucher(bouton, () => derniere.current());

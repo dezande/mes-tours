@@ -1,4 +1,4 @@
-// Enveloppe #app de toute l'app (appareil/orientation.ts).
+// Enveloppe #app de toute l'app (appareil/Orientation.tsx).
 // En paysage sur téléphone, elle pivote de ±90° pour rester dans l'axe du téléphone ;
 // tailles (--app-w, --app-h) et marges de sécurité (--safe-*) suivent la rotation.
 // Les éléments « position: fixed » qu'elle contient se placent par rapport à elle :
@@ -49,7 +49,7 @@
 }
 
 // Hauteur visible sans les barres du navigateur, quand c'est pris en charge (hors rotation, où
-// --app-h est fixé en pixels par appareil/orientation.ts).
+// --app-h est fixé en pixels par appareil/Orientation.tsx).
 @supports (height: 1svh) {
 	#app {
 		--app-h: 100svh;

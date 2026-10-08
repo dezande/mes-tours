@@ -9,7 +9,7 @@
  * Ce composant fait tout ce qui est commun : les gestes (src/logic/gestes-zones.ts), le clavier,
  * l'appui long et sa jauge, les phases (hooks/usePhasesZones.ts), les réglages enregistrés et leur
  * panneau (ReglagesZones), le test des zones (ModeTest), la luminosité (#dim), et le paysage si le
- * tour se joue téléphone tenu en largeur (hooks/usePaysage.ts). Le tour ne fournit que son décor et
+ * tour se joue téléphone tenu en largeur (useVerrouPaysage, appareil/Orientation.tsx). Le tour ne fournit que son décor et
  * ses mots :
  *
  *   export default function MonTour() {
@@ -30,10 +30,10 @@ import { useCallback, useRef, useState } from 'preact/hooks';
 import { JaugeAppui } from '../JaugeAppui.tsx';
 import { useAppuiLong } from '../../hooks/useAppuiLong.ts';
 import { useClavier } from '../../hooks/useClavier.ts';
-import { usePaysage } from '../../hooks/usePaysage.ts';
 import { isArmed, isLocked, usePhasesZones, type EtatZones, type Phase } from '../../hooks/usePhasesZones.ts';
 import { useQuandLAppSeCache } from '../../hooks/useQuandLAppSeCache.ts';
 import { useReglagesEnregistres } from '../../hooks/useReglagesEnregistres.ts';
+import { useOrientation, useVerrouPaysage } from '../../appareil/Orientation.tsx';
 import { DOUBLE_TAP, GestureTracker, HOLD, type PointerId } from '../../logic/gestes-zones.ts';
 import type { ReglagesZones as Reglages } from '../../logic/reglages-zones.ts';
 import { zoneIndexForPoint } from '../../logic/zones.ts';
@@ -90,7 +90,8 @@ export function TourAZones({ cleReglages, valider, zones, noms, valeurs, libelle
 
 	const scene = useRef<HTMLElement>(null);
 	// En paysage : la scène et le test des zones ; les réglages, ouverts depuis le menu, en portrait.
-	const { appPoint } = usePaysage(paysage && (!enReglages || modeTest), scene);
+	useVerrouPaysage(paysage && (!enReglages || modeTest));
+	const { appPoint } = useOrientation();
 	const [gestes] = useState(() => new GestureTracker());
 	/** Les doigts posés sur la scène : deux doigts annulent tout geste. */
 	const poses = useRef(new Set<PointerId>());

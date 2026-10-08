@@ -87,7 +87,7 @@ export default function Morpion() {
 	 *                 le toucher suivant le retourne sur la même grille, où qu'il soit.
 	 */
 	const { scene, jauge } = useGestesDoubleToucher(reglages.showHoldRing, (geste, { y }) => {
-		// La hauteur de l'app, et non de la fenêtre : l'app peut être pivotée (appareil/orientation.ts).
+		// La hauteur de l'app, et non de la fenêtre : l'app peut être pivotée (appareil/Orientation.tsx).
 		const cote = coteDuPoint(y, document.getElementById('app')?.clientHeight ?? window.innerHeight);
 		if (!cote) return;
 		const avant = etatRef.current;

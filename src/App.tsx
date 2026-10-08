@@ -7,6 +7,7 @@
 
 import { useEffect } from 'preact/hooks';
 import { EcranAllume } from './appareil/EcranAllume.tsx';
+import { Orientation } from './appareil/Orientation.tsx';
 import { TOURS } from './content/tours.ts';
 import { LangueProvider } from './langue/LangueContext.tsx';
 import { resoudre } from './logic/adresses.ts';
@@ -28,12 +29,14 @@ export function App() {
 	}, [page.page, adresse]);
 
 	return (
-		<LangueProvider>
-			{page.page === 'tour'
-				// Une clé par ouverture : rouvrir un tour repart toujours d'une nouvelle routine.
-				? <PageTour key={adresse.cle} dossier={page.dossier} enReglages={page.reglages} depuisLApp={adresse.depuisLApp} />
-				: <Menu />}
-			<EcranAllume />
-		</LangueProvider>
+		<Orientation>
+			<LangueProvider>
+				{page.page === 'tour'
+					// Une clé par ouverture : rouvrir un tour repart toujours d'une nouvelle routine.
+					? <PageTour key={adresse.cle} dossier={page.dossier} enReglages={page.reglages} depuisLApp={adresse.depuisLApp} />
+					: <Menu />}
+				<EcranAllume />
+			</LangueProvider>
+		</Orientation>
 	);
 }
