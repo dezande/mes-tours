@@ -1,25 +1,25 @@
 /*
- * VERROU PAYSAGE d'un tour joué téléphone tenu en largeur (src/logic/paysage.ts) — la carte de
+ * VERROU PAYSAGE d'un tour joué téléphone tenu en largeur (src/logic/orientation.ts) — la carte de
  * visite, ou tout tour à zones avec `paysage` (components/zones/TourAZones.tsx) —, à la place du
- * verrou portrait du kit (kit/web/orientation.ts) le temps du tour : pivote #app et donne sa taille
- * (--app-w, --app-h), que les styles du kit (_app.scss) appliquent. Les marges de sécurité
+ * verrou portrait de l'app (appareil/orientation.ts) le temps du tour : pivote #app et donne sa taille
+ * (--app-w, --app-h), que les styles de l'app (styles/_app.scss) appliquent. Les marges de sécurité
  * (--safe-*) suivent la rotation par ces mêmes styles.
  *
- * #app est celle de toute l'app : le verrou portrait du kit la recalcule à chaque « resize ». Ses
+ * #app est celle de toute l'app : le verrou portrait de l'app la recalcule à chaque « resize ». Ses
  * écouteurs sont posés au démarrage (main.tsx), les nôtres après : ils passent après lui et ont le
- * dernier mot. Au départ du tour, nos écouteurs sont retirés et un « resize » rend la main au kit,
+ * dernier mot. Au départ du tour, nos écouteurs sont retirés et un « resize » rend la main au verrou portrait,
  * qui remet #app en portrait pour le menu.
  *
  * Les réglages, eux, restent en portrait (`actif` faux) : ils s'ouvrent depuis le menu, téléphone
- * tenu droit, et suivent le verrou du kit comme ceux des autres tours. La scène et le test des
+ * tenu droit, et suivent le verrou portrait comme ceux des autres tours. La scène et le test des
  * zones sont en paysage.
  */
 
 import type { RefObject } from 'preact';
 import { useCallback, useLayoutEffect, useRef } from 'preact/hooks';
-import { currentRotation } from '../kit/web/orientation.ts';
-import { appSize, toAppPoint, type Rotation, type Viewport } from '../kit/web/orientation-logic.ts';
-import { landscapeRotation } from '../logic/paysage.ts';
+import { currentRotation } from '../appareil/orientation.ts';
+import { appSize, toAppPoint, type Rotation, type Viewport } from '../logic/orientation.ts';
+import { landscapeRotation } from '../logic/orientation.ts';
 
 function viewport(): Viewport {
 	// L'angle et le tactile ne servent pas ici : seule compte la forme de la fenêtre.
@@ -39,7 +39,7 @@ export function usePaysage(actif: boolean, scene: RefObject<HTMLElement | null>)
 	const rotation = useRef<Rotation>(0);
 	const actifRef = useRef(actif);
 
-	/** Recalcule la rotation, après le verrou du kit. Inactif : #app reste celle du kit. */
+	/** Recalcule la rotation, après le verrou portrait. Inactif : #app reste en portrait. */
 	const appliquer = useCallback((): void => {
 		if (!actifRef.current) return;
 		const app = scene.current?.closest<HTMLElement>('#app');
@@ -55,20 +55,20 @@ export function usePaysage(actif: boolean, scene: RefObject<HTMLElement | null>)
 	// Écouteurs posés une fois pour toutes (et non à chaque changement d'`actif`) : ils restent
 	// avant ceux du test des zones, qui mesure la scène une fois la rotation appliquée.
 	useLayoutEffect(() => {
-		// Rotation de l'écran : le kit relance lui-même un « resize ». Pointeur changé (souris,
-		// tactile) : le kit se recalcule sans « resize », on repasse derrière lui.
+		// Rotation de l'écran : le verrou portrait relance lui-même un « resize ». Pointeur changé (souris,
+		// tactile) : le verrou portrait se recalcule sans « resize », on repasse derrière lui.
 		window.addEventListener('resize', appliquer);
 		const grossier = typeof window.matchMedia === 'function' ? window.matchMedia('(pointer: coarse)') : null;
 		grossier?.addEventListener('change', appliquer);
 		return () => {
 			window.removeEventListener('resize', appliquer);
 			grossier?.removeEventListener('change', appliquer);
-			// Le kit reprend #app (portrait) : rotation, tailles, et marges de sécurité avec elles.
+			// Le verrou portrait reprend #app (portrait) : rotation, tailles, et marges de sécurité avec elles.
 			signalerResize();
 		};
 	}, [appliquer]);
 
-	// Scène ou réglages : le kit recalcule d'abord (portrait), puis nous (paysage si actif).
+	// Scène ou réglages : le verrou portrait recalcule d'abord (portrait), puis nous (paysage si actif).
 	useLayoutEffect(() => {
 		actifRef.current = actif;
 		appliquer();

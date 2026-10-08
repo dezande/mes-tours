@@ -10,17 +10,13 @@
 //         npm run deploy -- --dry-run   (vérifications et build seulement, sans push)
 import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { commitDuBuild, fail } from './commun.ts';
 
 const BRANCH = 'main';
 const WORKFLOW = 'ci.yml';
 const dryRun = process.argv.includes('--dry-run');
 /** Rejouer les tests dans Chrome en local, en plus de la CI de la pull request. */
 const complet = process.argv.includes('--complet');
-
-function fail(message: string): never {
-	console.error(`\n✗ ${message}`);
-	process.exit(1);
-}
 
 function step(title: string): void {
 	console.log(`\n▸ ${title}`);
@@ -153,15 +149,15 @@ if (watchMain.status !== 0) fail(`Le déploiement a échoué. Détails : gh run 
 
 /*
  * Le site sert-il bien ce qui vient d'être fusionné ? On compare le commit inscrit au build
- * (kit/web/build.js) et non le nom du cache calculé avant la pull request : la fusion en rebase
+ * (version.js) et non le nom du cache calculé avant la pull request : la fusion en rebase
  * réécrit le commit, donc ce nom-là n'aurait jamais correspondu.
  */
 step('Vérification du site');
 const { homepage } = JSON.parse(readFileSync('package.json', 'utf8')) as { homepage: string };
 const online = await waitFor(async () => {
-	const response = await fetch(new URL(`kit/web/build.js?t=${Date.now()}`, homepage), { cache: 'no-store' });
+	const response = await fetch(new URL(`version.js?t=${Date.now()}`, homepage), { cache: 'no-store' });
 	if (!response.ok) return null;
-	const served = (await response.text()).match(/commit: '([^']+)'/)?.[1];
+	const served = commitDuBuild(await response.text());
 	return served && sha.startsWith(served) ? true : null;
 }, 180_000, 5_000);
 if (!online) fail(`${homepage} ne sert pas encore le commit ${sha.slice(0, 7)} après 3 minutes. Revérifiez dans quelques minutes.`);

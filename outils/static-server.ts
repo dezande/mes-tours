@@ -1,5 +1,5 @@
 // Serveur statique minimal pour dist/, sans dépendance.
-// Utilisé par node/serve.ts et par les tests dans Chrome des apps.
+// Utilisé par outils/serve.ts, outils/captures.ts et les tests dans Chrome.
 import { createServer, type Server } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import type { AddressInfo } from 'node:net';

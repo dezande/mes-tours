@@ -5,3 +5,10 @@
  */
 
 export const APP_VERSION = '1.1.0';
+
+/**
+ * Numéro de build (nombre de commits) et commit court, inscrits au build par outils/stamp-build.ts.
+ * Ce module garde son propre fichier (dist/version.js, vite.config.ts) : le déploiement le relit
+ * sur le site publié.
+ */
+export const BUILD = { version: '__APP_VERSION__', commit: '__APP_COMMIT__' };

@@ -1,10 +1,10 @@
-// Serveur local (src/kit/node/static-server.ts) : fichiers servis, types, 404, et surtout aucun accès
+// Serveur local (outils/static-server.ts) : fichiers servis, types, 404, et surtout aucun accès
 // en dehors du dossier servi, même avec des adresses piégées.
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { connect } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { startStaticServer, type StaticServer } from '../../src/kit/node/static-server.ts';
+import { startStaticServer, type StaticServer } from '../../outils/static-server.ts';
 
 let root: string;
 let server: StaticServer;

@@ -1,4 +1,4 @@
-// Vérifie le journal des versions (CHANGELOG.md), pour le kit comme pour une app :
+// Vérifie le journal des versions (CHANGELOG.md), de l'app :
 // 1. la forme : versions MAJEUR.MINEUR.CORRECTIF, datées, en ordre décroissant, sans doublon,
 //    avec du contenu et un lien vers la publication ; « Non publié » admis en tête, sans date ;
 // 2. la mise à jour : avec --base <ref>, toute modification autre que le journal lui-même doit
@@ -8,9 +8,9 @@
 //    qu'aura le commit publié, le commit de publication compris. Sans cette vérification, on
 //    écrit le numéro lu avant de commiter, et l'app en affiche un autre.
 //
-// Usage : node node/check-changelog.ts [--base <ref>] [--head <ref>] [--file <chemin>]
-import { execFileSync } from 'node:child_process';
+// Usage : node outils/check-changelog.ts [--base <ref>] [--head <ref>] [--file <chemin>]
 import { existsSync, readFileSync } from 'node:fs';
+import { git } from './commun.ts';
 
 const UNRELEASED = 'Non publié';
 const SKIP_MARKER = '[sans journal]';
@@ -25,14 +25,6 @@ interface Entry {
 function arg(name: string): string | undefined {
 	const index = process.argv.indexOf(`--${name}`);
 	return index === -1 ? undefined : process.argv[index + 1];
-}
-
-function git(args: string[]): string | null {
-	try {
-		return execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-	} catch {
-		return null;
-	}
 }
 
 /** Le numéro de build annoncé en tête d'une version (« … — 25 commits »), s'il y en a un.
@@ -146,7 +138,7 @@ if (base && !/^0+$/.test(base)) {
 
 /* ---------- 3. Numéro de build de la version qu'on publie ---------- */
 
-// Le numéro affiché par l'app est le nombre de commits (node/stamp-build.ts). Le commit qui
+// Le numéro affiché par l'app est le nombre de commits (outils/stamp-build.ts). Le commit qui
 // renomme « Non publié » en numéro de version en ajoute un : si on écrit le numéro lu avant de
 // commiter, il manque toujours ce commit-là, et le tableau de correspondance ne retrouve plus
 // la version depuis le numéro affiché sur le téléphone. On ne vérifie qu'à la publication,

@@ -2,7 +2,7 @@
 @use "../../components/zones";
 
 // Le tour remplit #app, dans ses couleurs, sous son voile de luminosité (components/_zones.scss).
-// Taille de la boule : relative à l'app (pivotée ou non, voir kit/styles/_app.scss).
+// Taille de la boule : relative à l'app (pivotée ou non, voir styles/_app.scss).
 @include zones.base-du-tour($fade: 1.5s, $couleur: $gold, $police: $sans) {
 	--ball: min(calc(var(--app-w) * .74), calc(var(--app-h) * .42), 520px);
 }

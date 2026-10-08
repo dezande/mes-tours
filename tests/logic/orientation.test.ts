@@ -1,5 +1,6 @@
-// Les calculs du verrou portrait (src/kit/web/orientation-logic.ts).
-import { appSize, portraitRotation, toAppPoint, type Viewport } from '../../src/kit/web/orientation-logic.ts';
+// Les verrous portrait (toute l'app) et paysage (la carte de visite) : src/logic/orientation.ts.
+// Lancer : npm test
+import { appSize, landscapeRotation, portraitRotation, toAppPoint, type Viewport } from '../../src/logic/orientation.ts';
 
 const PORTRAIT: Viewport = { width: 390, height: 844, angle: 0, touch: true };
 const LEFT: Viewport = { width: 844, height: 390, angle: 90, touch: true };
@@ -30,4 +31,19 @@ test('toAppPoint : les coins de l’écran tombent sur les bons coins de l’app
 	expect(toAppPoint(844, 0, RIGHT, 90), 'haut droite écran = haut gauche app').toStrictEqual({ x: 0, y: 0 });
 	expect(toAppPoint(844, 390, RIGHT, 90), 'bas droite écran = haut droite app').toStrictEqual({ x: 390, y: 0 });
 	expect(toAppPoint(0, 0, RIGHT, 90), 'haut gauche écran = bas gauche app').toStrictEqual({ x: 0, y: 844 });
+});
+
+test('paysage : écran en portrait (app verrouillée, téléphone tenu en largeur) : la scène pivote d’un quart de tour', () => {
+	expect(landscapeRotation(390, 844)).toBe(90);
+});
+
+test('paysage : écran déjà en paysage, ou carré : rien ne pivote', () => {
+	expect(landscapeRotation(844, 390)).toBe(0);
+	expect(landscapeRotation(500, 500)).toBe(0);
+});
+
+test('paysage : pivotée, le haut de la scène est à droite de l’écran : le coin haut droite de l’écran est le coin haut gauche de la scène', () => {
+	const ecran = { width: 390, height: 844, angle: 0, touch: true };
+	const p = toAppPoint(380, 10, ecran, landscapeRotation(ecran.width, ecran.height));
+	expect(p).toStrictEqual({ x: 10, y: 10 });
 });

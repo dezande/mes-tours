@@ -18,7 +18,7 @@
 import { useCallback, useRef, useState } from 'preact/hooks';
 
 export interface Jauge {
-	/** Le point touché, dans le repère de #app (kit/web/orientation.ts : appPoint). */
+	/** Le point touché, dans le repère de #app (appareil/orientation.ts : appPoint). */
 	x: number;
 	y: number;
 	/** Rien avant ce délai, puis remplissage en `dureeMs`. */

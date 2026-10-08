@@ -8,7 +8,7 @@
  * Le nom de l'app (« Analyseur Q », « AQ-52 ») n'est pas traduit.
  */
 
-import type { Lang, Texte } from '../../../logic/i18n.ts';
+import { textesInterface, type Texte } from '../../../logic/i18n.ts';
 
 export const INTERFACE = {
 	// Cadre d'instrument (décor autour des slides).
@@ -66,7 +66,4 @@ export const INTERFACE = {
 export type CleInterface = keyof typeof INTERFACE;
 
 /** Texte de l'interface dans la langue demandée. */
-export function ui(cle: CleInterface, lang: Lang): string {
-	const value = INTERFACE[cle];
-	return typeof value === 'string' ? value : value[lang];
-}
+export const ui = textesInterface(INTERFACE);

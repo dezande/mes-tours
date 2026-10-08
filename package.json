@@ -9,13 +9,13 @@
 	"scripts": {
 		"dev": "vite",
 		"clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
-		"build": "vite build && tsc -p src/sw && node src/kit/node/check-dist.ts && node src/kit/node/stamp-build.ts",
+		"build": "vite build && tsc -p src/sw && node outils/check-dist.ts && node outils/stamp-build.ts",
 		"typecheck": "tsc -p src --noEmit && tsc -p src/sw --noEmit && tsc",
 		"test": "jest --selectProjects unitaires composants",
-		"check:changelog": "node src/kit/node/check-changelog.ts",
+		"check:changelog": "node outils/check-changelog.ts",
 		"test:e2e": "jest --selectProjects e2e --runInBand --forceExit",
-		"serve": "npm run build && node src/kit/node/serve.ts",
-		"deploy": "node src/kit/node/deploy.ts"
+		"serve": "npm run build && node outils/serve.ts",
+		"deploy": "node outils/deploy.ts"
 	},
 	"devDependencies": {
 		"@jest/globals": "^30.5.2",

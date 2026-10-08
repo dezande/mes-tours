@@ -3,19 +3,19 @@
  * dans dist/assets/ sous un nom qui change avec leur contenu. public/ est recopié tel quel (manifeste,
  * icônes, captures, licences des polices).
  *
- * La suite du build est celle du kit (package.json, script « build ») : service worker, vérification
+ * La suite du build (package.json, script « build ») : service worker, vérification
  * de dist/ (node/check-dist.ts), puis numéro de version et liste des fichiers en cache
  * (node/stamp-build.ts). D'où quelques noms fixes :
  *   dist/app.js                 le point d'entrée ;
  *   dist/style.css              toutes les feuilles de style, en une seule ;
- *   dist/kit/web/build.js       le numéro de version, que stamp-build.ts inscrit au build et que
+ *   dist/version.js       le numéro de version, que stamp-build.ts inscrit au build et que
  *                               le déploiement (node/deploy.ts) relit sur le site publié.
  */
 import preact from '@preact/preset-vite';
 import { defineConfig, type Plugin } from 'vite';
 
 /** Le numéro de version garde son propre fichier, à ce nom fixe. */
-const BUILD = 'kit/web/build';
+const BUILD = 'version';
 
 /** Seuls les fichiers de l'app sont autorisés : rien ne se charge d'ailleurs, l'app est hors-ligne. */
 const CSP = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self' data:; connect-src 'self'; font-src 'self'; manifest-src 'self'; worker-src 'self'";
@@ -42,7 +42,7 @@ export default defineConfig({
 				entryFileNames: 'app.js',
 				chunkFileNames: (chunk) => (chunk.name === BUILD ? '[name].js' : 'assets/[name]-[hash].js'),
 				assetFileNames: (asset) => (asset.names.some((name) => name.endsWith('.css')) ? 'style.css' : 'assets/[name]-[hash][extname]'),
-				manualChunks: (id) => (id.endsWith('/src/kit/web/build.ts') ? BUILD : undefined),
+				manualChunks: (id) => (id.endsWith('/src/version.ts') ? BUILD : undefined),
 			},
 		},
 	},

@@ -1,5 +1,5 @@
 // Les deux langues des tours (src/logic/i18n.ts) : textes traduits, langue du téléphone.
-import { deviceLang, isLang, isTexte, t } from '../../src/logic/i18n.ts';
+import { deviceLang, isLang, isTexte, t, textesInterface } from '../../src/logic/i18n.ts';
 
 test('t : une chaîne vaut pour les deux langues, un objet donne la bonne', () => {
 	expect(t('AQ-52', 'fr')).toBe('AQ-52');
@@ -30,4 +30,11 @@ test('deviceLang : anglais si le téléphone est en anglais, français sinon', (
 	expect(deviceLang(undefined)).toBe('fr');
 	expect(deviceLang([null as unknown as string])).toBe('fr');
 	expect(deviceLang([null as never, 'en']), 'liste abîmée').toBe('en');
+});
+
+test('textesInterface : le texte d’une clé dans la langue demandée, ou le même dans les deux langues', () => {
+	const ui = textesInterface({ titre: { fr: 'Réglages', en: 'Settings' }, nom: 'Mes tours' });
+	expect(ui('titre', 'fr')).toBe('Réglages');
+	expect(ui('titre', 'en')).toBe('Settings');
+	expect(ui('nom', 'en')).toBe('Mes tours');
 });

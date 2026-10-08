@@ -1,5 +1,5 @@
 /*
- * Les réglages d'un tour, enregistrés sur l'appareil (localStorage, kit/web/storage.ts) et gardés
+ * Les réglages d'un tour, enregistrés sur l'appareil (localStorage, appareil/stockage.ts) et gardés
  * d'une ouverture à l'autre. Une mise à jour de l'app ne remplace que le cache hors-ligne, jamais le
  * localStorage : renommer une clé ferait perdre les réglages (garder l'ancienne dans `anciennesCles`).
  *
@@ -13,7 +13,7 @@
  */
 
 import { useCallback, useState } from 'preact/hooks';
-import { readStored, writeStored } from '../kit/web/storage.ts';
+import { readStored, writeStored } from '../appareil/stockage.ts';
 
 export function useReglagesEnregistres<T>(cle: string, valider: (brut: unknown) => T, ...anciennesCles: string[]): [T, (suivants: T | null) => void] {
 	const [reglages, setReglages] = useState<T>(() => valider(readStored(cle, ...anciennesCles)));

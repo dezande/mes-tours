@@ -6,7 +6,7 @@
  * ui(clé, langue), dans la langue du menu principal.
  */
 
-import type { Lang, Texte } from '../../../logic/i18n.ts';
+import { textesInterface, type Texte } from '../../../logic/i18n.ts';
 
 export const INTERFACE = {
 	// Réglages
@@ -34,7 +34,4 @@ export const INTERFACE = {
 export type CleInterface = keyof typeof INTERFACE;
 
 /** Texte de l'interface dans la langue demandée. */
-export function ui(cle: CleInterface, lang: Lang): string {
-	const value: Texte = INTERFACE[cle];
-	return typeof value === 'string' ? value : value[lang];
-}
+export const ui = textesInterface(INTERFACE);

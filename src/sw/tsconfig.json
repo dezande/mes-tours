@@ -5,8 +5,8 @@
 		"module": "esnext",
 		"moduleResolution": "bundler",
 		"moduleDetection": "legacy",
-		"rootDir": "../kit/sw",
+		"rootDir": ".",
 		"outDir": "../../dist"
 	},
-	"include": ["../kit/sw/sw.ts"]
+	"include": ["sw.ts"]
 }

@@ -1,4 +1,4 @@
-// Vérifie que le build de l'app est complet (lancé depuis sa racine, avant node/stamp-build.ts) :
+// Vérifie que le build de l'app est complet (lancé depuis sa racine, avant outils/stamp-build.ts) :
 // fichiers de base, numéro de version, icônes du manifest et fichiers propres à l'app (config.ts).
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -11,7 +11,7 @@ const expectFile = (file: string, reason: string): void => {
 };
 
 for (const file of ['index.html', 'style.css', 'app.js', 'sw.js', 'manifest.json']) expectFile(file, 'fichier de base');
-expectFile('kit/web/build.js', 'numéro de version');
+expectFile('version.js', 'numéro de version');
 for (const file of APP.requiredFiles) expectFile(file, 'fichier de l’app, config.ts');
 
 try {
@@ -23,7 +23,7 @@ try {
 	errors.push(`manifest.json illisible : ${(error as Error).message}`);
 }
 const sw = existsSync(join(DIST, 'sw.js')) ? readFileSync(join(DIST, 'sw.js'), 'utf8') : '';
-if (sw && !sw.includes('__CACHE_PREFIX__')) errors.push('sw.js ne vient pas du kit (kit/sw/sw.ts)');
+if (sw && !sw.includes('__CACHE_PREFIX__')) errors.push('sw.js ne vient pas de src/sw/sw.ts');
 
 if (errors.length > 0) {
 	console.error(`Build incomplet :\n- ${errors.join('\n- ')}`);

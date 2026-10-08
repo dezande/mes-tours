@@ -75,12 +75,12 @@ src/
   styles/               TOUT le Sass : main.scss, _base.scss, abstracts/, components/ (styles
                         des briques, en mixins), menu/, tours/<dossier>/
   assets/               polices (fonts/), images (images/<dossier>/), icône de l'app (icons/)
-  kit/                  code commun des accessoires de scène (repris de kit-scene) : écran allumé,
-                        portrait, mises à jour, service worker, build, déploiement ; ses
-                        réglages (nom, préfixe du cache) dans kit/node/config.ts
-  sw/                   compilation du service worker du kit
+  appareil/             ce qui touche au téléphone : orientation, écran allumé, stockage, mises à jour
+  sw/                   le service worker (sw.ts), compilé à part en dist/sw.js
 public/                 copié tel quel : manifeste, icônes, captures, licences des polices
-tests/                  Jest : logic/ (logique partagée), tours/ et kit/ (unitaires), composants/
+outils/                 scripts du build (vérification, numéro de version, cache), serveur local,
+                        déploiement, captures ; réglages de l'app (nom, préfixe du cache) dans config.ts
+tests/                  Jest : logic/ (logique partagée), tours/ et scripts/ (unitaires), composants/
                         (Preact), e2e/ (Chrome)
 ```
 
@@ -88,7 +88,7 @@ tests/                  Jest : logic/ (logique partagée), tours/ et kit/ (unita
 - **Les styles de chaque tour sont rangés sous sa classe** (`.scene-<dossier>`, posée par `PageTour`, avec `meta.load-css` dans `src/styles/tours/<dossier>/_index.scss`) : tous chargés ensemble dans une seule feuille, ils ne se marchent jamais dessus. Les `@keyframes`, qui valent pour toute la page, sont préfixés par tour (`boule-`, `cdv-`, `pof-`, `six-`, `aq-`). Le fond derrière l'app et la couleur de la barre du téléphone suivent le tour ouvert (`html[data-tour]`).
 - **Le pont** ([`src/tours/pont.tsx`](src/tours/pont.tsx)) : à l'appui de 3 s, à Échap / M, ou quand ses réglages se ferment, le tour revient au menu (`quitter()`), par l'historique — le menu réapparaît, et l'historique ne grandit pas. La fin de la routine, elle, remet le tour en place sans le quitter. Ouvert par l'écrou, le tour n'affiche que son panneau de réglages (`enReglages`), dans la langue du menu.
 - **Les boutons agissent au lever du doigt**, appui bref ou long (`useSurToucher` pour le menu, `useBoutonsTactiles` pour les réglages) : sur Android, un doigt qui reste posé sur un bouton devient un appui long, et le navigateur n'envoie pas de clic.
-- **Un seul service worker** (celui du kit) met tout en cache, tours compris. Une nouvelle version ne s'installe jamais pendant un tour.
+- **Un seul service worker** ([`src/sw/sw.ts`](src/sw/sw.ts)) met tout en cache, tours compris. Une nouvelle version ne s'installe jamais pendant un tour.
 
 ## Ajouter un tour
 
@@ -149,17 +149,17 @@ Un tour à cartes ajoute `cartes.tapis`, `cartes.cartes(…)` et `cartes.vignett
 
 `main` protégée : pull request, fusion en rebase (historique linéaire), branche à jour, CI verte (« Types, tests, build et tests dans Chrome »), une ligne dans le [journal des versions](CHANGELOG.md) pour chaque changement. Chaque fusion sur `main` publie le site.
 
-**Le build** (Vite) compile Preact et Sass en `dist/app.js` et `dist/style.css`, chaque tour dans son propre fichier (chargé à sa première ouverture), polices et images dans `dist/assets/`. La fin du build est celle du kit : le service worker, la vérification de `dist/` et le numéro de version (`dist/kit/web/build.js`, que Vite garde à part : le déploiement le relit sur le site publié). La Content-Security-Policy n'est ajoutée qu'au build : le serveur de développement de Vite injecte ses styles en ligne.
+**Le build** (Vite) compile Preact et Sass en `dist/app.js` et `dist/style.css`, chaque tour dans son propre fichier (chargé à sa première ouverture), polices et images dans `dist/assets/`. La fin du build (`outils/`) : le service worker, la vérification de `dist/` et le numéro de version (`dist/version.js`, que Vite garde à part : le déploiement le relit sur le site publié). La Content-Security-Policy n'est ajoutée qu'au build : le serveur de développement de Vite injecte ses styles en ligne.
 
 **Les tests, tous avec [Jest](https://jestjs.io/)** (compilés par SWC, configuration dans [`jest.config.js`](jest.config.js)) : la logique pure sous Node, les composants dans jsdom avec [Preact Testing Library](https://testing-library.com/docs/preact-testing-library/intro/), et l'app compilée dans un vrai Chrome sans interface. `expect(valeur, 'message')` dit ce qui a échoué ([jest-expect-message](https://github.com/mattphillips/jest-expect-message)).
 
-**Le service worker** est celui du kit : il ne renvoie la page de l'app que pour sa propre adresse, jamais pour une autre page du site — un test dans Chrome le vérifie.
+**Le service worker** ne renvoie la page de l'app que pour sa propre adresse, jamais pour une autre page du site — un test dans Chrome le vérifie.
 
 ```sh
 npm install
 npm run dev         # serveur de développement (Vite), rechargement à chaud
 npm run serve       # build puis serveur local sur http://localhost:8000
-npm test            # tests unitaires et des composants (Jest) : l'app, les tours et le kit
+npm test            # tests unitaires et des composants (Jest) : l'app, les tours et les scripts du build
 npm run test:e2e    # tests dans Chrome (après npm run build)
 npm run typecheck
 npm run check:changelog
