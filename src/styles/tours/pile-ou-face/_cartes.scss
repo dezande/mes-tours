@@ -1,4 +1,6 @@
+@use "sass:color";
 @use "../../abstracts/mixins" as *;
+@use "tokens" as *;
 @use "../../components/cartes";
 
 /*
@@ -41,6 +43,77 @@
 	@include cover;
 	// La carte tourne autour de son propre centre.
 	perspective: 1200px;
+}
+
+/*
+ * Les encres du réglage « couleur » : celle du mot « Prédiction » au dos, et de la prédiction à
+ * l'avant — le même stylo des deux côtés. Posées sur la carte et sur les vignettes des réglages.
+ */
+.carte,
+.vignette {
+	--encre: #{$encre};
+
+	&[data-couleur="bleu"] {
+		--encre: #{$encre-bleue};
+	}
+
+	&[data-couleur="rouge"] {
+		--encre: #{$encre-rouge};
+	}
+}
+
+.carte .prediction {
+	color: var(--encre);
+}
+
+.avant {
+	color: var(--encre);
+}
+
+/*
+ * Le dos : un papier crème, comme l'avant, marqué « Prédiction » à la main et souligné
+ * (components/Carte.tsx : MotPrediction). Le mot remplit la largeur de la carte : sa taille est
+ * donnée en part de la largeur du papier (cqi), la même règle pour la carte et pour les vignettes.
+ */
+.dos,
+.vignette.papier {
+	display: grid;
+	place-items: center;
+	container-type: inline-size;
+	background: radial-gradient(120% 90% at 50% 30%, #fbf6ea, $papier 58%, $papier-ombre 140%);
+	color: var(--encre);
+}
+
+.dos {
+	box-shadow:
+		inset 0 0 0 1px color.change($encre, $alpha: .16),
+		0 1px 2px rgba(0, 0, 0, .5),
+		0 18px 36px rgba(0, 0, 0, .45);
+}
+
+.vignette.papier {
+	box-shadow: inset 0 0 0 1px color.change($encre, $alpha: .16);
+}
+
+.mot {
+	display: inline-block;
+	// « Prédiction » fait environ 3,7 em de large, sa marge comprise : à 24 % de la largeur du papier,
+	// il en couvre près de 90 %, en français comme en anglais.
+	font-size: 24cqi;
+	// Un peu de travers, comme écrit à la main sur un papier posé.
+	transform: rotate(-4deg);
+}
+
+// Le mot, de la même main que la prédiction de l'avant (components/_cartes.scss : .prediction).
+.mot-ecrit {
+	margin: 0;
+	padding: .06em .14em;
+	font-family: $manuscrit;
+	font-weight: 600;
+	line-height: 1.22;
+	color: var(--encre);
+	text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
+	white-space: nowrap;
 }
 
 /*

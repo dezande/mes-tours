@@ -1,14 +1,14 @@
 /*
  * Les réglages des cinq cartes, ouverts par l'écrou ⚙ du menu principal : le bord d'où part le
- * codage (comme le sens de comptage de Princesse), dos et couleur des cartes, le rappel du codage,
+ * codage (comme le sens de comptage de Princesse), couleur du dos des cartes, le rappel du codage,
  * jauge de l'appui long, mode entraînement et test des zones, réglages par défaut.
  */
 
-import { ChoixIllustre, Vignette as VignetteDesTours } from '../../../components/cartes/ChoixIllustre.tsx';
+import { ChoixIllustre } from '../../../components/cartes/ChoixIllustre.tsx';
 import { PanneauReglages } from '../../../components/PanneauReglages.tsx';
 import type { Lang } from '../../../logic/i18n.ts';
 import { ui, type CleInterface } from '../content/interface.ts';
-import { DESSINS, SENS, TEINTES, type Dessin, type Settings, type Teinte } from '../logic/settings.ts';
+import { SENS, TEINTES, type Settings, type Teinte } from '../logic/settings.ts';
 import { DosArcade } from './DosArcade.tsx';
 
 interface Props {
@@ -22,9 +22,8 @@ interface Props {
 	surTestDesZones: () => void;
 }
 
-/** Une petite carte face cachée : le dos « Arcade », ou celui des autres tours de cartes. */
-function Vignette({ dessin, teinte }: { dessin: Dessin; teinte: Teinte }) {
-	if (dessin !== 'arcade') return <VignetteDesTours dessin={dessin} teinte={teinte} />;
+/** Une petite carte face cachée : le dos « Arcade », dans la couleur demandée. */
+function Vignette({ teinte }: { teinte: Teinte }) {
 	return <span className="vignette" data-motif="arcade" data-couleur={teinte}><DosArcade /></span>;
 }
 
@@ -64,16 +63,10 @@ export function Reglages({ reglages, langue, enregistrer, surEntrainement, surTe
 				<p className="hint slider-hint">{ui('menu.sensAide', langue)}</p>
 			</div>
 
-			{/* Les aperçus montrent les cartes telles qu'elles seront : les dos dans la couleur en cours,
-			    les couleurs sur le dos en cours. */}
-			<div className="card">
-				<div className="row-label">{ui('menu.motif', langue)}</div>
-				<ChoixIllustre id="motif-choix" etiquette={ui('menu.motif', langue)} valeurs={DESSINS} choisie={reglages.motif} nom={(valeur) => ui(`motif.${valeur}` as CleInterface, langue)} apercu={(dessin) => <Vignette dessin={dessin} teinte={reglages.couleur} />} choisir={(motif) => changer({ motif })} />
-			</div>
-
+			{/* Le dos « Arcade » est celui du tour : seule sa couleur se choisit, en regardant. */}
 			<div className="card">
 				<div className="row-label">{ui('menu.couleur', langue)}</div>
-				<ChoixIllustre id="couleur-choix" etiquette={ui('menu.couleur', langue)} couleurs valeurs={TEINTES} choisie={reglages.couleur} nom={(valeur) => ui(`couleur.${valeur}` as CleInterface, langue)} apercu={(teinte) => <Vignette dessin={reglages.motif} teinte={teinte} />} choisir={(couleur) => changer({ couleur })} />
+				<ChoixIllustre id="couleur-choix" etiquette={ui('menu.couleur', langue)} couleurs valeurs={TEINTES} choisie={reglages.couleur} nom={(valeur) => ui(`couleur.${valeur}` as CleInterface, langue)} apercu={(teinte) => <Vignette teinte={teinte} />} choisir={(couleur) => changer({ couleur })} />
 			</div>
 
 			<div className="card" id="codage">

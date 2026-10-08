@@ -17,7 +17,6 @@ export const INTERFACE = {
 	},
 	'sens.gauche': { fr: 'La gauche', en: 'The left' },
 	'sens.droite': { fr: 'La droite', en: 'The right' },
-	'menu.motif': { fr: 'Dos des cartes', en: 'Card backs' },
 	'menu.couleur': { fr: 'Couleur des dos', en: 'Back colour' },
 	'menu.aides': {
 		fr: 'Aides visuelles : à masquer avant de jouer si le public voit l\'écran.',
@@ -55,16 +54,9 @@ export const INTERFACE = {
 	},
 
 	/*
-	 * Dos des cartes (la valeur enregistrée, elle, ne change pas : logic/settings.ts). Ces noms
+	 * Couleurs du dos (la valeur enregistrée, elle, ne change pas : logic/settings.ts). Ces noms
 	 * servent d'étiquette aux lecteurs d'écran, qui ne voient pas les vignettes.
 	 */
-	'motif.arcade': { fr: 'Arcade', en: 'Arcade' },
-	'motif.deco': { fr: 'Art déco', en: 'Art deco' },
-	'motif.nouveau': { fr: 'Art nouveau', en: 'Art nouveau' },
-	'motif.pixel': { fr: 'Pixel art', en: 'Pixel art' },
-	'motif.minimal': { fr: 'Minimaliste', en: 'Minimalist' },
-	'motif.pop': { fr: 'Pop art', en: 'Pop art' },
-	'motif.futuriste': { fr: 'Futuriste', en: 'Futuristic' },
 	'couleur.noir': { fr: 'Noir', en: 'Black' },
 	'couleur.rouge': { fr: 'Rouge', en: 'Red' },
 	'couleur.bleu': { fr: 'Bleu', en: 'Blue' },

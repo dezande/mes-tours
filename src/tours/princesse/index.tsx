@@ -19,14 +19,14 @@
  *
  * Organisation du dossier :
  *   index.tsx    ce fichier : la scène, l'état de la routine et ses minuteries (gestes et clavier : src/hooks/)
- *   components/  Jeu (les cinq cartes côte à côte), DessinsDeCarte (les dos, les faces, le valet),
- *                Reglages (l'écrou ⚙ : dos et couleur des cartes, durée)
+ *   components/  Jeu (les cinq cartes côte à côte), DessinsDeCarte (le dos, les faces, le valet),
+ *                Reglages (l'écrou ⚙ : couleur du dos des cartes, durée)
  *   content/     LES CARTES : cartes.ts (les cinq, dans leur ordre de départ) et interface.ts (les textes)
  *   logic/       logique pure, sans DOM, testée sous Node (tests/tours/princesse/)
  *     routine.ts     l'état de la routine, la carte touchée, la carte cachée et les faces montrées
  *     melange.ts     l'ordre des faces et les ordres successifs du mélange, tirés au sort
  *     cartes.ts      forme, nom et index d'une carte, place des enseignes
- *     dessin.ts      les tracés : enseignes, dos, valet
+ *     dessin.ts      les tracés : enseignes, valet
  *     keys.ts        touches du clavier
  *     settings.ts    forme et validation des réglages
  * Les styles sont dans src/styles/tours/princesse/.
@@ -216,7 +216,7 @@ export default function Princesse() {
 		<>
 			{/* La scène reçoit tous les touchers. */}
 			<main id="stage" {...scene}>
-				<Jeu etat={etat} ordre={ordre} places={places} eparpillees={eparpillees} faces={facesAffichees(faces, ordre, etat)} sansAnimation={sansAnimation} langue={langue} motif={reglages.motif} couleur={reglages.couleur} />
+				<Jeu etat={etat} ordre={ordre} places={places} eparpillees={eparpillees} faces={facesAffichees(faces, ordre, etat)} sansAnimation={sansAnimation} langue={langue} couleur={reglages.couleur} />
 			</main>
 
 			{/* Ce qui est à l'écran, pour les lecteurs d'écran seulement. */}

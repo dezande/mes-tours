@@ -13,12 +13,11 @@
  */
 
 import type { Ref } from 'preact';
-import { DosDeCarte } from '../../../components/cartes/DosDeCarte.tsx';
 import type { Lang } from '../../../logic/i18n.ts';
 import type { Position } from '../logic/disposition.ts';
 import { nomDeLaCarte, ui } from '../content/interface.ts';
 import { estRetournee, faceDe, NOMBRE, type Etat } from '../logic/routine.ts';
-import { rangDeLaPlace, type Dessin, type Sens, type Teinte } from '../logic/settings.ts';
+import { rangDeLaPlace, type Sens, type Teinte } from '../logic/settings.ts';
 import { DosArcade } from './DosArcade.tsx';
 import { FaceDeCarte } from './FaceDeCarte.tsx';
 
@@ -31,7 +30,6 @@ interface Props {
 	/** Sans transition : les cartes reviennent face cachée d'un coup (ouverture, remise en place). */
 	sansAnimation: boolean;
 	langue: Lang;
-	motif: Dessin;
 	couleur: Teinte;
 	/** La rangée, que le tour mesure pour savoir quelle carte est touchée. */
 	rangeeRef: Ref<HTMLDivElement>;
@@ -39,7 +37,7 @@ interface Props {
 
 const RANGS = Array.from({ length: NOMBRE }, (_, i) => i);
 
-export function Rangee({ etat, places, sens, sansAnimation, langue, motif, couleur, rangeeRef }: Props) {
+export function Rangee({ etat, places, sens, sansAnimation, langue, couleur, rangeeRef }: Props) {
 	return (
 		<div id="rangee" ref={rangeeRef} className={sansAnimation ? 'no-anim' : undefined}>
 			{/* Les cartes dans l'ordre de la table, de gauche à droite : chacune avec son rang du codage. */}
@@ -52,8 +50,9 @@ export function Rangee({ etat, places, sens, sansAnimation, langue, motif, coule
 					<article key={i} className={`carte${retournee ? ' retournee' : ''}${face ? ' spectateur' : ''}`} data-index={i} data-place={place} data-couleur={couleur} aria-roledescription="carte"
 						style={{ '--x': x.toFixed(3), '--y': y.toFixed(3), '--rot': rot.toFixed(2) }}>
 						<div className="carte-pivot">
-							<div className="carte-face dos" data-motif={motif} aria-hidden={retournee}>
-								{motif === 'arcade' ? <DosArcade /> : <DosDeCarte dessin={motif} />}
+							{/* La couleur est posée sur le dos lui-même : c'est là que le style « Arcade » la lit. */}
+							<div className="carte-face dos" data-motif="arcade" data-couleur={couleur} aria-hidden={retournee}>
+								<DosArcade />
 							</div>
 							{/* La carte du spectateur est écrite dès qu'elle est la seule face cachée : prête quand elle se retourne. */}
 							<div className="carte-face avant" aria-hidden={!retournee} aria-label={retournee ? (face ? nomDeLaCarte(face, langue) : ui('carte.blanche', langue)) : undefined}>

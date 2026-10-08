@@ -1,15 +1,10 @@
 /*
- * Les tracés des cartes : les enseignes, le dos bleu façon Bicycle et le valet. Fonctions pures,
- * sans DOM : testées sous Node (tests/tours/princesse/dessin.test.ts). Les composants (components/)
- * en font des SVG.
+ * Les tracés des faces : les enseignes et le valet (le dos, lui, est une photo :
+ * components/DessinsDeCarte.tsx). Fonctions pures, sans DOM : testées sous Node
+ * (tests/tours/princesse/dessin.test.ts). Les composants (components/) en font des SVG.
  *
  * Tout est dessiné dans le repère de la carte, 100 de large pour 140 de haut (2,5 × 3,5 pouces),
  * sauf les enseignes, dessinées dans une case de 100 × 100 et posées à leur taille.
- *
- * Le dos n'est pas une copie du dos « Rider » de Bicycle : il en reprend l'allure — le bleu, la
- * marge blanche, une trame fine, un médaillon au centre et deux plus petits en haut et en bas — avec
- * des roues de bicyclette dans les médaillons. Il est symétrique de haut en bas et de gauche à
- * droite : une carte tête-bêche montre le même dos, et rien ne la distingue d'une autre.
  */
 
 import type { Enseigne } from './cartes.ts';
@@ -26,69 +21,6 @@ export const ENSEIGNE: Readonly<Record<Enseigne, string>> = {
 	trefle: `${cercle(50, 27, 20)}${cercle(27, 58, 20)}${cercle(73, 58, 20)}${cercle(50, 50, 12)}M47 52C47 74 41 88 31 96H69C59 88 53 74 53 52Z`,
 	pique: 'M50 4C40 24 6 40 6 62C6 76 17 84 29 84C38 84 44 79 47 73C46 84 41 91 31 96H69C59 91 54 84 53 73C56 79 62 84 71 84C83 84 94 76 94 62C94 40 60 24 50 4Z',
 };
-
-/* ---------- Le dos ---------- */
-
-/** La marge blanche du dos, puis le champ bleu, dans le repère de la carte. */
-export const DOS = { marge: 6, filet: 2.6 } as const;
-
-/** La trame fine du champ bleu : deux réseaux de traits croisés à 45°, tous les `pas`. */
-function trame(pas: number): string {
-	const [x0, y0, x1, y1] = [DOS.marge, DOS.marge, 100 - DOS.marge, 140 - DOS.marge];
-	const [l, h] = [x1 - x0, y1 - y0];
-	let d = '';
-	// Chaque trait coupe le champ d'un bord à l'autre ; k parcourt toutes les diagonales.
-	for (let k = -h; k <= l; k += pas) {
-		// Descendant vers la droite : x = x0 + k + t, y = y0 + t.
-		const debut = Math.max(0, -k);
-		const fin = Math.min(h, l - k);
-		if (fin > debut) d += `M${(x0 + k + debut).toFixed(2)} ${(y0 + debut).toFixed(2)}L${(x0 + k + fin).toFixed(2)} ${(y0 + fin).toFixed(2)}`;
-		// Montant vers la droite, son miroir : x = x1 - k - t.
-		if (fin > debut) d += `M${(x1 - k - debut).toFixed(2)} ${(y0 + debut).toFixed(2)}L${(x1 - k - fin).toFixed(2)} ${(y0 + fin).toFixed(2)}`;
-	}
-	return d;
-}
-
-/** Une roue de bicyclette : jante, moyeu et `rayons` rayons, autour de (cx, cy). */
-function roue(cx: number, cy: number, r: number, rayons: number): { jante: string; rayons: string; moyeu: string } {
-	let d = '';
-	for (let i = 0; i < rayons; i++) {
-		const a = (i / rayons) * 2 * Math.PI;
-		d += `M${(cx + Math.cos(a) * r * .18).toFixed(2)} ${(cy + Math.sin(a) * r * .18).toFixed(2)}L${(cx + Math.cos(a) * r).toFixed(2)} ${(cy + Math.sin(a) * r).toFixed(2)}`;
-	}
-	return { jante: `${cercle(cx, cy, r)}${cercle(cx, cy, r * .86)}`, rayons: d, moyeu: cercle(cx, cy, r * .18) };
-}
-
-/** Un fleuron d'angle : une volute dans le coin (x, y), tournée vers le centre de la carte. */
-function fleuron(x: number, y: number, sx: 1 | -1, sy: 1 | -1): string {
-	const p = (dx: number, dy: number): string => `${(x + dx * sx).toFixed(2)} ${(y + dy * sy).toFixed(2)}`;
-	return `M${p(0, 14)}C${p(0, 5)} ${p(5, 0)} ${p(14, 0)}M${p(4, 14)}C${p(4, 8)} ${p(8, 4)} ${p(14, 4)}`
-		+ `M${p(10, 10)}m-1.8 0a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0`;
-}
-
-const [CX, CY] = [50, 70];
-const CENTRE = roue(CX, CY, 15, 24);
-const HAUT = roue(CX, 31, 8, 12);
-const BAS = roue(CX, 109, 8, 12);
-const coins = [DOS.marge + DOS.filet + 2, 100 - DOS.marge - DOS.filet - 2];
-const coinsY = [DOS.marge + DOS.filet + 2, 140 - DOS.marge - DOS.filet - 2];
-
-/** Les tracés du dos, du fond vers le dessus. */
-export const DESSIN_DU_DOS = {
-	/** Le champ bleu, à l'intérieur de la marge blanche. */
-	champ: `M${DOS.marge} ${DOS.marge}H${100 - DOS.marge}V${140 - DOS.marge}H${DOS.marge}Z`,
-	trame: trame(3.2),
-	/** Le filet blanc qui longe le bord du champ. */
-	filet: `M${DOS.marge + DOS.filet} ${DOS.marge + DOS.filet}H${100 - DOS.marge - DOS.filet}V${140 - DOS.marge - DOS.filet}H${DOS.marge + DOS.filet}Z`,
-	/** Les fonds pleins des médaillons, qui cachent la trame. */
-	medaillons: `${cercle(CX, CY, 19)}${cercle(CX, 31, 10.5)}${cercle(CX, 109, 10.5)}`,
-	/** Leur bord, et la tige qui les relie. */
-	cadres: `${cercle(CX, CY, 19)}${cercle(CX, CY, 17.4)}${cercle(CX, 31, 10.5)}${cercle(CX, 109, 10.5)}M${CX} 41.5V51M${CX} 89V98.5`,
-	jantes: `${CENTRE.jante}${HAUT.jante}${BAS.jante}`,
-	rayons: `${CENTRE.rayons}${HAUT.rayons}${BAS.rayons}`,
-	moyeux: `${CENTRE.moyeu}${HAUT.moyeu}${BAS.moyeu}`,
-	fleurons: `${fleuron(coins[0]!, coinsY[0]!, 1, 1)}${fleuron(coins[1]!, coinsY[0]!, -1, 1)}${fleuron(coins[0]!, coinsY[1]!, 1, -1)}${fleuron(coins[1]!, coinsY[1]!, -1, -1)}`,
-} as const;
 
 /* ---------- Le valet ---------- */
 

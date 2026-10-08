@@ -2,13 +2,13 @@
 import { DEFAULTS, rangDeLaPlace, sanitizeSettings } from '../../../src/tours/cinq-cartes/logic/settings.ts';
 
 test('des réglages valides sont gardés tels quels', () => {
-	const valides = { sens: 'droite', motif: 'pixel', couleur: 'bleu', showHoldRing: false };
+	const valides = { sens: 'droite', couleur: 'bleu', showHoldRing: false };
 	expect(sanitizeSettings(valides)).toStrictEqual(valides);
 });
 
 test('chaque champ invalide reprend sa valeur par défaut, sans toucher aux autres', () => {
-	expect(sanitizeSettings({ sens: 'haut', motif: 'mix', couleur: 'bleu', showHoldRing: false })).toStrictEqual({ sens: DEFAULTS.sens, motif: DEFAULTS.motif, couleur: 'bleu', showHoldRing: false });
-	expect(sanitizeSettings({ sens: 'droite', motif: 'pop', couleur: 'vert', showHoldRing: 'oui' })).toStrictEqual({ sens: 'droite', motif: 'pop', couleur: DEFAULTS.couleur, showHoldRing: DEFAULTS.showHoldRing });
+	expect(sanitizeSettings({ sens: 'haut', couleur: 'bleu', showHoldRing: false })).toStrictEqual({ sens: DEFAULTS.sens, couleur: 'bleu', showHoldRing: false });
+	expect(sanitizeSettings({ sens: 'droite', couleur: 'vert', showHoldRing: 'oui' })).toStrictEqual({ sens: 'droite', couleur: DEFAULTS.couleur, showHoldRing: DEFAULTS.showHoldRing });
 });
 
 test('n’importe quelle donnée abîmée donne les réglages par défaut', () => {
@@ -25,7 +25,8 @@ test('le « 1 » à gauche, les places sont les rangs ; à droite, tout est en m
 	expect([0, 1, 2, 3, 4].map((p) => rangDeLaPlace(p, 'droite'))).toStrictEqual([4, 3, 2, 1, 0]);
 });
 
-test('par défaut, le dos « Arcade », rouge : l’allure de Balatro', () => {
-	expect([DEFAULTS.motif, DEFAULTS.couleur]).toStrictEqual(['arcade', 'rouge']);
-	expect(sanitizeSettings({ motif: 'arcade' }).motif).toBe('arcade');
+test('le dos « Arcade » ne se choisit pas : rouge par défaut, l’allure de Balatro', () => {
+	expect(DEFAULTS.couleur).toBe('rouge');
+	// Le dessin de dos d'une version précédente est oublié, la couleur gardée.
+	expect(sanitizeSettings({ motif: 'pop', couleur: 'noir' })).toStrictEqual({ ...DEFAULTS, couleur: 'noir' });
 });

@@ -70,6 +70,10 @@ test('écrou ⚙ : un réglage changé est gardé, la croix ramène au menu', as
 	const carte = await ouvrir('#/tours/pile-ou-face?reglages');
 	expect(document.querySelector('.titre-reglages')).toHaveTextContent('Réglages');
 	expect(document.querySelector('.nom-du-tour')).toHaveTextContent('Pile ou face');
+	// Le dos est un papier marqué « Prédiction » : seule l'encre se choisit, en trois couleurs.
+	expect(document.querySelector('#motif-choix')).toBeNull();
+	expect(document.querySelectorAll('#couleur-choix button')).toHaveLength(3);
+	expect(document.querySelector('.carte .dos .mot-ecrit')).toHaveTextContent('Prédiction');
 	fireEvent.click(document.querySelector('#couleur-choix button[data-valeur="rouge"]')!);
 	expect(carte.dataset.couleur).toBe('rouge');
 	expect(JSON.parse(localStorage.getItem('pile-ou-face:settings:v1')!)).toMatchObject({ couleur: 'rouge' });

@@ -25,6 +25,6 @@
 	margin: 6px 0 0;
 }
 
-// Choix du dos et de la couleur (components/_cartes.scss) : six dessins sur deux rangées de trois,
-// et les quatre couleurs sur une seule rangée, comme les dessins.
-@include cartes.vignettes($colonnes: 3, $colonnes-couleurs: 4);
+// Choix de l'encre (components/_cartes.scss) : les trois couleurs sur une seule rangée, chacune
+// montrée sur le papier marqué « Prédiction » (_cartes.scss).
+@include cartes.vignettes($colonnes: 3, $colonnes-couleurs: 3);

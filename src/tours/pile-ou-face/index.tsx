@@ -16,7 +16,7 @@
  *     piece.ts       l'état de la carte, et pile ou face selon la moitié touchée
  *     keys.ts        touches du clavier
  *     settings.ts    forme et validation des réglages
- * Les dos de cartes sont partagés avec les six prédictions (src/components/cartes/), les styles
+ * Le soulignement est partagé avec les six prédictions (src/components/cartes/), les styles
  * sont dans src/styles/tours/pile-ou-face/.
  */
 
@@ -112,7 +112,7 @@ export default function PileOuFace() {
 			{/* La scène reçoit tous les touchers. */}
 			<main id="stage" {...scene}>
 				<div id="table" className={sansAnimation ? 'no-anim' : undefined}>
-					<Carte etat={etat} coteEcrit={coteEcrit} langue={langue} motif={reglages.motif} couleur={reglages.couleur} />
+					<Carte etat={etat} coteEcrit={coteEcrit} langue={langue} couleur={reglages.couleur} />
 				</div>
 			</main>
 

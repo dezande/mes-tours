@@ -198,7 +198,7 @@ export default function CinqCartes() {
 		<>
 			{/* La scène reçoit tous les touchers. */}
 			<main id="stage" {...scene}>
-				<Rangee etat={etat} places={places} sens={reglages.sens} sansAnimation={sansAnimation} langue={langue} motif={reglages.motif} couleur={reglages.couleur} rangeeRef={rangeeRef} />
+				<Rangee etat={etat} places={places} sens={reglages.sens} sansAnimation={sansAnimation} langue={langue} couleur={reglages.couleur} rangeeRef={rangeeRef} />
 			</main>
 
 			{/* Ce qui est à l'écran, pour les lecteurs d'écran seulement. */}

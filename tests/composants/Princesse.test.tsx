@@ -58,8 +58,8 @@ test('au départ, les cinq cartes sont faces en bas', async () => {
 	expect(jeu.dataset.phase).toBe('depart');
 	expect(jeu.querySelectorAll('.carte')).toHaveLength(5);
 	expect(jeu.querySelectorAll('.carte.retournee')).toHaveLength(0);
-	// Chaque carte a son dos (bleu, façon Bicycle, par défaut) et sa face dessinés d'avance.
-	expect(jeu.querySelectorAll('.dos .dos-bicycle')).toHaveLength(5);
+	// Chaque carte a son dos (la photo, bleue par défaut) et sa face, posés d'avance.
+	expect(jeu.querySelectorAll('.dos img.photo-du-dos')).toHaveLength(5);
 	expect([...jeu.querySelectorAll('.carte')].every((c) => c.getAttribute('data-couleur') === 'bleu')).toBe(true);
 	expect(jeu.querySelectorAll('.avant .face')).toHaveLength(5);
 });
@@ -225,23 +225,20 @@ test('écrou ⚙ : la durée est gardée, « Rétablir » la remet à 5 s, la cr
 	expect(await screen.findByText('Choisis un tour')).toBeInTheDocument();
 });
 
-test('écrou ⚙ : le dos et sa couleur, choisis en regardant, valent pour les cartes', async () => {
+test('écrou ⚙ : la couleur du dos, choisie en regardant, vaut pour les cartes', async () => {
 	window.location.hash = '#/tours/princesse?reglages';
 	render(<App />);
-	await waitFor(() => expect(document.querySelector('#motif-choix')).not.toBeNull());
-	// Sept dos et quatre couleurs, chacun montré par une petite carte.
-	expect(document.querySelectorAll('#motif-choix button')).toHaveLength(7);
-	expect(document.querySelectorAll('#couleur-choix button')).toHaveLength(4);
-	expect(document.querySelector('#motif-choix [aria-checked="true"]')).toHaveAttribute('data-valeur', 'bicycle');
+	await waitFor(() => expect(document.querySelector('#couleur-choix')).not.toBeNull());
+	// Plus de choix du dessin : le dos est la photo, en trois couleurs, chacune montrée par une petite carte.
+	expect(document.querySelector('#motif-choix')).toBeNull();
+	expect(document.querySelectorAll('#couleur-choix button')).toHaveLength(3);
+	expect(document.querySelectorAll('#couleur-choix .vignette img.photo-du-dos')).toHaveLength(3);
 	expect(document.querySelector('#couleur-choix [aria-checked="true"]')).toHaveAttribute('data-valeur', 'bleu');
 	expect(document.querySelector('#sens-choix [aria-checked="true"]')).toHaveAttribute('data-valeur', 'gauche');
 	fireEvent.click(document.querySelector('#sens-choix [data-valeur="droite"]')!);
 	expect(JSON.parse(localStorage.getItem('princesse:settings:v1')!)).toMatchObject({ sens: 'droite' });
-	fireEvent.click(document.querySelector('#motif-choix [data-valeur="deco"]')!);
 	fireEvent.click(document.querySelector('#couleur-choix [data-valeur="rouge"]')!);
-	expect(JSON.parse(localStorage.getItem('princesse:settings:v1')!)).toMatchObject({ motif: 'deco', couleur: 'rouge' });
-	// Les aperçus des couleurs montrent le dos choisi.
-	expect([...document.querySelectorAll('#couleur-choix .vignette')].every((v) => v.getAttribute('data-motif') === 'deco')).toBe(true);
+	expect(JSON.parse(localStorage.getItem('princesse:settings:v1')!)).toMatchObject({ couleur: 'rouge' });
 	fireEvent.click(screen.getByRole('button', { name: 'Fermer' }));
 	expect(await screen.findByText('Choisis un tour')).toBeInTheDocument();
 	act(() => {
@@ -249,5 +246,5 @@ test('écrou ⚙ : le dos et sa couleur, choisis en regardant, valent pour les c
 	});
 	await waitFor(() => expect(document.querySelectorAll('#jeu .carte')).toHaveLength(5));
 	expect([...document.querySelectorAll('#jeu .carte')].every((c) => c.getAttribute('data-couleur') === 'rouge')).toBe(true);
-	expect(document.querySelectorAll('#jeu .dos[data-motif="deco"] svg.dos-motif')).toHaveLength(5);
+	expect(document.querySelectorAll('#jeu .dos img.photo-du-dos')).toHaveLength(5);
 });

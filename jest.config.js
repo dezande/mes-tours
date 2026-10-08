@@ -28,7 +28,7 @@ const commun = {
 	transformIgnorePatterns: ['/node_modules/(?!preact/)'],
 	moduleNameMapper: {
 		'\\.(scss|css)$': '<rootDir>/tests/outils/style.ts',
-		'\\.(svg|png|webp|woff2)$': '<rootDir>/tests/outils/fichier.ts',
+		'\\.(svg|png|jpg|webp|woff2)$': '<rootDir>/tests/outils/fichier.ts',
 	},
 	// Le second argument de expect() : le message qui dit ce qui a échoué.
 	setupFilesAfterEnv: ['jest-expect-message'],

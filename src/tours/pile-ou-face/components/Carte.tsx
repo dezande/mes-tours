@@ -15,7 +15,6 @@
 
 import { Fragment } from 'preact';
 import { useCallback, useLayoutEffect, useRef } from 'preact/hooks';
-import { DosDeCarte } from '../../../components/cartes/DosDeCarte.tsx';
 import { Soulignement } from '../../../components/cartes/Soulignement.tsx';
 import { useReajustement } from '../../../hooks/useReajustement.ts';
 import { plusGrandeEchelle } from '../../../logic/ajustement.ts';
@@ -24,7 +23,7 @@ import { ui } from '../content/interface.ts';
 import { PREDICTIONS } from '../content/predictions.ts';
 import { t } from '../../../logic/i18n.ts';
 import type { Cote, Etat } from '../logic/piece.ts';
-import type { Dessin, Teinte } from '../logic/settings.ts';
+import type { Teinte } from '../logic/settings.ts';
 import { DessinPiece } from './DessinPiece.tsx';
 
 /** Plus petite échelle du texte : en dessous, mieux vaut raccourcir la prédiction. */
@@ -42,14 +41,13 @@ interface Props {
 	/** Le côté dont la prédiction est écrite à l'avant (gardé quand la carte revient face cachée). */
 	coteEcrit: Cote | null;
 	langue: Lang;
-	motif: Dessin;
 	couleur: Teinte;
 }
 
 /** La prédiction d'un côté, ligne par ligne : seul un retour à la ligne du texte la casse. */
 const lignes = (cote: Cote, langue: Lang): string[] => (t(PREDICTIONS[cote], langue) ?? '').split('\n');
 
-export function Carte({ etat, coteEcrit, langue, motif, couleur }: Props) {
+export function Carte({ etat, coteEcrit, langue, couleur }: Props) {
 	const carteRef = useRef<HTMLElement>(null);
 	const avantRef = useRef<HTMLDivElement>(null);
 	const ecritureRef = useRef<HTMLDivElement>(null);
@@ -88,9 +86,9 @@ export function Carte({ etat, coteEcrit, langue, motif, couleur }: Props) {
 	return (
 		<article ref={carteRef} className={`carte${montree ? ' retournee' : ''}`} aria-roledescription="carte" data-couleur={couleur} data-cote={coteEcrit ?? undefined}>
 			<div className="carte-pivot">
-				{/* Le dos : un dessin SVG, rien à lire. */}
-				<div className="carte-face dos" data-motif={motif} aria-label={ui('carte.dos', langue)}>
-					<DosDeCarte dessin={motif} />
+				{/* Le dos : un papier marqué « Prédiction », à l'encre du réglage. */}
+				<div className="carte-face dos" aria-label={ui('carte.dos', langue)}>
+					<MotPrediction langue={langue} />
 				</div>
 				{/* L'avant : seule la carte retournée est à lire ; armée, elle ne dit encore rien. */}
 				<div ref={avantRef} className="carte-face avant" aria-hidden={!montree}>
@@ -114,6 +112,16 @@ export function Carte({ etat, coteEcrit, langue, motif, couleur }: Props) {
 				</div>
 			</div>
 		</article>
+	);
+}
+
+/** « Prédiction », écrit à la main et souligné : le dos de la carte, et des vignettes des réglages. */
+export function MotPrediction({ langue }: { langue: Lang }) {
+	return (
+		<div className="mot" aria-hidden="true">
+			<p className="mot-ecrit">{ui('carte.mot', langue)}</p>
+			<Soulignement index={1} />
+		</div>
 	);
 }
 

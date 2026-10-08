@@ -1,42 +1,27 @@
 /*
- * Les deux côtés d'une carte, en SVG : le dos (façon Bicycle, ou l'un de ceux des autres tours de
- * cartes, au choix des réglages), et la face — index dans les coins, enseignes à leur place, ou le
- * valet. Les tracés viennent de logic/dessin.ts, les places des enseignes de logic/cartes.ts ; les
- * couleurs sont posées par les classes (styles/tours/princesse/_cartes.scss).
+ * Les deux côtés d'une carte : le dos, une photo, et la face, en SVG — index dans les coins,
+ * enseignes à leur place, ou le valet. Les tracés de la face viennent de logic/dessin.ts, les places
+ * des enseignes de logic/cartes.ts ; les couleurs sont posées par les classes
+ * (styles/tours/princesse/_cartes.scss).
  *
- * Un dessin vectoriel plutôt qu'une image : net à toutes les tailles d'écran, il ne pèse rien dans
- * le cache hors-ligne.
+ * La face est un dessin vectoriel : nette à toutes les tailles d'écran, elle ne pèse rien dans le
+ * cache hors-ligne. Le dos est la photo d'un vrai dos Rider de Bicycle, empaquetée avec l'app.
  */
 
-import { DosDeCarte } from '../../../components/cartes/DosDeCarte.tsx';
-import type { Motif } from '../logic/settings.ts';
-import { CADRE_FIGURE, DEMI_VALET, DESSIN_DU_DOS, ENSEIGNE } from '../logic/dessin.ts';
+import photoDuDos from '../../../assets/images/princesse/dos.jpg';
+import { CADRE_FIGURE, DEMI_VALET, ENSEIGNE } from '../logic/dessin.ts';
 import { estFigure, estRouge, indexDeCarte, placesDesEnseignes, type Carte, type Enseigne } from '../logic/cartes.ts';
 
 /**
- * Le dos choisi dans les réglages. Façon Bicycle : marge blanche, champ tramé, médaillons aux roues
- * de bicyclette, fleurons d'angle. Les autres sont ceux des tours de cartes (src/components/cartes/).
- * Les couleurs suivent le data-couleur de la carte ou de la vignette.
+ * Le dos : la photo, bleue. Rouge ou noir, elle est passée en niveaux de gris puis teinte par le
+ * calque .teinte, qui suit le data-couleur de la carte ou de la vignette.
  */
-export function Dos({ motif }: { motif: Motif }) {
-	return motif === 'bicycle' ? <DosBicycle /> : <DosDeCarte dessin={motif} />;
-}
-
-function DosBicycle() {
-	const d = DESSIN_DU_DOS;
+export function Dos() {
 	return (
-		<svg className="dos-bicycle" viewBox="0 0 100 140" preserveAspectRatio="none" aria-hidden="true">
-			<rect className="marge" width="100" height="140" />
-			<path className="champ" d={d.champ} />
-			<path className="trame" d={d.trame} />
-			<path className="filet" d={d.filet} />
-			<path className="fleurons" d={d.fleurons} />
-			<path className="medaillons" d={d.medaillons} />
-			<path className="cadres" d={d.cadres} />
-			<path className="jantes" d={d.jantes} />
-			<path className="rayons" d={d.rayons} />
-			<path className="moyeux" d={d.moyeux} />
-		</svg>
+		<>
+			<img className="photo-du-dos" src={photoDuDos} alt="" draggable={false} />
+			<span className="teinte" aria-hidden="true" />
+		</>
 	);
 }
 

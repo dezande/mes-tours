@@ -29,7 +29,7 @@ Tous mes accessoires de scène dans **une seule application** : https://dezande.
 
 **La langue se choisit une fois, dans le menu principal** : les tours n'ont plus de choix de langue à eux (ni dans leurs réglages, ni sur la première slide de l'analyseur). En anglais, Pile ou face écrit « 0.20 euro / tails » et « heads ». La boule de cristal et la carte de visite n'ont qu'une interface en français ; ce qu'elles montrent au public, un nombre dans une boule ou au dos de la carte du Théâtre Robert-Houdin, n'a pas à changer de langue. À la toute première ouverture, l'app suit la langue du téléphone.
 
-Les réglages de chaque tour (dos des cartes, délai, routine de la boule…) sont gardés d'une ouverture à l'autre ; le menu du tour ne s'ouvre plus pendant la routine, seulement par l'écrou ⚙. Le doigt de l'appui de 3 s, relevé sur le menu, ne relance pas la tuile placée dessous ; après la croix ou l'appui de 3 s, le menu répond au premier toucher.
+Les réglages de chaque tour (couleur du dos des cartes, délai, routine de la boule…) sont gardés d'une ouverture à l'autre ; le menu du tour ne s'ouvre plus pendant la routine, seulement par l'écrou ⚙. Le doigt de l'appui de 3 s, relevé sur le menu, ne relance pas la tuile placée dessous ; après la croix ou l'appui de 3 s, le menu répond au premier toucher.
 
 ### Installer sur le téléphone
 
