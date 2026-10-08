@@ -41,6 +41,11 @@ export const TOURS: readonly Tour[] = [
 		nom: { fr: 'Morpion', en: 'Tic-tac-toe' },
 	},
 	{
+		// La version de « The Princess Card Trick » : cinq cartes, celle qui est pensée disparaît.
+		dossier: 'princesse',
+		nom: { fr: 'Princesse', en: 'Princess' },
+	},
+	{
 		dossier: 'six-predictions',
 		nom: { fr: 'Les six prédictions', en: 'The six predictions' },
 	},

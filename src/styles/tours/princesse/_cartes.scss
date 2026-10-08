@@ -1,0 +1,301 @@
+@use "sass:map";
+@use "tokens" as *;
+@use "../../abstracts/mixins" as *;
+
+/*
+ * Les cinq cartes côte à côte, au centre du tapis, sans se recouvrir (components/Jeu.tsx).
+ *
+ * Trois transformations se superposent, chacune sur son élément pour ne pas se gêner :
+ *   .carte        pose la carte (--x, --y, --rot), un peu de travers, puis la fait disparaître ;
+ *   .carte-pivot  la retourne (rotateY) ;
+ *   .carte-face   le dos et la face, dos à dos (backface-visibility).
+ */
+
+#jeu {
+	/*
+	 * La carte prend la plus grande taille qui tienne : cinq cartes en rangée, séparées par un
+	 * écart de --ecart de leur largeur. La rangée entière tient en largeur, et la carte ne dépasse pas
+	 * 70 % de la hauteur libre (le tour se joue en paysage : c'est la hauteur qui commande ; le reste
+	 * laisse la place au désordre de la rangée et au mélange, qui monte et descend).
+	 */
+	// Assez d'écart pour que deux voisines, un peu de travers, ne se touchent jamais (logic/disposition.ts).
+	--ecart: .22;
+	--dispo-w: calc(var(--app-w) - var(--safe-l) - var(--safe-r) - 40px);
+	--dispo-h: calc(var(--app-h) - var(--safe-t) - var(--safe-b) - 32px);
+	--carte-w: min(calc(var(--dispo-w) / (5 + 4 * var(--ecart))), calc(var(--dispo-h) * .7 / 1.4), 300px);
+	--carte-h: calc(var(--carte-w) * 1.4);
+	// D'une carte à la suivante : l'écart entre leurs centres.
+	--pas: calc(var(--carte-w) * (1 + var(--ecart)));
+	--rayon: calc(var(--carte-w) * .055);
+	position: relative;
+	// Exactement la largeur des cinq places : une colonne par carte, celle que l'artiste touche
+	// (index.tsx : placeDeLEventail).
+	width: calc(var(--pas) * 5);
+	height: var(--carte-h);
+}
+
+.carte {
+	// Écrites par components/Jeu.tsx (logic/disposition.ts) : la position de la carte, en places
+	// depuis le milieu de la rangée (--x), en hauteurs de carte (--y), son inclinaison (--rot), et
+	// son rang d'empilement (--z).
+	--x: 0;
+	--y: 0;
+	--rot: 0;
+	--z: 0;
+	position: absolute;
+	top: 0;
+	left: calc(50% - var(--carte-w) / 2);
+	width: var(--carte-w);
+	height: var(--carte-h);
+	z-index: calc(10 + var(--z));
+	// La carte tourne autour de son propre centre : la perspective est posée ici, et nulle part
+	// plus haut, pour qu'aucune carte ne partage d'espace 3D avec une autre.
+	perspective: 900px;
+	transform:
+		translate(calc(var(--x) * var(--pas)), calc(var(--y) * var(--carte-h)))
+		rotate(calc(var(--rot) * 1deg));
+	transition: transform .45s cubic-bezier(.3, .1, .25, 1);
+}
+
+// La carte pensée n'est plus là : elle disparaît d'un coup, sans transition.
+.carte.disparue {
+	visibility: hidden;
+	opacity: 0;
+	transition: none;
+}
+
+.carte-pivot {
+	@include cover;
+	transform-style: preserve-3d;
+	transition: transform .62s cubic-bezier(.4, .02, .2, 1);
+}
+
+.carte.retournee .carte-pivot {
+	transform: rotateY(180deg);
+}
+
+.carte-face {
+	@include cover;
+	@include backface-hidden;
+	border-radius: var(--rayon);
+	overflow: hidden;
+	box-shadow:
+		0 0 0 .5px rgba(0, 0, 0, .25),
+		-2px 2px 4px rgba(0, 0, 0, .35),
+		0 10px 22px rgba(0, 0, 0, .35);
+
+	svg {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+// ---------- Les dos (components/DessinsDeCarte.tsx : Dos) ----------
+
+// Les couleurs du dos, posées sur chaque carte et sur chaque vignette des réglages (data-couleur).
+.carte,
+.vignette {
+	@each $nom, $c in $dos-couleurs {
+		&[data-couleur="#{$nom}"] {
+			--dos-clair: #{map.get($c, clair)};
+			--dos-fonce: #{map.get($c, fonce)};
+			--filet: #{map.get($c, filet)};
+			--trait: #{map.get($c, trait)};
+		}
+	}
+}
+
+.dos {
+	--marge: calc(var(--carte-w) * .045);
+	background: $dos-blanc;
+}
+
+// Les dos des autres tours de cartes : un fond en dégradé dans la marge de papier, le dessin par-dessus.
+.dos:not([data-motif="bicycle"]),
+.vignette:not([data-motif="bicycle"]) {
+	background: linear-gradient(155deg, var(--dos-clair), var(--dos-fonce));
+	box-shadow:
+		inset 0 0 0 var(--marge) $dos-blanc,
+		inset 0 0 0 calc(var(--marge) + 1px) rgba(0, 0, 0, .3),
+		0 0 0 .5px rgba(0, 0, 0, .25),
+		-2px 2px 4px rgba(0, 0, 0, .35),
+		0 10px 22px rgba(0, 0, 0, .35);
+	color: var(--trait);
+}
+
+// Le dessin, à l'intérieur de la marge de papier (src/components/cartes/DosDeCarte.tsx).
+.carte-face svg.dos-motif,
+.vignette .dos-motif {
+	--retrait: calc(var(--marge) + 1px);
+	position: absolute;
+	top: var(--retrait);
+	left: var(--retrait);
+	width: calc(100% - 2 * var(--retrait));
+	height: calc(100% - 2 * var(--retrait));
+}
+
+// Le dos façon Bicycle : il dessine lui-même sa marge, et remplit la carte.
+.dos-bicycle {
+	.marge {
+		fill: $dos-blanc;
+	}
+
+	.champ {
+		fill: var(--dos-clair);
+	}
+
+	.trame {
+		fill: none;
+		stroke: var(--filet);
+		stroke-width: .32;
+		opacity: .5;
+	}
+
+	.filet,
+	.cadres,
+	.jantes,
+	.rayons,
+	.fleurons {
+		fill: none;
+		stroke: var(--filet);
+	}
+
+	.filet {
+		stroke-width: .7;
+	}
+
+	.medaillons {
+		fill: var(--dos-fonce);
+	}
+
+	.cadres {
+		stroke-width: .8;
+	}
+
+	.jantes {
+		stroke-width: .7;
+		fill-rule: evenodd;
+	}
+
+	.rayons {
+		stroke-width: .35;
+	}
+
+	.moyeux {
+		fill: var(--filet);
+	}
+
+	.fleurons {
+		stroke-width: .8;
+		stroke-linecap: round;
+	}
+}
+
+.vignette .dos-bicycle {
+	position: absolute;
+	inset: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+// ---------- La face (components/DessinsDeCarte.tsx : FaceDeCarte) ----------
+
+.avant {
+	transform: rotateY(180deg);
+	background: radial-gradient(130% 100% at 30% 20%, #fff, $carton 60%, $carton-ombre 140%);
+}
+
+.face {
+	&.rouge {
+		color: $rouge;
+	}
+
+	&.noire {
+		color: $noir;
+	}
+
+	.enseigne {
+		fill: currentColor;
+	}
+
+	.index text {
+		font-family: $index;
+		font-size: 14.5px;
+		font-weight: 700;
+		fill: currentColor;
+
+		// « 10 » : les deux chiffres serrés dans la largeur d'un seul.
+		&.serre {
+			font-size: 13px;
+			letter-spacing: -1.4px;
+		}
+	}
+
+	// Le valet : son cadre, et ses couleurs.
+	.fond-figure {
+		fill: #fff;
+	}
+
+	.cadre-figure {
+		fill: none;
+		stroke: $noir;
+		stroke-width: .7;
+	}
+
+	.milieu {
+		fill: none;
+		stroke: $noir;
+		stroke-width: .45;
+	}
+
+	.figure path:not(.enseigne, .milieu) {
+		stroke: $noir;
+		stroke-width: .45;
+		stroke-linejoin: round;
+		stroke-linecap: round;
+	}
+
+	.figure .rouge {
+		fill: $valet-rouge;
+	}
+
+	.figure .bleu {
+		fill: $valet-bleu;
+	}
+
+	.figure .jaune {
+		fill: $valet-jaune;
+	}
+
+	.figure .peau {
+		fill: $valet-peau;
+	}
+
+	.figure .blanc {
+		fill: #fff;
+	}
+
+	.figure .noir {
+		fill: $noir;
+		stroke: none;
+	}
+
+	.figure .trait {
+		fill: none;
+		stroke-width: .6;
+	}
+
+	.figure .trait.rouge {
+		stroke: $valet-rouge;
+	}
+}
+
+// À l'ouverture et au retour au départ, les cartes sont directement à leur place, faces en bas.
+#jeu.no-anim {
+	.carte,
+	.carte-pivot {
+		transition: none;
+	}
+}

@@ -1,0 +1,45 @@
+// Les tracés des cartes : les enseignes, le dos et le valet, bien formés et à leur place.
+import { CADRE_FIGURE, DEMI_VALET, DESSIN_DU_DOS, ENSEIGNE } from '../../../src/tours/princesse/logic/dessin.ts';
+import { ENSEIGNES } from '../../../src/tours/princesse/logic/cartes.ts';
+
+/** Les coordonnées absolues d'un tracé (commandes M, L, C, Q, H, V en majuscules seulement). */
+function points(d: string): number[][] {
+	const nombres = (texte: string): number[] => (texte.match(/-?\d*\.?\d+/g) ?? []).map(Number);
+	const liste: number[][] = [];
+	for (const [, commande, reste] of d.matchAll(/([MLCQ])([^MLCQHVZmlcqhvzaA]*)/g)) {
+		const n = nombres(reste!);
+		for (let i = 0; i + 1 < n.length; i += 2) liste.push([n[i]!, n[i + 1]!]);
+		void commande;
+	}
+	return liste;
+}
+
+test('chaque enseigne est dessinée, dans sa case de 100 × 100', () => {
+	for (const enseigne of ENSEIGNES) {
+		const liste = points(ENSEIGNE[enseigne]);
+		expect(liste.length, enseigne).toBeGreaterThan(3);
+		for (const [x, y] of liste) expect(x! >= 0 && x! <= 100 && y! >= 0 && y! <= 100, `${enseigne} : ${x}, ${y}`).toBe(true);
+	}
+});
+
+test('le dos est dessiné dans la carte, ses traits dans le champ bleu', () => {
+	for (const [nom, d] of Object.entries(DESSIN_DU_DOS)) {
+		expect(d.length, nom).toBeGreaterThan(10);
+		for (const [x, y] of points(d)) expect(x! >= 5.9 && x! <= 94.1 && y! >= 5.9 && y! <= 134.1, `${nom} : ${x}, ${y}`).toBe(true);
+	}
+});
+
+test('la trame du dos est symétrique de gauche à droite', () => {
+	const cles = (liste: number[][]): string => liste.map(([x, y]) => `${x!.toFixed(1)},${y!.toFixed(1)}`).sort().join(' ');
+	const trame = points(DESSIN_DU_DOS.trame);
+	expect(cles(trame.map(([x, y]) => [100 - x!, y!]))).toBe(cles(trame));
+});
+
+test('la moitié du valet reste dans son cadre, au-dessus de la ligne du milieu', () => {
+	const { x, y, l } = CADRE_FIGURE;
+	for (const piece of DEMI_VALET) {
+		for (const [px, py] of points(piece.d)) {
+			expect(px! >= x && px! <= x + l && py! >= y && py! <= 70, `${piece.teinte} : ${px}, ${py}`).toBe(true);
+		}
+	}
+});

@@ -160,6 +160,40 @@ def piece():
         if t[y][x] and k%2==0: t[y][x]='#fff4c4'
     return contour(t,'#2a1606')
 
+# ---------- Princesse : l'éventail à dos bleus, le cœur en face ----------
+def princesse():
+    t=toile()
+    bleus=['#0f2a5c','#1f4d9c','#3d74c9']
+    blancs=['#c3d1dc','#e6edf2','#ffffff']
+    def carte(x0,y0,w,h,face):
+        for y in range(y0,y0+h):
+            for x in range(x0,x0+w):
+                if (x in (x0,x0+w-1)) and (y in (y0,y0+h-1)): continue
+                bord = x in (x0,x0+w-1) or y in (y0,y0+h-1)
+                if bord: t[y][x]=blancs[2]
+                elif not face:
+                    # le champ bleu et sa trame claire, en losanges
+                    trame=((x-x0)+(y-y0))%3==0 or ((x-x0)-(y-y0))%3==0
+                    v=0.25+0.5*(1-(y-y0)/h)
+                    t[y][x]=bleus[2] if trame else ramp(v,bleus[:2],x,y)
+                else:
+                    v=0.95-0.5*((x-x0)/w)
+                    t[y][x]=ramp(v,blancs,x,y)
+    carte(1,8,14,20,False)
+    carte(6,6,14,20,False)
+    carte(11,4,14,20,False)
+    carte(16,7,15,22,True)
+    # le cœur rouge, au milieu de la carte de face
+    rouges=['#7a1c2c','#c8102e','#e0646e']
+    coeur=["0110110","1111111","1111111","0111110","0011100","0001000"]
+    for yy,ligne in enumerate(coeur):
+        for xx,b in enumerate(ligne):
+            if b=='1': t[15+yy][20+xx]=rouges[2] if (xx,yy) in ((1,1),(1,2)) else rouges[1] if yy<4 else rouges[0]
+    # l'index rouge dans le coin
+    for (x,y) in ((18,9),(18,10),(18,11),(19,11)):
+        t[y][x]=rouges[1]
+    return contour(t,'#0b1430')
+
 # ---------- Les six prédictions : l'éventail ----------
 def eventail():
     t=toile()
@@ -263,7 +297,7 @@ def en_grille(t):
         lignes.append(l)
     return lignes
 
-icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'morpion':morpion(),'six-predictions':eventail(),'analyseur-q':analyseur()}
+icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'morpion':morpion(),'princesse':princesse(),'six-predictions':eventail(),'analyseur-q':analyseur()}
 gear=ecrou()
 # palette commune
 couleurs=[]
@@ -287,6 +321,6 @@ def svg(grille,pal,ox,oy,s):
 corps=''
 for i,(k,v) in enumerate(out['icones'].items()):
     corps+=svg(v,out['palette'],20+i*180,20,5)
-corps+=svg(out['ecrou'],out['palette'],1120,40,5)
-open(__import__('os').path.join(__import__('os').path.dirname(__file__) or '.', 'apercu.svg'),'w').write(f'<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="200" shape-rendering="crispEdges"><rect width="1260" height="200" fill="#20306a"/>{corps}</svg>')
+corps+=svg(out['ecrou'],out['palette'],20+len(out['icones'])*180,40,5)
+open(__import__('os').path.join(__import__('os').path.dirname(__file__) or '.', 'apercu.svg'),'w').write(f'<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="200" shape-rendering="crispEdges"><rect width="1440" height="200" fill="#20306a"/>{corps}</svg>')
 print(len(couleurs),'couleurs')
