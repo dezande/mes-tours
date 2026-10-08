@@ -6,6 +6,7 @@
  */
 
 import { useEffect } from 'preact/hooks';
+import { EcranAllume } from './appareil/EcranAllume.tsx';
 import { TOURS } from './content/tours.ts';
 import { LangueProvider } from './langue/LangueContext.tsx';
 import { resoudre } from './logic/adresses.ts';
@@ -32,6 +33,7 @@ export function App() {
 				// Une clé par ouverture : rouvrir un tour repart toujours d'une nouvelle routine.
 				? <PageTour key={adresse.cle} dossier={page.dossier} enReglages={page.reglages} depuisLApp={adresse.depuisLApp} />
 				: <Menu />}
+			<EcranAllume />
 		</LangueProvider>
 	);
 }

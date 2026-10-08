@@ -122,6 +122,17 @@ test('le menu 16 bits montre les six tours, chacun avec son icône et son écrou
 	});
 }, TIMEOUT);
 
+test('l’écran reste allumé : la vidéo muette joue dès l’ouverture, au menu comme dans un tour', async () => {
+	await withApp(async (page) => {
+		const video = `(() => { const v = document.querySelector('video#keep-awake'); return v && v.muted && !v.paused ? 'joue' : null; })()`;
+		await attendre(page, video, 'la vidéo muette ne joue pas au menu');
+		await ouvrir(page, 'boule-de-cristal', `Boolean(document.querySelector('#number'))`);
+		await page.tap(HAUT);
+		await attendre(page, video, 'la vidéo muette ne joue plus dans le tour');
+		expect(await page.evaluate<number>(`document.querySelectorAll('video#keep-awake').length`), 'une seule vidéo, même après un changement de page').toBe(1);
+	});
+}, TIMEOUT);
+
 test('ouverte dans le navigateur, le menu dit que c’est une app ; installée, il ne le dit plus', async () => {
 	await withApp(async (page) => {
 		const bandeau = `(() => { const b = document.querySelector('#installation'); const r = b.getBoundingClientRect(); return { visible: !b.hidden && r.height > 0, titre: b.querySelector('.installation-titre').textContent, haut: r.top, basDesTuiles: document.querySelector('#tours').getBoundingClientRect().bottom }; })()`;
