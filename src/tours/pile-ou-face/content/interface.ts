@@ -21,8 +21,7 @@ export const INTERFACE = {
 		fr: 'À 0 s, la carte se retourne dès le toucher.',
 		en: 'At 0 s, the card flips as soon as you tap.',
 	},
-	'menu.motif': { fr: 'Dos de la carte', en: 'Card back' },
-	'menu.couleur': { fr: 'Couleur du dos', en: 'Back colour' },
+	'menu.couleur': { fr: 'Couleur de l\'encre', en: 'Ink colour' },
 	'menu.aides': {
 		fr: 'Aides visuelles : à masquer avant de jouer si le public voit l\'écran.',
 		en: 'Visual aids: hide them before performing if the audience can see the screen.',
@@ -62,23 +61,18 @@ export const INTERFACE = {
 	},
 
 	/*
-	 * Dos de la carte (la valeur enregistrée, elle, ne change pas : logic/settings.ts).
-	 * Ces noms ne sont plus écrits dans le menu, où chaque bouton montre le dos lui-même : ils
+	 * Couleur de l'encre (la valeur enregistrée, elle, ne change pas : logic/settings.ts).
+	 * Ces noms ne sont pas écrits dans le menu, où chaque bouton montre le dos lui-même : ils
 	 * servent d'étiquette aux lecteurs d'écran, qui ne voient pas les vignettes.
 	 */
-	'motif.deco': { fr: 'Art déco', en: 'Art deco' },
-	'motif.nouveau': { fr: 'Art nouveau', en: 'Art nouveau' },
-	'motif.pixel': { fr: 'Pixel art', en: 'Pixel art' },
-	'motif.minimal': { fr: 'Minimaliste', en: 'Minimalist' },
-	'motif.pop': { fr: 'Pop art', en: 'Pop art' },
-	'motif.futuriste': { fr: 'Futuriste', en: 'Futuristic' },
 	'couleur.noir': { fr: 'Noir', en: 'Black' },
 	'couleur.rouge': { fr: 'Rouge', en: 'Red' },
 	'couleur.bleu': { fr: 'Bleu', en: 'Blue' },
-	'couleur.blanc': { fr: 'Blanc', en: 'White' },
 
 	// La carte.
 	'carte.dos': { fr: 'Carte face cachée', en: 'Face-down card' },
+	// Le mot écrit au dos de la carte.
+	'carte.mot': { fr: 'Prédiction', en: 'Prediction' },
 } as const satisfies Record<string, Texte>;
 
 export type CleInterface = keyof typeof INTERFACE;

@@ -1,13 +1,14 @@
 /*
  * Les réglages de Pile ou face, ouverts par l'écrou ⚙ du menu principal : délai avant le
- * retournement, dos et couleur de la carte, jauge de l'appui long, réglages par défaut.
+ * retournement, couleur de l'encre, jauge de l'appui long, réglages par défaut.
  */
 
-import { ChoixIllustre, Vignette } from '../../../components/cartes/ChoixIllustre.tsx';
+import { ChoixIllustre } from '../../../components/cartes/ChoixIllustre.tsx';
 import { PanneauReglages } from '../../../components/PanneauReglages.tsx';
 import type { Lang } from '../../../logic/i18n.ts';
 import { ui, type CleInterface } from '../content/interface.ts';
-import { DELAI_MAX, DESSINS, TEINTES, type Settings } from '../logic/settings.ts';
+import { DELAI_MAX, TEINTES, type Settings } from '../logic/settings.ts';
+import { MotPrediction } from './Carte.tsx';
 
 interface Props {
 	reglages: Settings;
@@ -35,16 +36,10 @@ export function Reglages({ reglages, langue, enregistrer }: Props) {
 				<p className="hint slider-hint">{ui('menu.delaiAide', langue)}</p>
 			</div>
 
-			{/* Les aperçus montrent la carte telle qu'elle sera : les dos dans la couleur en cours,
-			    les couleurs sur le dos en cours. */}
-			<div className="card">
-				<div className="row-label">{ui('menu.motif', langue)}</div>
-				<ChoixIllustre id="motif-choix" etiquette={ui('menu.motif', langue)} valeurs={DESSINS} choisie={reglages.motif} nom={(valeur) => ui(`motif.${valeur}` as CleInterface, langue)} apercu={(dessin) => <Vignette dessin={dessin} teinte={reglages.couleur} />} choisir={(motif) => changer({ motif })} />
-			</div>
-
+			{/* Le dos est un papier marqué « Prédiction » : seule l'encre se choisit, en regardant. */}
 			<div className="card">
 				<div className="row-label">{ui('menu.couleur', langue)}</div>
-				<ChoixIllustre id="couleur-choix" etiquette={ui('menu.couleur', langue)} couleurs valeurs={TEINTES} choisie={reglages.couleur} nom={(valeur) => ui(`couleur.${valeur}` as CleInterface, langue)} apercu={(teinte) => <Vignette dessin={reglages.motif} teinte={teinte} />} choisir={(couleur) => changer({ couleur })} />
+				<ChoixIllustre id="couleur-choix" etiquette={ui('menu.couleur', langue)} couleurs valeurs={TEINTES} choisie={reglages.couleur} nom={(valeur) => ui(`couleur.${valeur}` as CleInterface, langue)} apercu={(teinte) => <span className="vignette papier" data-couleur={teinte}><MotPrediction langue={langue} /></span>} choisir={(couleur) => changer({ couleur })} />
 			</div>
 		</PanneauReglages>
 	);

@@ -38,8 +38,8 @@ interface Props {
 	autresAides?: ComponentChildren;
 	/** « Rétablir les réglages par défaut ». */
 	defauts: { libelle: string; retablir: () => void };
-	/** Les réglages propres au tour, chacun dans un bloc .card. */
-	children: ComponentChildren;
+	/** Les réglages propres au tour, chacun dans un bloc .card (aucun pour les six prédictions). */
+	children?: ComponentChildren;
 }
 
 export function PanneauReglages({ id = 'menu', classeNom = 'menu-version', aide, jauge, autresAides, defauts, children }: Props) {

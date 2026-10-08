@@ -2,8 +2,9 @@
  * Les dos de cartes, dessinés en SVG (DosDeCarte.tsx) : ceux de Pile ou face et des six prédictions.
  *
  * Six dessins, d'époques et d'esprits différents — Art déco, Art nouveau, pixel art, minimaliste,
- * pop art et futuriste — tracés dans la couleur du réglage, sur le fond du réglage
- * (styles/tours/<dossier>/_cartes.scss). Un dessin vectoriel plutôt qu'une image : il reste net à toutes les
+ * pop art et futuriste —, un par carte des six prédictions. Ils sont tracés dans la couleur du
+ * réglage, sur le fond du réglage (styles/tours/<dossier>/_cartes.scss) : seule la couleur se
+ * choisit, jamais le dessin. Pile ou face, lui, a un dos de papier (son components/Carte.tsx). Un dessin vectoriel plutôt qu'une image : il reste net à toutes les
  * tailles d'écran, ne pèse rien dans le cache hors-ligne, et suit la couleur choisie sans qu'on
  * ait à préparer un fichier par combinaison — six dessins fois quatre couleurs feraient
  * vingt-quatre images.
@@ -275,7 +276,7 @@ const FUTURISTE: Trait[] = [
 	{ d: 'M46 46h8v3h-8ZM46 91h8v3h-8Z' },
 ];
 
-/** Les dessins de dos, dans l'ordre des réglages. */
+/** Les dessins de dos des six prédictions, un par carte, dans l'ordre du paquet. */
 export const DESSINS_DE_DOS = ['deco', 'nouveau', 'pixel', 'minimal', 'pop', 'futuriste'] as const;
 export type DessinDeDos = (typeof DESSINS_DE_DOS)[number];
 

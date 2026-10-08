@@ -23,7 +23,7 @@ import { t, type Lang } from '../../../logic/i18n.ts';
 import { CARTES } from '../content/cartes.ts';
 import { ui } from '../content/interface.ts';
 import type { Cran } from '../logic/etalement.ts';
-import type { Dessin, Teinte } from '../logic/settings.ts';
+import type { Dessin, Teinte } from '../logic/dos.ts';
 
 /** Plus petite échelle du texte : en dessous, mieux vaut raccourcir la prédiction. */
 const MIN_FIT = 0.25;

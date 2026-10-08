@@ -1,36 +1,6 @@
 @use "tokens" as *;
 @use "../../components/panneau-reglages" as panneau;
-@use "../../components/cartes";
 
 // Le panneau de réglages, sobre, sur le tapis (components/_panneau-reglages.scss).
 @include panneau.panneau-reglages($fond: $bg, $texte: $ink, $texte-doux: $ink-soft,
 	$filet: $ink-faint, $accent: $accent, $carte: $panel, $serif: $serif);
-
-// Choix du dos et de la couleur (components/_cartes.scss) : les couleurs tiennent sur une seule
-// rangée.
-@include cartes.vignettes($colonnes: 4, $colonnes-couleurs: 5);
-
-// Le bouton « mélange » : trois cartes en éventail, chacune dans un autre style.
-.vignette-mix {
-	position: relative;
-	display: block;
-	width: 100%;
-	aspect-ratio: 5 / 7;
-
-	.vignette {
-		--marge: 2px;
-		position: absolute;
-		top: 4%;
-		left: 0;
-		width: 68%;
-		border-radius: 4px;
-
-		&:nth-child(2) {
-			transform: translate(23%, 8%);
-		}
-
-		&:nth-child(3) {
-			transform: translate(46%, 16%);
-		}
-	}
-}

@@ -91,113 +91,52 @@
 	}
 }
 
-// ---------- Les dos (components/DessinsDeCarte.tsx : Dos) ----------
+// ---------- Le dos (components/DessinsDeCarte.tsx : Dos) ----------
 
-// Les couleurs du dos, posées sur chaque carte et sur chaque vignette des réglages (data-couleur).
-.carte,
+// La photo remplit la carte, ou la vignette des réglages ; ses coins sont ceux de la carte.
+.dos,
 .vignette {
-	@each $nom, $c in $dos-couleurs {
-		&[data-couleur="#{$nom}"] {
-			--dos-clair: #{map.get($c, clair)};
-			--dos-fonce: #{map.get($c, fonce)};
-			--filet: #{map.get($c, filet)};
-			--trait: #{map.get($c, trait)};
-		}
-	}
-}
-
-.dos {
-	--marge: calc(var(--carte-w) * .045);
 	background: $dos-blanc;
+	// Le calque de teinte ne se mélange qu'à la photo, jamais au tapis derrière la carte.
+	isolation: isolate;
 }
 
-// Les dos des autres tours de cartes : un fond en dégradé dans la marge de papier, le dessin par-dessus.
-.dos:not([data-motif="bicycle"]),
-.vignette:not([data-motif="bicycle"]) {
-	background: linear-gradient(155deg, var(--dos-clair), var(--dos-fonce));
-	box-shadow:
-		inset 0 0 0 var(--marge) $dos-blanc,
-		inset 0 0 0 calc(var(--marge) + 1px) rgba(0, 0, 0, .3),
-		0 0 0 .5px rgba(0, 0, 0, .25),
-		-2px 2px 4px rgba(0, 0, 0, .35),
-		0 10px 22px rgba(0, 0, 0, .35);
-	color: var(--trait);
-}
-
-// Le dessin, à l'intérieur de la marge de papier (src/components/cartes/DosDeCarte.tsx).
-.carte-face svg.dos-motif,
-.vignette .dos-motif {
-	--retrait: calc(var(--marge) + 1px);
-	position: absolute;
-	top: var(--retrait);
-	left: var(--retrait);
-	width: calc(100% - 2 * var(--retrait));
-	height: calc(100% - 2 * var(--retrait));
-}
-
-// Le dos façon Bicycle : il dessine lui-même sa marge, et remplit la carte.
-.dos-bicycle {
-	.marge {
-		fill: $dos-blanc;
-	}
-
-	.champ {
-		fill: var(--dos-clair);
-	}
-
-	.trame {
-		fill: none;
-		stroke: var(--filet);
-		stroke-width: .32;
-		opacity: .5;
-	}
-
-	.filet,
-	.cadres,
-	.jantes,
-	.rayons,
-	.fleurons {
-		fill: none;
-		stroke: var(--filet);
-	}
-
-	.filet {
-		stroke-width: .7;
-	}
-
-	.medaillons {
-		fill: var(--dos-fonce);
-	}
-
-	.cadres {
-		stroke-width: .8;
-	}
-
-	.jantes {
-		stroke-width: .7;
-		fill-rule: evenodd;
-	}
-
-	.rayons {
-		stroke-width: .35;
-	}
-
-	.moyeux {
-		fill: var(--filet);
-	}
-
-	.fleurons {
-		stroke-width: .8;
-		stroke-linecap: round;
-	}
-}
-
-.vignette .dos-bicycle {
+.photo-du-dos,
+.teinte {
 	position: absolute;
 	inset: 0;
 	display: block;
 	width: 100%;
 	height: 100%;
+}
+
+.photo-du-dos {
+	object-fit: cover;
+	pointer-events: none;
+	user-select: none;
+}
+
+// En rouge ou en noir : la photo en niveaux de gris, l'encre bleue poussée jusqu'au noir, puis le
+// calque de l'encre choisie, en « screen » — il teint ce qui était noir et laisse le blanc blanc.
+.teinte {
+	display: none;
+	mix-blend-mode: screen;
+}
+
+.carte,
+.vignette {
+	@each $nom, $encre in $dos-encres {
+		&[data-couleur="#{$nom}"] {
+			.photo-du-dos {
+				filter: grayscale(1) contrast(1.7) brightness(1.08);
+			}
+
+			.teinte {
+				display: block;
+				background: $encre;
+			}
+		}
+	}
 }
 
 // ---------- La face (components/DessinsDeCarte.tsx : FaceDeCarte) ----------

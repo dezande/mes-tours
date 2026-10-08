@@ -56,8 +56,7 @@
 }
 
 // Les couleurs de dos, le retournement, le dos et l'avant écrit à la main (components/_cartes.scss).
-// Chaque carte a ses couleurs : le réglage « mix » en donne une différente à chaque carte
-// (components/Paquet.tsx, logic/settings.ts).
+// Chaque carte a sa couleur, tirée au sort à chaque paquet (components/Paquet.tsx, logic/dos.ts).
 @include cartes.cartes($marge-texte: clamp(10px, 4.5%, 22px));
 
 .carte {

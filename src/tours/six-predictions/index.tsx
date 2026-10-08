@@ -16,9 +16,10 @@
  *     cartes.ts      forme d'une carte, vérification du contenu
  *     paquet.ts      l'état du paquet et ce que chaque toucher en fait
  *     etalement.ts   de combien chaque carte du dessous dépasse de sa voisine, tiré au sort
+ *     dos.ts         le dessin de chaque carte, et les couleurs tirées au sort
  *     keys.ts        touches du clavier
  *     settings.ts    forme et validation des réglages
- * Les dos de cartes et le soulignement sont partagés avec Pile ou face (src/components/cartes/),
+ * Les dessins des dos et le soulignement sont partagés avec Pile ou face (src/components/cartes/),
  * les styles sont dans src/styles/tours/six-predictions/.
  */
 
@@ -34,6 +35,7 @@ import { Paquet } from './components/Paquet.tsx';
 import { Reglages } from './components/Reglages.tsx';
 import { CARTES } from './content/cartes.ts';
 import { ui } from './content/interface.ts';
+import { teintesAuHasard, type Teinte } from './logic/dos.ts';
 import { crans, nouveauSemis, type Cran } from './logic/etalement.ts';
 import { keyAction } from './logic/keys.ts';
 import { apresToucher, compteurLabel, DEPART, estVide, remettre, type Etat } from './logic/paquet.ts';
@@ -64,6 +66,8 @@ const ACTION_GUARD_MS = 260;
  * jamais sur le même étalement.
  */
 const nouvelEtalement = (): Cran[] => crans(nouveauSemis(), NOMBRE);
+/** Les couleurs des dos, elles aussi neuves à chaque ouverture et à chaque remise du paquet. */
+const nouvellesTeintes = (): Teinte[] => teintesAuHasard(NOMBRE);
 
 /** Ce qui est à l'écran, pour les lecteurs d'écran seulement. */
 function annonce(etat: Etat, langue: Lang): string {
@@ -80,6 +84,7 @@ export default function SixPredictions() {
 
 	const [etat, setEtat] = useState<Etat>(DEPART);
 	const [etalement, setEtalement] = useState<Cran[]>(nouvelEtalement);
+	const [teintes, setTeintes] = useState<Teinte[]>(nouvellesTeintes);
 	// Lus par les gestes et le clavier, qui doivent toujours voir la dernière valeur.
 	const etatRef = useRef(etat);
 	const prochainToucherA = useRef(0);
@@ -115,6 +120,7 @@ export default function SixPredictions() {
 		prochainToucherA.current = 0;
 		setRemises((n) => n + 1);
 		setEtalement(nouvelEtalement());
+		setTeintes(nouvellesTeintes());
 		changer(remettre());
 	}, [changer]);
 
@@ -140,7 +146,7 @@ export default function SixPredictions() {
 		<>
 			{/* La scène reçoit tous les touchers. */}
 			<main id="stage" {...scene}>
-				<Paquet etat={etat} etalement={etalement} sansAnimation={sansAnimation} langue={langue} motif={reglages.motif} couleur={reglages.couleur} />
+				<Paquet etat={etat} etalement={etalement} sansAnimation={sansAnimation} langue={langue} teintes={teintes} />
 			</main>
 
 			{/* Ce qui est à l'écran, pour les lecteurs d'écran seulement. */}

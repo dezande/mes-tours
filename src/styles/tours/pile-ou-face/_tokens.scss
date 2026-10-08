@@ -16,3 +16,8 @@ $fond: (
 	radial-gradient(90% 62% at 50% 40%, rgba(255, 240, 210, .1), transparent 70%),
 	radial-gradient(130% 95% at 50% 46%, $nuit-clair, $nuit 45%, $nuit-sombre 100%),
 );
+
+// Les encres du réglage « couleur » (_cartes.scss) : le bleu-noir des tours de cartes ($encre), puis
+// un bleu de stylo-bille et un rouge de correcteur.
+$encre-bleue: #1f4fa8;
+$encre-rouge: #b0202c;

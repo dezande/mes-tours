@@ -1,5 +1,5 @@
-// Les tracés des cartes : les enseignes, le dos et le valet, bien formés et à leur place.
-import { CADRE_FIGURE, DEMI_VALET, DESSIN_DU_DOS, ENSEIGNE } from '../../../src/tours/princesse/logic/dessin.ts';
+// Les tracés des faces : les enseignes et le valet, bien formés et à leur place.
+import { CADRE_FIGURE, DEMI_VALET, ENSEIGNE } from '../../../src/tours/princesse/logic/dessin.ts';
 import { ENSEIGNES } from '../../../src/tours/princesse/logic/cartes.ts';
 
 /** Les coordonnées absolues d'un tracé (commandes M, L, C, Q, H, V en majuscules seulement). */
@@ -20,19 +20,6 @@ test('chaque enseigne est dessinée, dans sa case de 100 × 100', () => {
 		expect(liste.length, enseigne).toBeGreaterThan(3);
 		for (const [x, y] of liste) expect(x! >= 0 && x! <= 100 && y! >= 0 && y! <= 100, `${enseigne} : ${x}, ${y}`).toBe(true);
 	}
-});
-
-test('le dos est dessiné dans la carte, ses traits dans le champ bleu', () => {
-	for (const [nom, d] of Object.entries(DESSIN_DU_DOS)) {
-		expect(d.length, nom).toBeGreaterThan(10);
-		for (const [x, y] of points(d)) expect(x! >= 5.9 && x! <= 94.1 && y! >= 5.9 && y! <= 134.1, `${nom} : ${x}, ${y}`).toBe(true);
-	}
-});
-
-test('la trame du dos est symétrique de gauche à droite', () => {
-	const cles = (liste: number[][]): string => liste.map(([x, y]) => `${x!.toFixed(1)},${y!.toFixed(1)}`).sort().join(' ');
-	const trame = points(DESSIN_DU_DOS.trame);
-	expect(cles(trame.map(([x, y]) => [100 - x!, y!]))).toBe(cles(trame));
 });
 
 test('la moitié du valet reste dans son cadre, au-dessus de la ligne du milieu', () => {

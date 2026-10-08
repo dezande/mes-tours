@@ -37,6 +37,15 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **Les dos des cartes : chaque tour a le sien, seule la couleur se règle.** Plus de choix du dessin dans les réglages.
+  - **Pile ou face : le dos est un papier marqué « Prédiction »** (« Prediction » en anglais), écrit à la main en travers de toute la largeur de la carte et souligné, sur le même papier crème que l'avant. Le réglage de couleur devient celui de l'encre — noir, bleu ou rouge —, pour le mot du dos comme pour la prédiction de l'avant ; le blanc disparaît.
+  - **Princesse : le dos est la photo d'un vrai dos Rider de Bicycle** (`src/assets/images/princesse/dos.jpg`, empaquetée avec l'app et gardée hors-ligne), à la place du dos dessiné façon Bicycle. En bleu, la photo telle quelle ; en rouge ou en noir, elle est passée en niveaux de gris puis teinte de la couleur choisie. Le blanc disparaît.
+  - **Les cinq cartes : toujours le dos « Arcade »**, fait pour le tour, dans sa couleur (rouge par défaut, bleu, noir ou blanc). Correction : la couleur choisie dans les réglages ne s'appliquait qu'aux vignettes, jamais aux cartes sur la table, qui restaient rouges ; elle est maintenant posée sur chaque dos (test ajouté).
+  - **Les six prédictions : un dessin par carte, des couleurs tirées au sort.** Le paquet montre les six dessins (Art déco, Art nouveau, pixel art, minimaliste, pop art, futuriste), toujours dans le même ordre ; leurs couleurs sont tirées au sort à chaque ouverture et à chaque remise du paquet, deux cartes voisines n'ayant jamais la même. Les réglages n'ont plus de dos ni de couleur.
+  - Le dos et la couleur enregistrés par une version précédente sont oubliés sans rien casser (la couleur est gardée quand elle existe encore). Tests des réglages des quatre tours et du tirage des couleurs.
+
 ## [1.4.0] — 2026-10-08
 
 46 commits

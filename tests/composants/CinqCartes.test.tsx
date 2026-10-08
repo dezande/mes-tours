@@ -130,6 +130,15 @@ test('écrou ⚙ : le dos choisi est gardé, « Rétablir » le remet, le codage
 	await waitFor(() => expect(document.querySelector('#couleur-choix [data-valeur="rouge"]')).toHaveAttribute('aria-checked', 'true'));
 });
 
+test('la couleur choisie dans les réglages est celle des dos sur la table', async () => {
+	localStorage.setItem('cinq-cartes:settings:v1', JSON.stringify({ couleur: 'bleu' }));
+	await ouvrir('#/tours/cinq-cartes');
+	const dos = [...document.querySelectorAll<HTMLElement>('#rangee .dos')];
+	expect(dos).toHaveLength(5);
+	// Le style « Arcade » lit la couleur sur le dos lui-même (styles/tours/cinq-cartes/_balatro.scss).
+	for (const d of dos) expect(d.dataset.couleur).toBe('bleu');
+});
+
 test('écrou ⚙ : le mode entraînement joue la routine, « Recommencer » remet les dos, « Retour aux réglages » y revient', async () => {
 	await ouvrir('#/tours/cinq-cartes?reglages');
 	fireEvent.click(document.getElementById('entrainement-btn')!);

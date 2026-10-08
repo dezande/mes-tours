@@ -8,7 +8,7 @@ import type { Lang } from '../../../logic/i18n.ts';
 import { CARTES } from '../content/cartes.ts';
 import type { Cran } from '../logic/etalement.ts';
 import { estVide, type Etat } from '../logic/paquet.ts';
-import { dessinDeCarte, teinteDeCarte, type Couleur, type Motif } from '../logic/settings.ts';
+import { dessinDeCarte, type Teinte } from '../logic/dos.ts';
 import { Carte } from './Carte.tsx';
 
 interface Props {
@@ -22,11 +22,11 @@ interface Props {
 	 */
 	sansAnimation: boolean;
 	langue: Lang;
-	motif: Motif;
-	couleur: Couleur;
+	/** La couleur du dos de chaque carte, tirée au sort à chaque paquet (logic/dos.ts). */
+	teintes: readonly Teinte[];
 }
 
-export function Paquet({ etat, etalement, sansAnimation, langue, motif, couleur }: Props) {
+export function Paquet({ etat, etalement, sansAnimation, langue, teintes }: Props) {
 	const classes = [estVide(etat, CARTES.length) && 'vide', sansAnimation && 'no-anim'].filter(Boolean).join(' ');
 	return (
 		<div id="paquet" className={classes || undefined}>
@@ -45,9 +45,9 @@ export function Paquet({ etat, etalement, sansAnimation, langue, motif, couleur 
 						lisible={profondeur === 0 && etat.retournee}
 						cran={etalement[i]!}
 						langue={langue}
-						// Avec « mix », chaque carte a son dessin et sa couleur (logic/settings.ts).
-						dessin={dessinDeCarte(motif, i)}
-						teinte={teinteDeCarte(couleur, i)}
+						// Chaque carte a son dessin, et sa couleur tirée au sort (logic/dos.ts).
+						dessin={dessinDeCarte(i)}
+						teinte={teintes[i]!}
 					/>
 				);
 			})}

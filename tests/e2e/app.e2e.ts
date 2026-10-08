@@ -685,13 +685,17 @@ test('écrou ⚙ : tous les réglages ont la même structure, le nom du tour en 
 			expect(lu.titre, `${dossier} : titre`).toBe('Réglages');
 			expect(lu.nom, `${dossier} : nom du tour sous le titre`).toBe(TOURS.find((t) => t.dossier === dossier)!.nom.fr);
 			expect(lu.version, `${dossier} : une version est encore affichée`).toBe(false);
-			structures.push(lu.blocs.filter((b, i, liste) => b !== 'réglage' || liste[i - 1] !== 'réglage'));
+			structures.push([dossier, ...lu.blocs.filter((b, i, liste) => b !== 'réglage' || liste[i - 1] !== 'réglage')]);
 			await page.evaluate(dansLeTour(`document.querySelector('#close-btn').click()`));
 			await attendreLeMenu(page);
 		}
 		// Le même ordre partout : l'en-tête, les réglages propres au tour, puis les blocs communs.
 		// Ni l'état de l'écran allumé (il reste allumé sans qu'on ait à le voir), ni l'aide des gestes.
-		for (const structure of structures) expect(structure).toStrictEqual(['en-tête', 'réglage', 'aides', 'défauts']);
+		// Les six prédictions n'ont aucun réglage à elles : leurs dos ne se règlent pas.
+		for (const [dossier, ...structure] of structures) {
+			const attendue = dossier === 'six-predictions' ? ['en-tête', 'aides', 'défauts'] : ['en-tête', 'réglage', 'aides', 'défauts'];
+			expect(structure, dossier).toStrictEqual(attendue);
+		}
 	});
 }, TIMEOUT);
 
@@ -737,49 +741,42 @@ test('écrou ⚙ : en anglais, « Settings » et le nom anglais du tour', async 
 
 test('les six dos de cartes sont symétriques, de haut en bas et de gauche à droite', async () => {
 	// Chaque dos dessiné en grand, comparé à sa copie retournée : les pixels qui ne se recouvrent pas
-	// sont comptés (en part des pixels dessinés).
+	// sont comptés (en part des pixels dessinés) : ceux des six prédictions, un par carte.
+	const ecarts = (selecteur: string) => dansLeTour(`(async () => {
+		const L = 200, H = 280, resultats = [];
+		for (const [rang, dessin] of [...document.querySelectorAll('${selecteur}')].entries()) {
+			const svg = dessin.cloneNode(true);
+			svg.setAttribute('width', L); svg.setAttribute('height', H); svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg'); svg.setAttribute('color', '#000');
+			const image = new Image(); image.src = 'data:image/svg+xml,' + encodeURIComponent(svg.outerHTML); await image.decode();
+			const pixels = (sx, sy) => { const c = document.createElement('canvas'); c.width = L; c.height = H; const g = c.getContext('2d'); g.translate(sx < 0 ? L : 0, sy < 0 ? H : 0); g.scale(sx, sy); g.drawImage(image, 0, 0); return g.getImageData(0, 0, L, H).data; };
+			const [a, v, m] = [pixels(1, 1), pixels(1, -1), pixels(-1, 1)];
+			let encre = 0, dv = 0, dm = 0;
+			for (let k = 3; k < a.length; k += 4) { const A = a[k] > 100; if (A) encre++; if (A !== (v[k] > 100)) dv++; if (A !== (m[k] > 100)) dm++; }
+			resultats.push({ nom: '${selecteur} ' + rang, hautBas: dv / encre, gaucheDroite: dm / encre });
+		}
+		return resultats;
+	})()`);
 	await withApp(async (page) => {
-		await ouvrir(page, 'pile-ou-face', `document.querySelectorAll('#motif-choix .vignette svg').length === 6`, true);
-		const ecarts = await page.evaluate<{ nom: string; hautBas: number; gaucheDroite: number }[]>(dansLeTour(`(async () => {
-			const L = 200, H = 280, resultats = [];
-			for (const bouton of document.querySelectorAll('#motif-choix button')) {
-				const svg = bouton.querySelector('svg').cloneNode(true);
-				svg.setAttribute('width', L); svg.setAttribute('height', H); svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg'); svg.setAttribute('color', '#000');
-				const image = new Image(); image.src = 'data:image/svg+xml,' + encodeURIComponent(svg.outerHTML); await image.decode();
-				const pixels = (sx, sy) => { const c = document.createElement('canvas'); c.width = L; c.height = H; const g = c.getContext('2d'); g.translate(sx < 0 ? L : 0, sy < 0 ? H : 0); g.scale(sx, sy); g.drawImage(image, 0, 0); return g.getImageData(0, 0, L, H).data; };
-				const [a, v, m] = [pixels(1, 1), pixels(1, -1), pixels(-1, 1)];
-				let encre = 0, dv = 0, dm = 0;
-				for (let k = 3; k < a.length; k += 4) { const A = a[k] > 100; if (A) encre++; if (A !== (v[k] > 100)) dv++; if (A !== (m[k] > 100)) dm++; }
-				resultats.push({ nom: bouton.dataset.valeur, hautBas: dv / encre, gaucheDroite: dm / encre });
-			}
-			return resultats;
-		})()`));
-		expect(ecarts.length).toBe(6);
-		for (const { nom, hautBas, gaucheDroite } of ecarts) {
+		await ouvrir(page, 'six-predictions', `document.querySelectorAll('#paquet .dos svg.dos-motif').length === 6`);
+		const six = await page.evaluate<{ nom: string; hautBas: number; gaucheDroite: number }[]>(ecarts('#paquet .dos svg.dos-motif'));
+		expect(six.length).toBe(6);
+		for (const { nom, hautBas, gaucheDroite } of six) {
 			expect(hautBas < .01, `${nom} : ${(hautBas * 100).toFixed(1)} % du dessin ne se retrouve pas de haut en bas`).toBeTruthy();
 			expect(gaucheDroite < .01, `${nom} : ${(gaucheDroite * 100).toFixed(1)} % du dessin ne se retrouve pas de gauche à droite`).toBeTruthy();
 		}
 	});
 }, TIMEOUT);
 
-test('le dessin des dos a la même marge en haut, en bas et sur les côtés, sur les vignettes comme en scène', async () => {
+test('le dessin des dos a la même marge en haut, en bas et sur les côtés', async () => {
 	// Le dessin prenait sa hauteur de sa largeur : il s'arrêtait avant le bas de la carte (4 px de
-	// marge en haut, 7 en bas sur une vignette).
-	const marges = `[...document.querySelectorAll('.vignette, .carte .dos')].map((carte) => {
+	// marge en haut, 7 en bas sur une vignette). Les dessins ne restent plus qu'aux six prédictions.
+	const marges = `[...document.querySelectorAll('.carte .dos')].map((carte) => {
 		const c = carte.getBoundingClientRect(); const d = carte.querySelector('svg.dos-motif').getBoundingClientRect();
 		return [d.top - c.top, c.bottom - d.bottom, d.left - c.left, c.right - d.right].map((v) => Math.round(v * 10) / 10);
 	}).filter((m) => m.some((v) => Math.abs(v - m[0]) > .6))`;
 	await withApp(async (page) => {
-		await ouvrir(page, 'six-predictions', `document.querySelectorAll('#motif-choix .vignette svg').length > 6`, true);
-		expect(await page.evaluate(dansLeTour(marges)), 'des vignettes ont des marges inégales').toStrictEqual([]);
-		await page.evaluate(`history.back()`);
-		await attendreLeMenu(page);
-		for (const [dossier, pret] of [['six-predictions', `document.querySelectorAll('#paquet .carte').length === 6`], ['pile-ou-face', `Boolean(document.querySelector('#table .carte'))`]] as const) {
-			await ouvrir(page, dossier, pret);
-			expect(await page.evaluate(dansLeTour(marges)), `${dossier} : des cartes ont des marges inégales`).toStrictEqual([]);
-			await page.evaluate(`history.back()`);
-			await attendreLeMenu(page);
-		}
+		await ouvrir(page, 'six-predictions', `document.querySelectorAll('#paquet .carte').length === 6`);
+		expect(await page.evaluate(dansLeTour(marges)), 'des cartes ont des marges inégales').toStrictEqual([]);
 	});
 }, TIMEOUT);
 
