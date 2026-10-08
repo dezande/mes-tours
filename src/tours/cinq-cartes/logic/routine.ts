@@ -111,3 +111,15 @@ export function faceDe(etat: Etat, index: number): CarteJouee | null {
 	const derniere = rang === -1 ? etat.retournees.length === NOMBRE - 1 : rang === NOMBRE - 1;
 	return derniere ? etat.carte : null;
 }
+
+/**
+ * Une carte tirée au hasard, de l'As au Roi, dans l'une des quatre couleurs : celle que le mode
+ * entraînement demande de coder. `tirage` donne un nombre entre 0 (compris) et 1 (exclu).
+ */
+export function carteAuHasard(tirage: () => number = Math.random): CarteJouee {
+	const choisir = (nombre: number): number => Math.min(nombre - 1, Math.floor(tirage() * nombre));
+	return { valeur: VALEUR_MIN + choisir(VALEUR_MAX - VALEUR_MIN + 1), couleur: COULEURS[choisir(COULEURS.length)]! };
+}
+
+/** Les deux cartes sont-elles la même ? */
+export const memeCarte = (a: CarteJouee, b: CarteJouee): boolean => a.valeur === b.valeur && a.couleur === b.couleur;

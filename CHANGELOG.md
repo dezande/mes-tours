@@ -36,6 +36,10 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **Les cinq cartes, le mode entraînement demande la carte à coder** : une carte tirée au hasard parmi les 52 s'affiche dans la barre du haut (« À coder : Dame de cœur »), nouvelle à chaque ouverture, à chaque « Recommencer » et à chaque R au clavier. Le codage fini, la barre dit si c'est la bonne carte (en vert), ou laquelle a été codée (en rouge).
+
 ## [1.3.1] — 2026-10-08
 
 44 commits

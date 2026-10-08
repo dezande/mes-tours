@@ -30,6 +30,8 @@ export const INTERFACE = {
 	'aide.entrainement': { fr: 'Mode entraînement', en: 'Training mode' },
 	'aide.recommencer': { fr: 'Recommencer', en: 'Start again' },
 	'aide.retour': { fr: 'Retour aux réglages', en: 'Back to settings' },
+	'entrainement.trouver': { fr: 'À coder :', en: 'Code:' },
+	'entrainement.code': { fr: 'Codé :', en: 'Coded:' },
 	'aide.zones': { fr: 'Test des zones', en: 'Zone test' },
 	'aide.reglages': { fr: 'Réglages', en: 'Settings' },
 	'aide.quitter': { fr: 'Quitter', en: 'Quit' },

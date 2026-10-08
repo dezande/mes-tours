@@ -145,6 +145,29 @@ test('écrou ⚙ : le mode entraînement joue la routine, « Recommencer » reme
 	expect(window.location.hash).toBe('#/tours/cinq-cartes?reglages');
 });
 
+test('mode entraînement : la carte à coder est demandée, puis la barre dit si elle a été trouvée', async () => {
+	await ouvrir('#/tours/cinq-cartes?reglages');
+	// Le tirage donne le 5 de pique (valeur 1 + 4, coin en haut à gauche) ; « Recommencer » tire
+	// une nouvelle rangée, puis le Roi de carreau.
+	const tirages = [4.5 / 13, 0, 0, .999999, .999999];
+	const hasard = jest.spyOn(Math, 'random').mockImplementation(() => tirages.shift() ?? 0);
+	try {
+		fireEvent.click(document.getElementById('entrainement-btn')!);
+		const carte = (): HTMLElement => document.getElementById('entrainement-carte')!;
+		expect(carte()).toHaveTextContent('À coder : 5 de pique');
+		touches('1', '3', 'p');
+		expect(carte()).toHaveTextContent('✓ 5 de pique');
+		expect(carte()).toHaveAttribute('data-resultat', 'juste');
+		fireEvent.click(document.getElementById('entrainement-recommencer')!);
+		expect(carte()).toHaveTextContent('À coder : Roi de carreau');
+		touches('1', 'p');
+		expect(carte()).toHaveTextContent('✗ Codé : As de pique');
+		expect(carte()).toHaveAttribute('data-resultat', 'faux');
+	} finally {
+		hasard.mockRestore();
+	}
+});
+
 test('écrou ⚙ : le test des zones dessine les colonnes et les coins, sans retourner de carte ; « Réglages » y revient', async () => {
 	await ouvrir('#/tours/cinq-cartes?reglages');
 	fireEvent.click(document.getElementById('test-btn')!);
