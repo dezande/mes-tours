@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.5.0] | 50 | 2026-10-08 | Chaque tour de cartes a son dos, seule la couleur se règle ; un vrai valet de carreau pour la Princesse |
 | [1.4.0] | 46 | 2026-10-08 | Les cinq cartes : le mode entraînement demande la carte à coder |
 | [1.3.1] | 44 | 2026-10-08 | Un fond à chaque tour de cartes : guilloché, velours damassé, cuir |
 | [1.3.0] | 42 | 2026-10-08 | Les cinq cartes, nouveau tour à l'allure de Balatro ; huit tuiles au menu |
@@ -37,7 +38,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.5.0] — 2026-10-08
+
+50 commits
 
 - **Les dos des cartes : chaque tour a le sien, seule la couleur se règle.** Plus de choix du dessin dans les réglages.
   - **Pile ou face : le dos est un papier marqué « Prédiction »** (« Prediction » en anglais), écrit à la main en travers de toute la largeur de la carte et souligné, sur le même papier crème que l'avant. Le réglage de couleur devient celui de l'encre — noir, bleu ou rouge —, pour le mot du dos comme pour la prédiction de l'avant ; le blanc disparaît.
@@ -323,6 +326,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.5.0]: https://github.com/dezande/mes-tours/releases/tag/v1.5.0
 [1.4.0]: https://github.com/dezande/mes-tours/releases/tag/v1.4.0
 [1.3.1]: https://github.com/dezande/mes-tours/releases/tag/v1.3.1
 [1.3.0]: https://github.com/dezande/mes-tours/releases/tag/v1.3.0
