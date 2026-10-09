@@ -56,7 +56,8 @@ export function Rangee({ etat, places, sens, sansAnimation, langue, couleur, ran
 							</div>
 							{/* La carte du spectateur est écrite dès qu'elle est la seule face cachée : prête quand elle se retourne. */}
 							<div className="carte-face avant" aria-hidden={!retournee} aria-label={retournee ? (face ? nomDeLaCarte(face, langue) : ui('carte.blanche', langue)) : undefined}>
-								{face && <FaceDeCarte carte={face} langue={langue} />}
+								{/* Chaque carte a son Joker : quand toutes en sont, les cinq sont différents. */}
+								{face && <FaceDeCarte carte={face} langue={langue} variante={i} />}
 							</div>
 						</div>
 					</article>

@@ -3,7 +3,8 @@
  * Fonctions pures, sans DOM : testées sous Node (tests/tours/cinq-cartes/table.test.ts). Les
  * boîtes sont calculées par le tour (index.tsx), dans le repère de #app : pour savoir quelle
  * carte est touchée, la colonne de chaque carte (toute sa place dans la rangée, écarts compris,
- * sur toute la hauteur de l'écran, comme dans Princesse) ; pour le coin, la carte elle-même.
+ * sur toute la hauteur de l'écran, comme dans Princesse) ; pour le coin, le milieu de la carte,
+ * qui coupe toute sa colonne en quatre : les coins dépassent la carte jusqu'aux bords de l'écran.
  */
 
 import { COULEURS, type Couleur } from './routine.ts';
@@ -39,9 +40,10 @@ export function carteDuPoint(x: number, colonnes: readonly Boite[]): number | nu
 }
 
 /**
- * La couleur donnée par le coin de la carte `boite` touché au point (x, y) : la carte est coupée
- * en quatre par son milieu — en haut à gauche pique, en haut à droite cœur, en bas à gauche
- * trèfle, en bas à droite carreau.
+ * La couleur donnée par le coin de la carte `boite` touché au point (x, y) : la colonne de la
+ * carte est coupée en quatre par son milieu, sur toute sa largeur et toute la hauteur de l'écran
+ * (le doigt n'a pas à tomber sur la carte) — en haut à gauche pique, en haut à droite cœur, en
+ * bas à gauche trèfle, en bas à droite carreau.
  */
 export function couleurDuPoint(x: number, y: number, boite: Boite): Couleur | null {
 	if (!Number.isFinite(x) || !Number.isFinite(y) || !(boite.largeur > 0) || !(boite.hauteur > 0)) return null;
@@ -65,4 +67,20 @@ export function boitesDeLaRangee(rangee: Boite, places: readonly { x: number; y:
 	const cartes = places.map((p) => ({ x: milieu + p.x * pas - largeur / 2, y: rangee.y + p.y * hauteur, largeur, hauteur }));
 	const colonnes = cartes.map((c) => ({ x: c.x + largeur / 2 - pas / 2, y: c.y, largeur: pas, hauteur }));
 	return { colonnes, cartes };
+}
+
+/**
+ * Les quatre coins de la colonne `colonne` (de `hauteur` : celle de l'écran), coupée par le milieu
+ * de sa carte `carte`, dans l'ordre de COULEURS : ceux que couleurDuPoint reconnaît, pour le test
+ * des zones.
+ */
+export function coinsDeLaColonne(colonne: Boite, carte: Boite, hauteur: number): Boite[] {
+	const mx = Math.min(colonne.x + colonne.largeur, Math.max(colonne.x, carte.x + carte.largeur / 2));
+	const my = Math.min(hauteur, Math.max(0, carte.y + carte.hauteur / 2));
+	return COULEURS.map((_, i) => {
+		const [droite, bas] = [i % 2 === 1, i >= 2];
+		const x = droite ? mx : colonne.x;
+		const y = bas ? my : 0;
+		return { x, y, largeur: droite ? colonne.x + colonne.largeur - mx : mx - colonne.x, hauteur: bas ? hauteur - my : my };
+	});
 }

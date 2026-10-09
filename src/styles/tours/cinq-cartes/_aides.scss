@@ -96,8 +96,10 @@
 }
 
 .zone-coin {
+	// Les coins sont dans la colonne de leur carte : leur étiquette ne prend pas le bas de la colonne.
 	.tag {
 		top: 50%;
+		bottom: auto;
 		transform: translate(-50%, -50%);
 		font-size: 22px;
 	}

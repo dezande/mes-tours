@@ -4,8 +4,10 @@
  *   le codage       toucher les cartes 1, 2, 3, 4 (depuis le bord réglé, gauche par défaut) les
  *                   retourne, blanches, et ajoute 1, 2, 4, 8 à la valeur ; toucher la cinquième, à
  *                   l'autre bord, la retourne et termine le codage, et son coin donne la couleur
- *                   (haut gauche pique, haut droite cœur, bas gauche trèfle, bas droite carreau).
+ *                   (haut gauche pique, haut droite cœur, bas gauche trèfle, bas droite carreau) :
+ *                   sa colonne est coupée en quatre jusqu'aux bords de l'écran
  *   la révélation   chaque toucher retourne la carte touchée : blanche, sauf la dernière retournée
+ *                   (un Joker pour 14 et 15 ; la cinquième touchée directement : que des Jokers)
  *   la fin          les cinq cartes retournées, on ne peut plus que les retourner, dans un sens ou
  *                   dans l'autre ; aucun geste ne relance la routine (au clavier : R ou Début)
  *   appui de 3 s n'importe où, Échap ou M : retour au menu principal, d'où le tour rouvre neuf
@@ -126,13 +128,14 @@ export default function CinqCartes() {
 		changer(toucher(etatRef.current, index, couleur));
 	}, [changer]);
 
-	/** Les colonnes et les cartes de la table, dans le repère de #app, et le rang du codage de chaque place. */
+	/** Les colonnes et les cartes de la table, dans le repère de #app, le rang du codage de chaque place, et la hauteur de #app. */
 	const mesurer = useCallback(() => {
 		const el = rangeeRef.current;
 		const carte = el?.querySelector<HTMLElement>('.carte');
 		if (!el || !carte) return null;
 		const boites = boitesDeLaRangee(boiteDansLApp(el), places, carte.offsetWidth, carte.offsetHeight);
-		return { ...boites, rangs: places.map((_, place) => rangDeLaPlace(place, reglages.sens)) };
+		const hauteur = el.closest<HTMLElement>('#app')?.offsetHeight ?? window.innerHeight;
+		return { ...boites, rangs: places.map((_, place) => rangDeLaPlace(place, reglages.sens)), hauteur };
 	}, [places, reglages.sens]);
 
 	/* ---------- Les aides à la répétition ---------- */

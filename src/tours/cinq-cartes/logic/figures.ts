@@ -1,5 +1,5 @@
 /*
- * Les personnages des figures (Valet, Dame, Roi), en pixels, dans l'esprit des cartes de Balatro :
+ * Les personnages des figures (Valet, Dame, Roi) et des cinq Jokers, en pixels, dans l'esprit des cartes de Balatro :
  * une demi-figure, du haut de la coiffe à la taille, que components/FaceDeCarte.tsx pose en haut de
  * la carte puis tête-bêche en bas, comme sur toutes les cartes à jouer. Fonctions pures, sans DOM :
  * testées sous Node (tests/tours/cinq-cartes/figures.test.ts).
@@ -9,13 +9,15 @@
  *   o  le contour        p  la peau          y  l'or (couronnes, galons)
  *   h  les cheveux       b  la barbe          e  les yeux
  *   c  la couleur de l'enseigne (les habits)  w  le blanc (col, fraise, gants)
+ *   r  le rouge (nez et bouche du clown)
+ * Pour un Joker, « c » est la couleur du Joker, et non celle d'une enseigne.
  */
 
 export const LARGEUR_FIGURE = 16;
 export const HAUTEUR_FIGURE = 18;
 
 /** Les couleurs des figures, dans l'ordre où elles sont peintes. */
-export const TEINTES_FIGURE = ['o', 'p', 'y', 'h', 'b', 'e', 'c', 'w'] as const;
+export const TEINTES_FIGURE = ['o', 'p', 'y', 'h', 'b', 'e', 'c', 'w', 'r'] as const;
 
 const MOITIES: Readonly<Record<number, readonly string[]>> = {
 	// Le Valet : un bonnet à plume, des cheveux courts, un col blanc.
@@ -83,12 +85,132 @@ const MOITIES: Readonly<Record<number, readonly string[]>> = {
 	],
 };
 
-/** La moitié gauche, complétée par son miroir : la demi-figure entière, ligne par ligne. */
-export function grilleDeFigure(valeur: number): string[] {
-	const moitie = MOITIES[valeur];
+/**
+ * Les cinq Jokers, chacun son personnage ; chacun a aussi sa couleur (styles/tours/cinq-cartes/_balatro.scss :
+ * data-joker). Quand toutes les cartes sont des Jokers, les cinq sont différents.
+ */
+const JOKERS: readonly (readonly string[])[] = [
+	// 0, le fou (rouge) : le bonnet à deux pointes et ses grelots, le sourire, la fraise, l'habit d'arlequin.
+	[
+		'yy......',
+		'yyo.....',
+		'.occ....',
+		'.occco..',
+		'..occcoo',
+		'..occccc',
+		'...yyyyy',
+		'...opppp',
+		'...opepp',
+		'...oppep',
+		'...opppe',
+		'....oppp',
+		'..owwwww',
+		'.occwwcc',
+		'.owwccww',
+		'.occwwcc',
+		'.owwccww',
+		'.ooooooo',
+	],
+	// 1, le bouffon (violet) : le bonnet à trois pointes, des larmes peintes, le grand rire, le col en dents d'or.
+	[
+		'y......y',
+		'oc....oc',
+		'.oc..occ',
+		'.occoccc',
+		'..occccc',
+		'..oyyyyy',
+		'...opppp',
+		'...opepp',
+		'...opcpp',
+		'...opppp',
+		'...opeee',
+		'....oppp',
+		'..yoyoyo',
+		'.oyyyyyy',
+		'.occcccc',
+		'.occcyyc',
+		'.occcccc',
+		'.ooooooo',
+	],
+	// 2, le clown (bleu) : le chapeau pointu à pompon, les cheveux frisés, le visage blanc, le nez rouge.
+	[
+		'.......y',
+		'......oc',
+		'.....occ',
+		'....occc',
+		'...ocwcc',
+		'...yyyyy',
+		'.hhowwww',
+		'hhhowwew',
+		'hhhowwww',
+		'.hhowwwr',
+		'...orwww',
+		'...owrrr',
+		'....owww',
+		'..wwwwww',
+		'.occcwcc',
+		'.occcccc',
+		'.ocwcccw',
+		'.ooooooo',
+	],
+	// 3, l'arlequin (vert) : le bicorne, le loup noir, le col d'or, les losanges.
+	[
+		'........',
+		'o.......',
+		'oco.....',
+		'occoooo.',
+		'occccccc',
+		'oyyyyyyy',
+		'...opppp',
+		'..oooooo',
+		'...oowoo',
+		'...opppp',
+		'...oppep',
+		'....oppe',
+		'...oyyyy',
+		'.occcycc',
+		'.occyyyc',
+		'.ocyyyyy',
+		'.occyyyc',
+		'.ooooooo',
+	],
+	// 4, le roi des fous (orange) : la couronne à pierres, les cheveux, le losange peint sous l'œil, la fraise en pointes.
+	[
+		'...y.y.y',
+		'...yyyyy',
+		'...ycycy',
+		'...yyyyy',
+		'...ohhhh',
+		'..ohhppp',
+		'..ohpepp',
+		'..ohpcpp',
+		'..ohpppp',
+		'..ohpeee',
+		'...ohppp',
+		'....oppp',
+		'..cwcwcw',
+		'.occwcwc',
+		'.occcccc',
+		'.oycccyc',
+		'.occcccc',
+		'.ooooooo',
+	],
+];
+
+/** Le nombre de Jokers différents. */
+export const NOMBRE_DE_JOKERS = JOKERS.length;
+
+/** La moitié gauche complétée par son miroir : la demi-figure entière, ligne par ligne. */
+function completer(moitie: readonly string[] | undefined): string[] {
 	if (!moitie) return [];
 	return moitie.map((ligne) => {
 		const gauche = ligne.slice(0, LARGEUR_FIGURE / 2).padEnd(LARGEUR_FIGURE / 2, '.');
 		return gauche + [...gauche].reverse().join('');
 	});
 }
+
+/** La demi-figure d'une figure (11 à 13) ; une carte numérotée n'en a pas. */
+export const grilleDeFigure = (valeur: number): string[] => completer(MOITIES[valeur]);
+
+/** La demi-figure du Joker `variante` (0 à 4 ; au-delà, on reprend au premier). */
+export const grilleDeJoker = (variante: number): string[] => completer(JOKERS[((Math.trunc(variante) % NOMBRE_DE_JOKERS) + NOMBRE_DE_JOKERS) % NOMBRE_DE_JOKERS]);
