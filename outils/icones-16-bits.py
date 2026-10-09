@@ -271,6 +271,52 @@ def trois_paquets():
             for (u,v) in ((0,0),(0,1),(1,1),(0,2)): t[y0+1+v][x0+1+u]=c
     return contour(t,'#04230f')
 
+# ---------- Pluie très fine : une Dame d'un jeu ancien, tête-bêche, sous une pluie très fine ----------
+def pluie_tres_fine():
+    t=toile()
+    # les couleurs de la palette commune : le carton crème, l'or, le rouge et le bleu des jeux anciens
+    cremes=['#d9c69c','#efe3c6','#fbf6ea']
+    x0,y0,w,h=8,2,16,28
+    for y in range(y0,y0+h):
+        for x in range(x0,x0+w):
+            if (x in (x0,x0+w-1)) and (y in (y0,y0+h-1)): continue   # coins arrondis
+            # le carton jauni, éclairé en haut à gauche
+            v=0.95-0.45*((x-x0)/w*0.5+(y-y0)/h*0.5)
+            t[y][x]=ramp(v,cremes,x,y)
+    # la Dame en buste (couronne, cheveux d'or, fraise, robe bleue), puis la même tête-bêche
+    teintes={'Y':'#e0aa44','R':'#c8102e','s':'#fbf6ea','k':'#160a10','w':'#ffffff','B':'#1f4d9c','r':'#c8102e'}
+    dame=["..Y.Y.Y..",
+          "..YRYRY..",
+          "..YYYYY..",
+          ".YYsssYY.",
+          ".YsksksY.",
+          ".YsssssY.",
+          ".YssrssY.",
+          ".YYsssYY.",
+          "..wwwww..",
+          ".BBBRBBB.",
+          "BBBBRBBBB",
+          "BBYBRBYBB"]
+    for v,ligne in enumerate(dame):
+        for u,c in enumerate(ligne):
+            if c=='.': continue
+            t[4+v][11+u]=teintes[c]
+            t[y0+h-1-(2+v)][11+8-u]=teintes[c]
+    # la ligne qui coupe la figure à la taille, et le cœur des deux coins
+    for x in range(x0+1,x0+w-1): t[16][x]='#160a10'
+    for (u,v) in ((0,0),(2,0),(0,1),(1,1),(2,1),(1,2)):
+        t[y0+1+v][x0+1+u]='#c8102e'
+        t[y0+h-2-v][x0+w-2-u]='#c8102e'
+    t=contour(t,'#160a10')
+    # la pluie très fine, en filets penchés, autour de la carte
+    for y in range(N):
+        for x in range(N):
+            # un filet tous les 5 pixels, qui descend de 2 pixels pour 1 vers la droite, coupé par endroits
+            k=(x-y//2)//5
+            if t[y][x] is None and (x-y//2)%5==0 and (y+3*k)%8<6:
+                t[y][x]='#d8e0ee' if (y+3*k)%8<4 else '#9aa6bd'
+    return t
+
 # ---------- Analyseur Q : le pique dans son orbite ----------
 def analyseur():
     t=toile()
@@ -344,7 +390,7 @@ def en_grille(t):
         lignes.append(l)
     return lignes
 
-icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'morpion':morpion(),'princesse':princesse(),'six-predictions':eventail(),'cinq-cartes':cinq_cartes(),'trois-paquets':trois_paquets(),'analyseur-q':analyseur()}
+icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'morpion':morpion(),'princesse':princesse(),'six-predictions':eventail(),'cinq-cartes':cinq_cartes(),'trois-paquets':trois_paquets(),'pluie-tres-fine':pluie_tres_fine(),'analyseur-q':analyseur()}
 gear=ecrou()
 # palette commune
 couleurs=[]

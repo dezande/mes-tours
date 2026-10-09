@@ -1,0 +1,94 @@
+@use "sass:map";
+@use "../../abstracts/mixins" as *;
+@use "tokens" as *;
+@use "../../components/cartes";
+
+/*
+ * La carte, seule au centre de la table, téléphone tenu en hauteur : son dos « pluie très fine »
+ * (components/DosAncien.tsx) et sa Dame (components/FaceDeDame.tsx, _dame.scss).
+ *
+ * Deux transformations se superposent, chacune sur son élément pour ne pas se gêner :
+ *   .carte-pivot  la retourne (rotateY) ;
+ *   .carte-face   le dos et l'avant, dos à dos (backface-visibility).
+ */
+
+#table {
+	/*
+	 * La plus grande carte qui tienne, comme celle de pile ou face : le rapport d'une carte à jouer
+	 * commande sa largeur, et elle ne dépasse ni 86 % de la largeur ni 80 % de la hauteur libre. Le
+	 * tapis reste visible tout autour : le doigt a de la place dans chaque coin.
+	 */
+	--ratio: .714;
+	--dispo-h: calc(var(--app-h) - var(--safe-t) - var(--safe-b) - 32px);
+	--carte-h: min(
+		calc(var(--app-w) * .86 / var(--ratio)),
+		calc(var(--dispo-h) * .8),
+		640px
+	);
+	--carte-w: calc(var(--carte-h) * var(--ratio));
+	--rayon: clamp(10px, calc(var(--carte-w) * .05), 22px);
+	position: relative;
+	width: var(--carte-w);
+	height: var(--carte-h);
+}
+
+// Le retournement, le dos et l'avant (components/_cartes.scss).
+@include cartes.cartes($marge-texte: 0px);
+
+.carte {
+	@include cover;
+	// La carte tourne autour de son propre centre.
+	perspective: 1200px;
+}
+
+// L'encre du dos, d'après la couleur réglée, sur la carte comme sur les vignettes des réglages.
+.carte,
+.vignette {
+	--papier-dos: #{$papier-dos};
+	--encre-dos: #{map.get($encres-dos, "rouge")};
+
+	@each $teinte, $encre in $encres-dos {
+		&[data-couleur="#{$teinte}"] {
+			--encre-dos: #{$encre};
+		}
+	}
+}
+
+// Le dos : tout est imprimé dans le dessin, marge blanche comprise.
+.dos {
+	background: var(--papier-dos);
+	color: var(--encre-dos);
+	box-shadow:
+		inset 0 0 0 1px rgba(60, 40, 20, .18),
+		0 1px 2px rgba(0, 0, 0, .5),
+		0 18px 36px rgba(0, 0, 0, .5);
+}
+
+.dos-ancien {
+	position: absolute;
+	inset: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+/*
+ * L'avant : un carton ivoire jauni par les années, plus sombre vers les bords, et la trame à peine
+ * visible d'un papier vergé.
+ */
+.avant {
+	padding: 0;
+	background:
+		repeating-linear-gradient(0deg, rgba(110, 80, 30, .035) 0 1px, transparent 1px 3px),
+		radial-gradient(125% 95% at 45% 40%, #f8f0dc 0%, $papier-face 52%, $papier-jauni 112%);
+	box-shadow:
+		inset 0 0 0 1px rgba(90, 60, 20, .22),
+		inset 0 0 18px rgba(150, 110, 40, .18),
+		0 1px 2px rgba(0, 0, 0, .5),
+		0 18px 36px rgba(0, 0, 0, .5);
+}
+
+// À l'ouverture et à chaque remise en place au clavier, la carte revient face cachée d'un coup.
+#table.no-anim .carte-pivot {
+	transition: none;
+}

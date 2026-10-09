@@ -1,0 +1,41 @@
+// Les couleurs et typographies du tour : celles des tours de cartes (abstracts/_tokens-cartes.scss).
+@forward "../../abstracts/tokens-cartes";
+
+// Le tapis : une table d'ardoise, la nuit, derrière une vitre où coule une pluie très fine — des
+// filets clairs, serrés, penchés comme les hachures du dos ; la lumière chaude d'un réverbère en
+// haut, les bords dans l'ombre. Aucun autre tour n'a ce fond (README : « Ajouter un tour »).
+$ardoise: #26333d;
+$ardoise-clair: #3a4b57;
+$ardoise-sombre: #0c1319;
+$bg: $ardoise-sombre;
+$fond: (
+	radial-gradient(120% 90% at 50% 45%, transparent 45%, rgba(3, 7, 10, .78) 100%),
+	repeating-linear-gradient(67deg, rgba(205, 225, 240, .055) 0 1px, transparent 1px 6px),
+	repeating-linear-gradient(67deg, transparent 0 13px, rgba(205, 225, 240, .04) 13px 14px, transparent 14px 23px),
+	radial-gradient(65% 42% at 50% 16%, rgba(255, 210, 140, .14), transparent 72%),
+	radial-gradient(130% 100% at 50% 40%, $ardoise-clair, $ardoise 50%, $ardoise-sombre 100%),
+);
+
+// Le dos : un papier ivoire, imprimé d'une seule encre, celle du réglage (logic/settings.ts).
+$papier-dos: #f3ebd8;
+$encres-dos: (
+	"rouge": #a3322b,
+	"bleu": #2c4a7c,
+	"vert": #2f5f45,
+	"brun": #6b4426,
+);
+
+// La face : un carton ivoire jauni par les années, aux encres un peu passées.
+$papier-face: #f1e6cc;
+$papier-jauni: #d8c495;
+$rouge-passe: #b23a2e;
+$noir-passe: #241e1a;
+// Les couleurs de la Dame (logic/dame.ts) : celles des presses de l'époque.
+$dame-rouge: #b8402f;
+$dame-bleu: #355690;
+$dame-or: #d9a43c;
+$dame-vert: #5d7b3f;
+$dame-papier: #f5ebd3;
+
+// L'index des coins et le nom de la reine : un caractère à empattements, comme sur les jeux anciens.
+$index: "Didot", "Bodoni 72", "Iowan Old Style", "Times New Roman", "Noto Serif", Georgia, serif;

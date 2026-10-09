@@ -40,6 +40,16 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **Pluie très fine, un nouveau tour** (dixième tuile du menu, sur une ardoise de nuit où tombe une pluie très fine) : une seule carte face cachée, une Dame, dont la famille est choisie au moment où elle se retourne — le trucage de la carte de la couleur des cinq cartes.
+  - **Le coin de l'écran touché** donne la famille : en haut à gauche pique, en haut à droite cœur, en bas à gauche trèfle, en bas à droite carreau. L'écran est coupé en quatre par le milieu de la carte, jusqu'à ses bords : le doigt n'a pas à tomber sur la carte. Au clavier : P, C, T, D.
+  - **Retournée**, un toucher ne la change plus ; un double toucher (ou R) la remet face cachée, prête pour une nouvelle routine. L'appui de 3 s ramène au menu.
+  - **Une carte des années 1950 et 1960** : une Dame au portrait français, tête-bêche (couronne, cheveux d'or, voile, fraise, rose à la main, galons dorés), son nom dans le cadre comme sur les jeux d'époque (Pallas, Judith, Argine, Rachel ; en anglais, une Queen sans nom), chaque reine dans ses couleurs, les aplats posés un peu de travers sur le trait comme sur les presses de l'époque, un carton ivoire jauni avec quelques rousseurs. Le dos : des hachures très fines penchées comme une pluie, un médaillon ovale et sa rosace.
+  - **Les réglages** : la couleur du dos (rouge, bleu, vert ou brun), choisie en regardant ; le rappel du trucage ; la jauge de l'appui long ; le test des zones (les quatre coins dessinés sur la scène).
+  - Le menu resserré (tuiles de 56 px, icônes de 44 px) : dix tuiles tiennent sur l'écran sans défiler.
+  - Tests de la routine, des coins, des dessins, des réglages, dans l'app et dans Chrome.
+
 ## [1.7.0] — 2026-10-09
 
 54 commits

@@ -60,6 +60,11 @@ export const TOURS: readonly Tour[] = [
 		nom: { fr: 'Les trois paquets', en: 'The three packets' },
 	},
 	{
+		// Une seule carte, une Dame : sa famille est choisie par le coin touché, comme dans les cinq cartes.
+		dossier: 'pluie-tres-fine',
+		nom: { fr: 'Pluie très fine', en: 'Very fine rain' },
+	},
+	{
 		// « Analyseur Q » est le nom de l'appareil : le même dans les deux langues, comme dans le tour.
 		dossier: 'analyseur-q',
 		nom: { fr: 'Analyseur Q', en: 'Analyseur Q' },
