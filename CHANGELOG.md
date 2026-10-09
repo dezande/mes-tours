@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.7.0] | 54 | 2026-10-09 | Les cinq cartes : des Jokers de cinq styles, la couleur sur toute la colonne |
 | [1.6.0] | 52 | 2026-10-09 | Les trois paquets, nouveau tour : huit cartes forcées, trois paquets de sept, la carte pensée disparaît |
 | [1.5.0] | 50 | 2026-10-08 | Chaque tour de cartes a son dos, seule la couleur se règle ; un vrai valet de carreau pour la Princesse |
 | [1.4.0] | 46 | 2026-10-08 | Les cinq cartes : le mode entraînement demande la carte à coder |
@@ -39,7 +40,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.7.0] — 2026-10-09
+
+54 commits
 
 - **Les cinq cartes : les Jokers, et des coins plus grands pour la couleur.**
   - **La cinquième touchée directement**, sans rien coder : toutes les cartes sont des Jokers, la cinquième comprise, dès qu'elle se retourne.
@@ -351,6 +354,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.7.0]: https://github.com/dezande/mes-tours/releases/tag/v1.7.0
 [1.6.0]: https://github.com/dezande/mes-tours/releases/tag/v1.6.0
 [1.5.0]: https://github.com/dezande/mes-tours/releases/tag/v1.5.0
 [1.4.0]: https://github.com/dezande/mes-tours/releases/tag/v1.4.0
