@@ -8,6 +8,7 @@
 @use "../tours/morpion/tokens" as morpion;
 @use "../tours/cinq-cartes/tokens" as cinq;
 @use "../tours/trois-paquets/tokens" as trois-paquets;
+@use "../tours/pluie-tres-fine/tokens" as pluie;
 @use "../tours/analyseur-q/tokens" as analyseur;
 
 $nuit: #0b0b2b;
@@ -126,8 +127,8 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 	width: 100%;
 	max-width: 520px;
 	display: grid;
-	// Neuf tuiles tiennent sur un écran de téléphone, sans faire défiler (tests dans Chrome).
-	gap: 6px;
+	// Dix tuiles tiennent sur un écran de téléphone, sans faire défiler (tests dans Chrome).
+	gap: 5px;
 	// La place de la main, qui déborde à gauche des tuiles.
 	padding-left: 14px;
 	// L'écart minimal avec le bandeau d'installation, quand le menu défile.
@@ -164,8 +165,8 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
  * Le fond de chaque tuile (et de son écrou) : celui de son tour, en petit. Le velours de la boule,
  * le chêne de la carte de visite, le bleu gravé de pile ou face, le velours pourpre de la
  * princesse, le cuir des six prédictions, le ciel du morpion, le tourbillon des cinq cartes, le
- * feutre vert des trois paquets, l'écran de l'analyseur. Touchée, la tuile s'éclaire au lieu de
- * passer au bleu.
+ * feutre vert des trois paquets, l'ardoise sous la pluie de Pluie très fine, l'écran de
+ * l'analyseur. Touchée, la tuile s'éclaire au lieu de passer au bleu.
  */
 $fonds-des-tours: (
 	"boule-de-cristal": (
@@ -190,6 +191,7 @@ $fonds-des-tours: (
 		conic-gradient(from 200deg at 30% 60%, cinq.$balatro-rouge, cinq.$balatro-violet 25%, cinq.$balatro-bleu 50%, cinq.$balatro-sarcelle 70%, cinq.$balatro-rouge),
 	),
 	"trois-paquets": trois-paquets.$fond,
+	"pluie-tres-fine": pluie.$fond,
 	"analyseur-q": (
 		radial-gradient(70% 60% at 50% 45%, rgba(247, 147, 30, .2), transparent 75%),
 		analyseur.$bg,
@@ -216,9 +218,9 @@ $fonds-des-tours: (
 	display: flex;
 	align-items: center;
 	gap: 14px;
-	// 64 px plutôt que 72 : neuf tuiles tiennent sur l'écran.
-	min-height: 64px;
-	padding: 6px 12px;
+	// 56 px plutôt que 72 : dix tuiles tiennent sur l'écran.
+	min-height: 56px;
+	padding: 4px 12px;
 	text-align: left;
 }
 
@@ -242,9 +244,9 @@ $fonds-des-tours: (
 
 #menu-principal .tour-icone {
 	flex: none;
-	// 50 px plutôt que 64 : neuf tuiles tiennent sur l'écran.
-	width: 50px;
-	height: 50px;
+	// 44 px plutôt que 64 : dix tuiles tiennent sur l'écran.
+	width: 44px;
+	height: 44px;
 	filter: drop-shadow(2px 3px 0 rgba(5, 6, 26, .7));
 }
 

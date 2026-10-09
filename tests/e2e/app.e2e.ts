@@ -103,7 +103,7 @@ async function pressKey(page: Page, key: string): Promise<void> {
 
 /* ================= Le menu principal ================= */
 
-test('le menu 16 bits montre les neuf tours, chacun avec son icône et son écrou ⚙', async () => {
+test('le menu 16 bits montre les dix tours, chacun avec son icône et son écrou ⚙', async () => {
 	await withApp(async (page) => {
 		const tuiles = await page.evaluate<{ nom: string; icone: boolean; ecrou: string | null }[]>(`[...document.querySelectorAll('#tours .tour')].map((t) => ({
 			nom: t.querySelector('.tour-nom').textContent,
@@ -391,6 +391,34 @@ test('Les trois paquets : on balaie d’un panneau à l’autre (deux mélanges,
 	});
 }, TIMEOUT);
 
+test('Pluie très fine : le coin touché donne la famille de la Dame ; retournée, un toucher ne la change plus, le double toucher la remet face cachée', async () => {
+	const carte = `document.querySelector('#table .carte')`;
+	const famille = `document.querySelector('#table .face-dame')?.dataset.couleur`;
+	await withApp(async (page) => {
+		await ouvrir(page, 'pluie-tres-fine', `Boolean(document.querySelector('#table .carte .dos-ancien'))`);
+		// En haut à droite de l'écran, loin de la carte : cœur.
+		await page.tap({ x: SCREEN.width - 20, y: 30 });
+		await attendre(page, dansLeTour(`${carte}.classList.contains('retournee')`), 'carte retournée', 3000);
+		expect(await page.evaluate(dansLeTour(famille))).toBe('coeur');
+		await sleep(800);
+		// Un autre coin ne la change plus.
+		await page.tap({ x: 20, y: SCREEN.height - 30 });
+		await sleep(800);
+		expect(await page.evaluate(dansLeTour(famille)), 'un toucher a changé la Dame').toBe('coeur');
+		await page.doubleTap(CENTRE);
+		await attendre(page, dansLeTour(`!${carte}.classList.contains('retournee')`), 'carte face cachée', 3000);
+		await sleep(800);
+		expect(await page.evaluate<boolean>(`location.hash.startsWith('#/tours/pluie-tres-fine')`), 'le double toucher a quitté le tour').toBe(true);
+		// Une nouvelle routine : en bas à gauche, trèfle.
+		await page.tap({ x: 20, y: SCREEN.height - 30 });
+		await attendre(page, dansLeTour(`${carte}.classList.contains('retournee')`), 'carte retournée à nouveau', 3000);
+		expect(await page.evaluate(dansLeTour(famille))).toBe('trefle');
+		await sleep(800);
+		await appuiLong(page);
+		await attendreLeMenu(page);
+	});
+}, TIMEOUT);
+
 test('Boule de cristal : le double toucher efface le nombre, la boule se réarme sur place', async () => {
 	await withApp(async (page) => {
 		await ouvrir(page, 'boule-de-cristal', `Boolean(document.querySelector('#number'))`);
@@ -671,6 +699,7 @@ test('écrou ⚙ : les réglages du tour s’ouvrent seuls, « Fermer » ramène
 			['six-predictions', '#menu'],
 			['cinq-cartes', '#menu'],
 			['trois-paquets', '#menu'],
+			['pluie-tres-fine', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
 			await ouvrir(page, dossier, `Boolean(document.querySelector('${panneau}')) && !document.querySelector('${panneau}').hidden`, true);
@@ -704,6 +733,7 @@ test('écrou ⚙ : une croix en haut à droite ferme les réglages, plus de bout
 			['six-predictions', '#menu'],
 			['cinq-cartes', '#menu'],
 			['trois-paquets', '#menu'],
+			['pluie-tres-fine', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
 			await ouvrir(page, dossier, `Boolean(document.querySelector('${panneau}')) && !document.querySelector('${panneau}').hidden`, true);
@@ -740,6 +770,7 @@ test('écrou ⚙ : tous les réglages ont la même structure, le nom du tour en 
 			['six-predictions', '#menu'],
 			['cinq-cartes', '#menu'],
 			['trois-paquets', '#menu'],
+			['pluie-tres-fine', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
 			await ouvrir(page, dossier, `Boolean(document.querySelector('${panneau}')) && !document.querySelector('${panneau}').hidden`, true);
@@ -922,6 +953,7 @@ test('chaque tour reçoit les marges de l’écran : rien sous la caméra fronta
 			['six-predictions', `document.querySelectorAll('#paquet .carte').length === 6`],
 			['cinq-cartes', `document.querySelectorAll('#rangee .carte').length === 5`],
 			['trois-paquets', `document.querySelectorAll('.salade .carte[data-carte="D-pique"]').length === 2`],
+			['pluie-tres-fine', `Boolean(document.querySelector('#table .carte .dos-ancien'))`],
 			['analyseur-q', `Boolean(document.querySelector('.slide.current'))`],
 		] as const) {
 			await ouvrir(page, dossier, pret);

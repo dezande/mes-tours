@@ -1,0 +1,78 @@
+@use "sass:list";
+@use "../../abstracts/mixins" as *;
+@use "tokens" as *;
+
+/*
+ * La Dame (components/FaceDeDame.tsx, logic/dame.ts), aux encres d'un jeu des années 1950 et 1960 :
+ * le trait noir un peu passé, les aplats posés de travers, rouge et noir des enseignes un peu
+ * fanés. Chaque reine a ses trois couleurs, comme dans un vrai jeu :
+ *   Pallas (pique)    robe bleue, manches d'or, voile rouge
+ *   Judith (cœur)     robe rouge, manches bleues, voile vert
+ *   Argine (trèfle)   robe d'or, manches rouges, voile bleu
+ *   Rachel (carreau)  robe rouge, manches d'or, voile bleu
+ */
+
+$dames: (
+	"pique": ($dame-bleu, $dame-or, $dame-rouge),
+	"coeur": ($dame-rouge, $dame-bleu, $dame-vert),
+	"trefle": ($dame-or, $dame-rouge, $dame-bleu),
+	"carreau": ($dame-rouge, $dame-or, $dame-bleu),
+);
+
+.face-dame {
+	@include cover;
+	display: block;
+	width: 100%;
+	height: 100%;
+	--dame-trait: #{$noir-passe};
+	--dame-noir: #{$noir-passe};
+	--dame-or: #{$dame-or};
+	--dame-rouge: #{$dame-rouge};
+	--dame-vert: #{$dame-vert};
+	--dame-papier: #{$dame-papier};
+	--encre-enseigne: #{$noir-passe};
+
+	@each $couleur, $teintes in $dames {
+		&[data-couleur="#{$couleur}"] {
+			--dame-robe: #{list.nth($teintes, 1)};
+			--dame-manches: #{list.nth($teintes, 2)};
+			--dame-voile: #{list.nth($teintes, 3)};
+		}
+	}
+
+	&[data-couleur="coeur"],
+	&[data-couleur="carreau"] {
+		--encre-enseigne: #{$rouge-passe};
+	}
+
+	// Les index des coins et les enseignes du cadre.
+	.index text {
+		fill: var(--encre-enseigne);
+		font-family: $index;
+		font-weight: 700;
+	}
+
+	.enseigne {
+		fill: var(--encre-enseigne);
+	}
+
+	// Le nom de la reine, en petites capitales espacées, le long du cadre.
+	.nom {
+		fill: var(--dame-trait);
+		font-family: $index;
+		letter-spacing: .9px;
+	}
+
+	.cadre {
+		stroke: var(--dame-trait);
+	}
+
+	// Les aplats, un peu fanés : l'encre a bu le papier.
+	.moitie path[transform] {
+		opacity: .9;
+	}
+
+	.rousseurs {
+		fill: rgba(140, 92, 30, .13);
+	}
+}

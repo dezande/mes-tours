@@ -1,0 +1,39 @@
+@use "tokens" as *;
+@use "../../components/panneau-reglages" as panneau;
+@use "../../components/cartes";
+
+// Le panneau de réglages, sobre, sur l'ardoise (components/_panneau-reglages.scss).
+@include panneau.panneau-reglages($fond: $bg, $texte: $ink, $texte-doux: $ink-soft,
+	$filet: $ink-faint, $accent: $accent, $carte: $panel, $serif: $serif);
+
+// Choix de la couleur du dos (components/_cartes.scss) : les quatre encres sur une seule rangée,
+// chacune montrée sur le dos « pluie très fine » (_cartes.scss).
+@include cartes.vignettes($colonnes: 4, $colonnes-couleurs: 4);
+
+// Les vignettes : le même dos, en petit, sans la marge peinte des autres tours (après le mixin, qui
+// les peint autrement). En petit, des hachures si fines se perdraient : elles sont épaissies, et
+// l'encre se voit d'un coup d'œil.
+.vignette {
+	background: var(--papier-dos);
+	box-shadow: inset 0 0 0 1px rgba(60, 40, 20, .25);
+	color: var(--encre-dos);
+
+	.pluie {
+		stroke-width: .8;
+	}
+}
+
+.vignettes + .hint {
+	margin-top: 10px;
+}
+
+// Le test des zones, dans la carte des aides à la répétition.
+.aide-btn {
+	width: 100%;
+	margin-top: 12px;
+}
+
+// Le rappel du trucage : un paragraphe par temps de la routine.
+#trucage .hint + .hint {
+	margin-top: 8px;
+}
