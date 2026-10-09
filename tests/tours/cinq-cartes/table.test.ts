@@ -1,5 +1,5 @@
 // Où tombe un toucher : la carte sous le doigt, et le coin de la cinquième.
-import { boitesDeLaRangee, carteDuPoint, couleurDuPoint, MARGE_PX, type Boite } from '../../../src/tours/cinq-cartes/logic/table.ts';
+import { boitesDeLaRangee, carteDuPoint, coinsDeLaColonne, couleurDuPoint, MARGE_PX, type Boite } from '../../../src/tours/cinq-cartes/logic/table.ts';
 
 // Cinq cartes de 100 × 140, à 20 px les unes des autres (des colonnes sans écart, pour les coins).
 const BOITES: Boite[] = [0, 1, 2, 3, 4].map((i) => ({ x: 20 + i * 120, y: 50, largeur: 100, hauteur: 140 }));
@@ -30,6 +30,30 @@ test('un coin dans la marge, hors de la carte, reste celui du côté touché', (
 	const b = BOITES[4]!;
 	expect(couleurDuPoint(b.x - 3, b.y - 3, b)).toBe('pique');
 	expect(couleurDuPoint(b.x + b.largeur + 3, b.y + b.hauteur + 3, b)).toBe('carreau');
+});
+
+test('la colonne de la cinquième est coupée en quatre jusqu’aux bords de l’écran : le doigt n’a pas à tomber sur la carte', () => {
+	const b = BOITES[4]!;
+	// Tout en haut et tout en bas de l'écran, au-dessus et au-dessous de la carte.
+	expect(couleurDuPoint(b.x + 5, 0, b)).toBe('pique');
+	expect(couleurDuPoint(b.x + 95, 2, b)).toBe('coeur');
+	expect(couleurDuPoint(b.x + 5, 400, b)).toBe('trefle');
+	expect(couleurDuPoint(b.x + 95, 400, b)).toBe('carreau');
+	// Les quatre coins couvrent toute la colonne, sans trou, coupés au milieu de la carte.
+	const colonne = { x: b.x - 10, y: b.y, largeur: 120, hauteur: 140 };
+	const coins = coinsDeLaColonne(colonne, b, 400);
+	expect(coins).toStrictEqual([
+		{ x: 490, y: 0, largeur: 60, hauteur: 120 },
+		{ x: 550, y: 0, largeur: 60, hauteur: 120 },
+		{ x: 490, y: 120, largeur: 60, hauteur: 280 },
+		{ x: 550, y: 120, largeur: 60, hauteur: 280 },
+	]);
+	// Chaque coin donne sa couleur, partout où on le touche.
+	coins.forEach((c, i) => {
+		for (const [x, y] of [[c.x + 1, c.y + 1], [c.x + c.largeur - 1, c.y + c.hauteur - 1]]) {
+			expect(couleurDuPoint(x!, y!, b)).toBe(['pique', 'coeur', 'trefle', 'carreau'][i]);
+		}
+	});
 });
 
 test('une carte sans taille ne donne aucune couleur', () => {

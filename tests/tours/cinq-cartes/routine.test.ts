@@ -1,6 +1,6 @@
 // La routine : chaque carte touchée se retourne aussitôt ; le codage des quatre premières cartes et
 // du coin de la cinquième, puis la révélation.
-import { carteAuHasard, DEPART, estRetournee, faceDe, memeCarte, poids, toucher, toutesRetournees, valeurDeLaSomme, type Couleur, type Etat } from '../../../src/tours/cinq-cartes/logic/routine.ts';
+import { carteAuHasard, DEPART, estJoker, estRetournee, faceDe, JOKER, memeCarte, poids, toucher, toutesRetournees, valeurDeLaSomme, type Couleur, type Etat } from '../../../src/tours/cinq-cartes/logic/routine.ts';
 
 /** Touche les cartes `indexes` pendant le codage, puis la cinquième dans le coin de `couleur`. */
 const coder = (indexes: number[], couleur: Couleur): Etat =>
@@ -45,8 +45,40 @@ test('toucher deux fois la même carte ne la compte qu’une fois', () => {
 	expect(etat.phase === 'revelation' && etat.carte.valeur).toBe(5);
 });
 
-test('0, 14 et 15 sont ramenés à l’As et au Roi', () => {
-	expect([0, 1, 13, 14, 15].map(valeurDeLaSomme)).toStrictEqual([1, 1, 13, 13, 13]);
+test('0, 14 et 15 donnent le Joker', () => {
+	expect([0, 1, 13, 14, 15].map(valeurDeLaSomme)).toStrictEqual([JOKER, 1, 13, JOKER, JOKER]);
+});
+
+test('14 : la dernière carte retournée est un Joker, les autres restent blanches', () => {
+	const codee = coder([1, 2, 3], 'coeur');
+	expect(codee.phase === 'revelation' && estJoker(codee.carte)).toBe(true);
+	for (const i of [1, 2, 3, 4]) expect(faceDe(codee, i), `carte ${i}`).toBeNull();
+	// La seule face cachée porte déjà le Joker.
+	expect(faceDe(codee, 0)).toStrictEqual({ valeur: JOKER, couleur: 'coeur' });
+});
+
+test('15 : les cinq cartes sont retournées au codage, la cinquième montre aussitôt le Joker', () => {
+	const codee = coder([0, 1, 2, 3], 'pique');
+	expect(toutesRetournees(codee)).toBe(true);
+	expect(faceDe(codee, 4)).toStrictEqual({ valeur: JOKER, couleur: 'pique' });
+	for (const i of [0, 1, 2, 3]) expect(faceDe(codee, i), `carte ${i}`).toBeNull();
+});
+
+test('la cinquième touchée directement : toutes les cartes sont des Jokers, elle comprise', () => {
+	const codee = toucher(DEPART, 4, 'trefle');
+	const joker = { valeur: JOKER, couleur: 'trefle' };
+	expect(faceEnLAir(codee)).toStrictEqual([4]);
+	expect(faceDe(codee, 4)).toStrictEqual(joker);
+	const finie = retourner(codee, [2, 0, 3, 1]);
+	expect(toutesRetournees(finie)).toBe(true);
+	for (const i of [0, 1, 2, 3, 4]) expect(faceDe(finie, i), `carte ${i}`).toStrictEqual(joker);
+});
+
+test('une seule carte touchée avant la cinquième suffit : une seule carte a une face, et ce n’est pas un Joker', () => {
+	// 1 : l'As.
+	const codee = retourner(coder([0], 'carreau'), [1, 2, 3]);
+	expect([0, 1, 2, 3, 4].filter((i) => faceDe(codee, i) !== null)).toStrictEqual([3]);
+	expect(faceDe(codee, 3)).toStrictEqual({ valeur: 1, couleur: 'carreau' });
 });
 
 test('la cinquième sans coin ne fait rien', () => {

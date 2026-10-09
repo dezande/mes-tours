@@ -39,6 +39,15 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **Les cinq cartes : les Jokers, et des coins plus grands pour la couleur.**
+  - **La cinquième touchée directement**, sans rien coder : toutes les cartes sont des Jokers, la cinquième comprise, dès qu'elle se retourne.
+  - **14 ou 15** : la carte du spectateur (la dernière retournée) est un Joker, les autres restent blanches ; pour 15, les cinq cartes sont retournées au codage, et c'est la cinquième qui montre le Joker. Avant, 14 et 15 donnaient le Roi.
+  - **Cinq Jokers différents**, en pixels comme les figures, « JOKER » en colonne dans les coins ; chaque carte a le sien, de sa couleur et de son style, et quand toutes sont des Jokers, les cinq sont différents : le fou rouge (bonnet à grelots, habit d'arlequin), le bouffon violet (bonnet à trois pointes, larmes peintes), le clown bleu (chapeau à pompon, cheveux frisés, nez rouge), l'arlequin vert (bicorne, loup noir, losanges) et le roi des fous orange (couronne, fraise en pointes). Chacun a aussi son cadre : arrondi ou carré, simple, double ou en pointillés, sur un fond teinté de sa couleur.
+  - **La couleur se choisit sur toute la colonne de la cinquième carte**, coupée en quatre par le milieu de la carte jusqu'en haut et en bas de l'écran : le doigt n'a plus à tomber sur la carte. Le test des zones dessine ces quatre coins, et les réglages le rappellent.
+  - Tests de la routine (0, 14, 15), du Joker, des coins de la colonne et dans l'app.
+
 ## [1.6.0] — 2026-10-09
 
 52 commits

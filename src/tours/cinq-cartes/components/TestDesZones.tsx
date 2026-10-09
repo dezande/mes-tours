@@ -1,7 +1,8 @@
 /*
  * LE TEST DES ZONES, comme celui de la boule de cristal, ouvert depuis les réglages (aides à la
  * répétition) : chaque colonne touchable est dessinée sur la scène avec la valeur de sa carte (1,
- * 2, 4, 8), et la carte de la couleur avec ses quatre coins (♠ ♥ ♣ ♦). La zone touchée s'allume
+ * 2, 4, 8), et la colonne de la carte de la couleur coupée en quatre coins (♠ ♥ ♣ ♦), jusqu'aux
+ * bords de l'écran. La zone touchée s'allume
  * (`eclair`), et la barre dit ce qu'elle vaut ; « Réglages » y revient, « Quitter » ramène au menu.
  * Les touchers n'y retournent aucune carte.
  *
@@ -17,7 +18,7 @@ import { useBoutonsTactiles } from '../../../hooks/useBoutonsTactiles.ts';
 import type { Lang } from '../../../logic/i18n.ts';
 import { ui } from '../content/interface.ts';
 import { COULEURS, DERNIERE, poids, type Couleur } from '../logic/routine.ts';
-import type { Boite } from '../logic/table.ts';
+import { coinsDeLaColonne, type Boite } from '../logic/table.ts';
 
 /** La zone touchée : une colonne (son rang du codage), ou un coin de la carte de la couleur. */
 export type Zone = { readonly rang: number; readonly couleur?: Couleur };
@@ -32,8 +33,8 @@ const SYMBOLE: Readonly<Record<Couleur, string>> = { pique: '♠', coeur: '♥',
 
 interface Props {
 	langue: Lang;
-	/** Les colonnes et les cartes, dans l'ordre de la table, et le rang du codage de chaque place. */
-	mesurer: () => { colonnes: Boite[]; cartes: Boite[]; rangs: number[] } | null;
+	/** Les colonnes et les cartes, dans l'ordre de la table, le rang du codage de chaque place, et la hauteur de l'écran. */
+	mesurer: () => { colonnes: Boite[]; cartes: Boite[]; rangs: number[]; hauteur: number } | null;
 	eclair: Eclair | null;
 	surReglages: () => void;
 	surQuitter: () => void;
@@ -78,14 +79,13 @@ export function TestDesZones({ langue, mesurer, eclair, surReglages, surQuitter 
 							</div>
 						);
 					}
-					// La carte de la couleur : coupée en quatre par son milieu.
-					const carte = boites.cartes[place]!;
-					const demi = { largeur: carte.largeur / 2, hauteur: carte.hauteur / 2 };
+					// La colonne de la carte de la couleur : coupée en quatre par le milieu de la carte, jusqu'aux bords de l'écran.
+					const coins = coinsDeLaColonne(colonne, boites.cartes[place]!, boites.hauteur);
 					return (
 						<div key={`couleur-${place}`} className="zone-colonne couleur" style={{ left: `${colonne.x}px`, width: `${colonne.largeur}px` }}>
 							{COULEURS.map((couleur, i) => {
 								const zone = { rang, couleur };
-								const coin = { x: carte.x - colonne.x + (i % 2) * demi.largeur, y: carte.y + Math.floor(i / 2) * demi.hauteur, ...demi };
+								const coin = { ...coins[i]!, x: coins[i]!.x - colonne.x };
 								return (
 									<div key={cle(zone)} className={`zone-coin${allumee(zone)}`} data-couleur={couleur} style={px(coin)}>
 										<span className="tag">{SYMBOLE[couleur]}</span>

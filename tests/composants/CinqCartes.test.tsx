@@ -72,6 +72,28 @@ test('la routine finie, une carte touchée se retourne dans un sens ou dans l’
 	expect(cartes()[1]!.querySelector('.face-carte')).toBeNull();
 });
 
+test('la cinquième touchée directement : toutes les cartes sont des Jokers', async () => {
+	await ouvrir('#/tours/cinq-cartes');
+	touches('d');
+	// La cinquième se retourne aussitôt sur un Joker, rouge (coin du carreau).
+	expect(retournees()).toStrictEqual([4]);
+	expect(cartes()[4]!.querySelector<SVGElement>('.face-carte')!.dataset.valeur).toBe('joker');
+	touches('1', '2', '3', '4');
+	const faces = cartes().map((c) => c.querySelector<SVGElement>('.face-carte'));
+	expect(faces.map((f) => f?.dataset.valeur)).toStrictEqual(['joker', 'joker', 'joker', 'joker', 'joker']);
+	// Cinq Jokers différents, un par carte.
+	expect(new Set(faces.map((f) => f?.dataset.joker)).size).toBe(5);
+	expect(faces[0]).toHaveTextContent('JOKER');
+	expect(document.getElementById('annonce')).toHaveTextContent('Joker');
+});
+
+test('15 : la cinquième, dernière retournée, est un Joker ; les autres restent blanches', async () => {
+	await ouvrir('#/tours/cinq-cartes');
+	touches('1', '2', '3', '4', 'p');
+	expect(retournees()).toHaveLength(5);
+	expect(cartes().map((c) => c.querySelector<SVGElement>('.face-carte')?.dataset.valeur)).toStrictEqual([undefined, undefined, undefined, undefined, 'joker']);
+});
+
 test('au clavier seulement, R remet les cinq cartes face cachée, rien de codé : on reste dans le tour', async () => {
 	await ouvrir('#/tours/cinq-cartes');
 	touches('1', 'p', '2', '3', '4');
