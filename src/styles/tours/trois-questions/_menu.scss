@@ -1,0 +1,57 @@
+@use "tokens" as *;
+@use "../../components/panneau-reglages" as panneau;
+@use "../../components/cartes";
+
+// Le panneau de réglages, sobre, sur le noir de la galerie (components/_panneau-reglages.scss).
+@include panneau.panneau-reglages($fond: #0b0b0d, $texte: $ink, $texte-doux: $ink-soft,
+	$filet: $ink-faint, $accent: $accent, $carte: $panel, $serif: $serif);
+
+// Choix de la couleur du dos (components/_cartes.scss) : les trois couleurs sur une rangée, chacune
+// montrée sur la photo du dos, teinte comme les cartes (styles/tours/princesse/_cartes.scss).
+@include cartes.vignettes($colonnes: 3, $colonnes-couleurs: 3);
+
+// Le rappel de la routine : un paragraphe par temps.
+#trucage .hint + .hint {
+	margin-top: 8px;
+}
+
+// L'ordre du paquet, en abrégé : un champ à chasse fixe, neuf cartes par ligne.
+#ordre-paquet {
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 10.5em;
+	margin: 4px 0 8px;
+	padding: 10px 12px;
+	border-radius: 12px;
+	border: 1px solid $ink-faint;
+	background: rgba(0, 0, 0, .35);
+	color: $ink;
+	font: 13px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+	resize: vertical;
+	touch-action: manipulation;
+
+	&[aria-invalid="true"] {
+		border-color: rgba(232, 120, 100, .7);
+	}
+}
+
+#ordre-etat {
+	p {
+		margin: 0 0 4px;
+	}
+
+	&.fautes {
+		color: #f0a596;
+	}
+}
+
+#ordre-melange {
+	width: 100%;
+	margin-top: 6px;
+}
+
+#vibration-aide,
+#retournable-aide {
+	margin: 8px 0 0;
+}

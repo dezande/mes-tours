@@ -1,0 +1,142 @@
+@use "tokens" as *;
+
+/*
+ * La galerie de photos (components/Galerie.tsx) : trois diapositives côte à côte sur le noir, qui
+ * suivent le doigt, et sur chaque photo les cartes posées sur le tapis. Les faces, le dos et le
+ * retournement sont ceux de la Princesse (styles/tours/princesse/_cartes.scss) ; ici, chaque carte est
+ * posée à sa place, ce qui remplace la rangée de la Princesse.
+ */
+
+// La scène reçoit tous les touchers : « none » pour qu'aucun défilement ni zoom du navigateur ne s'y
+// glisse — c'est le tour qui fait défiler ses photos.
+#stage {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	touch-action: none;
+	// Les cartes en 3D, et leur empilement, restent enfermés ici : jamais par-dessus la jauge ou le menu.
+	isolation: isolate;
+	background: $bg;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+#galerie {
+	// --decalage : de combien la bande suit le doigt, écrit par le tour (index.tsx) ; --entre : le noir
+	// entre deux photos, pendant qu'elles glissent (components/Galerie.tsx : ENTRE).
+	--decalage: 0px;
+	--entre: 20px;
+	position: absolute;
+	inset: 0;
+}
+
+.diapo {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	padding: var(--safe-t) var(--safe-r) var(--safe-b) var(--safe-l);
+	// La photo se mesure sur la place libre (100cqw, 100cqh).
+	container-type: size;
+	transform: translateX(calc(var(--i) * (100% + var(--entre)) + var(--decalage)));
+	will-change: transform;
+}
+
+// La photo glisse jusqu'à sa place, comme dans une appli de photos, et ralentit en arrivant.
+#galerie.anime .diapo {
+	transition: transform .32s cubic-bezier(.2, .75, .25, 1);
+}
+
+// La photo : au format 3 × 4 d'un téléphone tenu droit, la plus grande qui tienne, sur le noir.
+.cliche {
+	position: relative;
+	width: min(100cqw, 100cqh * .75);
+	aspect-ratio: 3 / 4;
+	overflow: hidden;
+	background: $photo;
+}
+
+// Le cadrage. La lumière de la photo et ses bords assombris passent par-dessus les cartes.
+.prise {
+	position: absolute;
+	inset: 0;
+	isolation: isolate;
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: 100;
+		pointer-events: none;
+		background:
+			radial-gradient(125% 95% at 50% 45%, transparent 55%, rgba(0, 0, 0, .42) 100%),
+			linear-gradient(160deg, rgba(255, 236, 200, .07), transparent 45%, rgba(0, 10, 30, .12));
+	}
+
+	// La rafale : la même table, prise un instant après, d'un peu plus près et un peu de travers.
+	&.rafale {
+		transform: scale(1.045) rotate(-.7deg) translate(1.1%, -.9%);
+
+		&::after {
+			background:
+				radial-gradient(125% 95% at 46% 42%, transparent 52%, rgba(0, 0, 0, .46) 100%),
+				linear-gradient(200deg, rgba(255, 236, 200, .09), transparent 50%, rgba(0, 10, 30, .1));
+		}
+	}
+}
+
+// Les cartes, sans la rangée de la Princesse : chacune posée par son conteneur, sans glisser.
+.carte {
+	--rayon: calc(var(--carte-w) * .055);
+	transition: none;
+}
+
+// ---------- Les trois colonnes d'une question : jusqu'à quatorze cartes chacune, de haut en bas ----------
+
+.colonnes {
+	// La carte prend la plus grande taille qui tienne : trois colonnes sur la largeur, et quatorze
+	// cartes de haut en bas, d'une carte à la suivante de quoi lire l'index du coin en entier (22 % de
+	// sa hauteur) et un peu plus (27 %). 100cqw et 100cqh se mesurent ici, là où les cartes sont posées.
+	--ecart: 3cqw;
+	--carte-w: min((100cqw - 2 * var(--ecart)) / 3 * .9, 100cqh / (1 + 13 * .27) / 1.4);
+	--carte-h: calc(var(--carte-w) * 1.4);
+	position: absolute;
+	inset: 4.5% 3.5%;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: var(--ecart);
+	container-type: size;
+}
+
+.colonne {
+	// Les trois colonnes commencent et finissent à la même hauteur : celle de 13 cartes espace un peu
+	// plus les siennes que celle de 14. --cartes, son nombre de cartes, est écrit par components/Galerie.tsx.
+	--cartes: 14;
+	--pas-colonne: calc((100cqh - var(--carte-h)) / (var(--cartes) - 1));
+	position: relative;
+
+	.carte {
+		// Écrites par components/Galerie.tsx : le rang dans la colonne, et un peu de désordre, comme
+		// posée à la main (logic/photos.ts).
+		--rang: 0;
+		--dx: 0;
+		--dy: 0;
+		--rot: 0;
+		top: calc(var(--rang) * var(--pas-colonne));
+		left: calc(50% - var(--carte-w) / 2);
+		z-index: var(--rang);
+		transform: translate(calc(var(--dx) * var(--carte-w)), calc(var(--dy) * var(--carte-h))) rotate(calc(var(--rot) * 1deg));
+	}
+}
+
+// ---------- La révélation : la carte du spectateur, au premier plan quand elle se retourne ----------
+
+// Retournée, elle grandit et passe devant toutes les cartes, sous la lumière de la photo (.prise::after).
+.colonne #spectateur {
+	transition: transform .55s cubic-bezier(.3, .1, .25, 1);
+
+	&.retournee {
+		z-index: 90;
+		transform: scale(1.9);
+	}
+}

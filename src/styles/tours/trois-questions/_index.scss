@@ -1,0 +1,23 @@
+/*
+ * Trois questions (src/tours/trois-questions/) : tous ses styles sont rangés sous
+ * .scene-trois-questions, la page du tour (src/pages/PageTour.tsx). Les faces et le dos des cartes
+ * sont ceux de la Princesse (styles/tours/princesse/_cartes.scss), chargés ici sous la classe du
+ * tour ; _galerie.scss pose ensuite les cartes sur les photos. Aucune animation à lui (@keyframes) :
+ * rien à préfixer.
+ */
+@use "sass:meta";
+@use "tokens";
+
+// Le fond derrière #app, et sous la barre du téléphone : le noir d'une galerie de photos.
+html[data-tour="trois-questions"],
+html[data-tour="trois-questions"] body {
+	background: tokens.$bg;
+}
+
+.scene-trois-questions {
+	@include meta.load-css("base");
+	@include meta.load-css("../princesse/cartes");
+	@include meta.load-css("galerie");
+	@include meta.load-css("overlays");
+	@include meta.load-css("menu");
+}

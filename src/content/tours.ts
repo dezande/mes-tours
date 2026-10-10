@@ -65,6 +65,12 @@ export const TOURS: readonly Tour[] = [
 		nom: { fr: 'Pluie très fine', en: 'Very fine rain' },
 	},
 	{
+		// 52 cartes, trois questions : la carte du spectateur dite par ses colonnes, notées en faisant
+		// défiler une galerie de photos.
+		dossier: 'trois-questions',
+		nom: { fr: 'Trois questions', en: 'Three questions' },
+	},
+	{
 		// « Analyseur Q » est le nom de l'appareil : le même dans les deux langues, comme dans le tour.
 		dossier: 'analyseur-q',
 		nom: { fr: 'Analyseur Q', en: 'Analyseur Q' },
