@@ -41,6 +41,18 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **Trois questions, un nouveau tour** (onzième tuile du menu, une photo de la galerie entre ses bandes noires) : un paquet de 52 cartes, sans Joker, trois questions, et la carte du spectateur retrouvée par ses trois réponses.
+  - **Le codage** : chaque carte a un code de trois chiffres en base 4, sa place à chaque question (0 de côté, 1 à 3 la colonne) ; dix codes sont écartés (000, 111, 222, 333, 012, 123, 230, 301, 010, 101), les autres donnés dans l'ordre croissant aux cartes dans l'ordre du paquet ; les deux derniers, 331 et 332, ne sont ceux d'aucune carte. À chaque question, 13 cartes de côté, jamais montrées, et 12 à 14 dans chaque colonne. Les trois colonnes commencent et finissent à la même hauteur, et l'index de chaque carte se lit en entier.
+  - **Une galerie de photos, au doigt et d'une main** : chaque question est une photo des trois colonnes sur un tapis de close-up. Toucher la colonne du spectateur la note et passe à la photo suivante, un instant après (le temps de voir qu'aucun second toucher ne suit) ; s'il ne la voit pas, un double toucher, n'importe où. Défiler vers la gauche ne note rien : une autre photo des mêmes colonnes, prise en rafale. Défiler vers la droite revient en arrière et oublie la réponse. Aucun bouton, aucun texte : au public, quelqu'un fait défiler ses photos. Au clavier : 1, 2, 3, 0 pour « aucune », les flèches.
+  - **Un code écarté (ou 331, 332)** : la photo ne bouge pas, et le téléphone vibre pour l'artiste seul (réglable ; un iPhone ne vibre pas, la photo immobile le dit).
+  - **La révélation** : une dernière photo de trois colonnes de 13 cartes, celle du spectateur face en bas au milieu de la colonne du milieu ; la photo est bloquée, plus aucun défilement. Touchée, la carte se retourne, grandit et passe devant toutes les autres ; un réglage permet qu'elle reste face en bas (le double toucher relance alors la routine). La 1re carte en haut à gauche a sa valeur dans une autre famille ; la dernière en bas à droite, sa famille, d'une autre valeur, jamais une figure. Les 36 autres n'ont ni sa valeur ni sa famille. Le double toucher, la carte retournée, relance la routine.
+  - **Le paquet est mélangé à chaque nouvelle routine.** Un ordre fixe peut se régler (un chapelet mémorisé) : écrit en abrégé (AP 10C DK RT, ou AS 10H QD KC en anglais, ou avec ♠ ♥ ♦ ♣), enregistré dès qu'il est complet et juste, ses fautes dites sinon ; le champ vidé, le paquet est de nouveau mélangé. Aussi : la carte qu'on retourne ou non, la couleur du dos, la vibration, la jauge.
+  - Les faces Bicycle des trois paquets, le dos Rider de la Princesse.
+  - Le menu resserré encore un peu (tuiles de 54 px, noms sur deux lignes serrées) : onze tuiles tiennent sur l'écran sans défiler.
+  - Tests des codes, de la répartition, de chaque carte retrouvée, des codes écartés, des gestes, de la révélation pour les 52 cartes, de l'ordre écrit à la main, dans l'app et dans Chrome.
+
 ## [1.8.0] — 2026-10-10
 
 57 commits

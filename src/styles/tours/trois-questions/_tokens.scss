@@ -1,0 +1,24 @@
+// Les couleurs et typographies du tour : celles des tours de cartes (abstracts/_tokens-cartes.scss).
+@forward "../../abstracts/tokens-cartes";
+
+// La galerie : le noir d'une appli de photos, autour de chaque photo.
+$bg: #000;
+
+// Ce que montrent les photos : un tapis de close-up bleu nuit, photographié de près, sous une lampe
+// un peu chaude ; les bords s'assombrissent, comme sur une photo prise au téléphone.
+$tapis: #1d3a63;
+$tapis-clair: #2c5486;
+$tapis-sombre: #0c1a30;
+$photo: (
+	radial-gradient(70% 55% at 42% 34%, rgba(255, 238, 205, .14), transparent 72%),
+	repeating-linear-gradient(28deg, rgba(255, 255, 255, .018) 0 1px, transparent 1px 3px),
+	radial-gradient(130% 100% at 50% 42%, $tapis-clair, $tapis 50%, $tapis-sombre 100%),
+);
+
+// Le fond du tour, repris par sa tuile du menu : une photo du tapis, entre les bandes noires de la
+// galerie. Aucun autre tour n'a ce fond (README : « Ajouter un tour »).
+$fond: (
+	linear-gradient(180deg, $bg 0 16%, transparent 16% 84%, $bg 84%),
+	radial-gradient(120% 90% at 50% 45%, transparent 45%, rgba(0, 0, 0, .5) 100%),
+	$photo,
+);

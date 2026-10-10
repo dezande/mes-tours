@@ -103,7 +103,7 @@ async function pressKey(page: Page, key: string): Promise<void> {
 
 /* ================= Le menu principal ================= */
 
-test('le menu 16 bits montre les dix tours, chacun avec son icône et son écrou ⚙', async () => {
+test('le menu 16 bits montre les onze tours, chacun avec son icône et son écrou ⚙', async () => {
 	await withApp(async (page) => {
 		const tuiles = await page.evaluate<{ nom: string; icone: boolean; ecrou: string | null }[]>(`[...document.querySelectorAll('#tours .tour')].map((t) => ({
 			nom: t.querySelector('.tour-nom').textContent,
@@ -694,6 +694,60 @@ async function choisirLangue(page: Page, lang: 'fr' | 'en'): Promise<void> {
 	await page.waitFor(`document.documentElement.lang === '${lang}'`, `menu en ${lang}`);
 }
 
+test('Trois questions : une colonne touchée, le double toucher pour « aucune », la carte du spectateur à la révélation', async () => {
+	const photo = `document.querySelector('#galerie').dataset.photo`;
+	/** Un défilement du doigt vers la gauche (la photo suivante), comme dans une appli de photos. */
+	async function defiler(page: Page): Promise<void> {
+		const y = SCREEN.height / 2;
+		await page.touchStart({ x: SCREEN.width - 40, y });
+		for (let pas = 1; pas <= 6; pas++) {
+			await page.touchMove({ x: SCREEN.width - 40 - pas * 45, y: y + pas });
+			await sleep(16);
+		}
+		await page.touchEnd();
+		await sleep(600);
+	}
+	/** Le milieu de la colonne `n` (1 à 3) de la photo montrée. */
+	const colonne = (n: number): string => `(() => { const r = document.querySelector('#galerie .diapo[data-place="0"] .colonne[data-colonne="${n}"]').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()`;
+	await withApp(async (page) => {
+		await ouvrir(page, 'trois-questions', `Boolean(document.querySelector('#galerie .colonne .carte'))`);
+		expect(await page.evaluate(dansLeTour(photo))).toBe('question-0');
+		// Question 1 : colonne 3.
+		await page.tap(await page.evaluate<Point>(dansLeTour(colonne(3))));
+		await attendre(page, dansLeTour(`${photo} === 'question-1'`), 'photo de la question 2', 3000);
+		await sleep(600);
+		// Question 2 : un défilement ne note rien (la rafale), le double toucher note « aucune ».
+		await defiler(page);
+		expect(await page.evaluate(dansLeTour(photo))).toBe('question-1-rafale');
+		await page.doubleTap(await page.evaluate<Point>(dansLeTour(colonne(2))));
+		await attendre(page, dansLeTour(`${photo} === 'question-2'`), 'photo de la question 3', 3000);
+		await sleep(600);
+		// Question 3 : colonne 1. Le code 301 est écarté : rien ne bouge.
+		await page.tap(await page.evaluate<Point>(dansLeTour(colonne(1))));
+		await sleep(600);
+		expect(await page.evaluate(dansLeTour(photo)), 'un code écarté a bougé la galerie').toBe('question-2');
+		// Colonne 2 : le code 302, la révélation.
+		await page.tap(await page.evaluate<Point>(dansLeTour(colonne(2))));
+		await attendre(page, dansLeTour(`${photo} === 'revelation'`), 'révélation', 3000);
+		await sleep(600);
+		// La photo de la révélation est bien à sa place, à l'écran : trois colonnes, la carte du spectateur
+		// face en bas au milieu de celle du milieu. On la touche sur sa bande visible, en haut.
+		const centre = await page.evaluate<Point & { gauche: number }>(dansLeTour(`(() => { const r = document.querySelector('#spectateur').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height * .12, gauche: r.x }; })()`));
+		expect(centre.gauche > 0 && centre.x < SCREEN.width, 'la révélation n’est pas à l’écran').toBe(true);
+		expect(await page.evaluate<number>(dansLeTour(`document.querySelectorAll('#galerie .diapo[data-place="0"] .carte.retournee').length`))).toBe(38);
+		await page.tap(centre);
+		await attendre(page, dansLeTour(`document.querySelector('#spectateur').classList.contains('retournee')`), 'carte du spectateur retournée', 3000);
+		await sleep(800);
+		// Le double toucher : une nouvelle routine, on reste dans le tour.
+		await page.doubleTap(centre);
+		await attendre(page, dansLeTour(`${photo} === 'question-0'`), 'nouvelle routine', 3000);
+		expect(await page.evaluate<boolean>(`location.hash.startsWith('#/tours/trois-questions')`), 'le double toucher a quitté le tour').toBe(true);
+		await sleep(600);
+		await appuiLong(page);
+		await attendreLeMenu(page);
+	});
+}, TIMEOUT);
+
 test('écrou ⚙ : les réglages du tour s’ouvrent seuls, « Fermer » ramène au menu', async () => {
 	await withApp(async (page) => {
 		for (const [dossier, panneau] of [
@@ -706,6 +760,7 @@ test('écrou ⚙ : les réglages du tour s’ouvrent seuls, « Fermer » ramène
 			['cinq-cartes', '#menu'],
 			['trois-paquets', '#menu'],
 			['pluie-tres-fine', '#menu'],
+			['trois-questions', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
 			await ouvrir(page, dossier, `Boolean(document.querySelector('${panneau}')) && !document.querySelector('${panneau}').hidden`, true);
@@ -740,6 +795,7 @@ test('écrou ⚙ : une croix en haut à droite ferme les réglages, plus de bout
 			['cinq-cartes', '#menu'],
 			['trois-paquets', '#menu'],
 			['pluie-tres-fine', '#menu'],
+			['trois-questions', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
 			await ouvrir(page, dossier, `Boolean(document.querySelector('${panneau}')) && !document.querySelector('${panneau}').hidden`, true);
@@ -777,6 +833,7 @@ test('écrou ⚙ : tous les réglages ont la même structure, le nom du tour en 
 			['cinq-cartes', '#menu'],
 			['trois-paquets', '#menu'],
 			['pluie-tres-fine', '#menu'],
+			['trois-questions', '#menu'],
 			['analyseur-q', '#menu'],
 		] as const) {
 			await ouvrir(page, dossier, `Boolean(document.querySelector('${panneau}')) && !document.querySelector('${panneau}').hidden`, true);
@@ -960,6 +1017,7 @@ test('chaque tour reçoit les marges de l’écran : rien sous la caméra fronta
 			['cinq-cartes', `document.querySelectorAll('#rangee .carte').length === 5`],
 			['trois-paquets', `document.querySelectorAll('.salade .carte[data-carte="D-pique"]').length === 2`],
 			['pluie-tres-fine', `Boolean(document.querySelector('#table .carte .dos-ancien'))`],
+			['trois-questions', `Boolean(document.querySelector('#galerie .colonne .carte'))`],
 			['analyseur-q', `Boolean(document.querySelector('.slide.current'))`],
 		] as const) {
 			await ouvrir(page, dossier, pret);

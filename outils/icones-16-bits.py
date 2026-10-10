@@ -317,6 +317,41 @@ def pluie_tres_fine():
                 t[y][x]='#d8e0ee' if (y+3*k)%8<4 else '#9aa6bd'
     return t
 
+# ---------- Trois questions : une photo de la galerie (trois colonnes de cartes sur le tapis bleu), et un « ? » doré ----------
+def trois_questions():
+    t=toile()
+    # le tapis bleu nuit de la photo, éclairé en haut à gauche, dans son liseré blanc de photo
+    bleus=['#0c1a30','#1d3a63','#2c5486']
+    x0,y0,w,h=1,7,25,23
+    for y in range(y0,y0+h):
+        for x in range(x0,x0+w):
+            if x in (x0,x0+w-1) or y in (y0,y0+h-1): t[y][x]='#fbf6ea'; continue
+            v=0.95-0.6*((x-x0)/w*0.5+(y-y0)/h*0.5)
+            t[y][x]=ramp(v,bleus,x,y)
+    # trois colonnes de petites cartes qui se chevauchent : le haut de chacune, son index rouge ou noir
+    rouge='#c8102e'; noir='#0b0b12'
+    for c,cx in enumerate((3,11,19)):
+        for i in range(5):
+            cy=y0+2+i*3+(c%2)
+            haut=3 if i<4 else 5
+            for y in range(cy,cy+haut):
+                for x in range(cx,cx+5): t[y][x]='#ffffff' if y>cy else '#e6dcc4'
+            t[cy+1][cx+1]=rouge if (c+i)%2==0 else noir
+    # le « ? » doré, en haut à droite, par-dessus la photo
+    ors=['#c98c2e','#f2c55c','#fff0b0']
+    q=[".XXXX.",
+       "XX..XX",
+       "....XX",
+       "...XX.",
+       "..XX..",
+       "..XX..",
+       "......",
+       "..XX.."]
+    for v,l in enumerate(q):
+        for u,ch in enumerate(l):
+            if ch=='X': t[1+v][23+u]=ramp(0.9-0.1*v,ors,23+u,1+v)
+    return contour(t,'#05061a')
+
 # ---------- Analyseur Q : le pique dans son orbite ----------
 def analyseur():
     t=toile()
@@ -390,7 +425,7 @@ def en_grille(t):
         lignes.append(l)
     return lignes
 
-icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'morpion':morpion(),'princesse':princesse(),'six-predictions':eventail(),'cinq-cartes':cinq_cartes(),'trois-paquets':trois_paquets(),'pluie-tres-fine':pluie_tres_fine(),'analyseur-q':analyseur()}
+icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'morpion':morpion(),'princesse':princesse(),'six-predictions':eventail(),'cinq-cartes':cinq_cartes(),'trois-paquets':trois_paquets(),'pluie-tres-fine':pluie_tres_fine(),'trois-questions':trois_questions(),'analyseur-q':analyseur()}
 gear=ecrou()
 # palette commune
 couleurs=[]
