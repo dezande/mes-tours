@@ -9,3 +9,20 @@
 // Choix de la couleur du dos (components/_cartes.scss) : les trois couleurs sur une rangée, chacune
 // montrée sur la photo du dos, teinte comme les cartes (styles/tours/princesse/_cartes.scss).
 @include cartes.vignettes($colonnes: 3, $colonnes-couleurs: 3);
+
+// Les photos des paquets : deux boutons côte à côte, leur nom écrit en entier.
+#photos-choix {
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.choix-texte {
+	display: block;
+	padding: 10px 4px;
+	font-size: 14px;
+	text-align: center;
+	color: $ink;
+}
+
+.slider-hint {
+	margin: 6px 0 0;
+}

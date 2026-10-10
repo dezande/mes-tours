@@ -11,6 +11,7 @@ import { Orientation } from './appareil/Orientation.tsx';
 import { TOURS } from './content/tours.ts';
 import { LangueProvider } from './langue/LangueContext.tsx';
 import { resoudre } from './logic/adresses.ts';
+import { Journal } from './pages/Journal.tsx';
 import { Menu } from './pages/Menu.tsx';
 import { PageTour } from './pages/PageTour.tsx';
 import { naviguer, useAdresse } from './routeur.ts';
@@ -34,7 +35,9 @@ export function App() {
 				{page.page === 'tour'
 					// Une clé par ouverture : rouvrir un tour repart toujours d'une nouvelle routine.
 					? <PageTour key={adresse.cle} dossier={page.dossier} enReglages={page.reglages} depuisLApp={adresse.depuisLApp} />
-					: <Menu />}
+					: page.page === 'journal'
+						? <Journal key={adresse.cle} depuisLApp={adresse.depuisLApp} />
+						: <Menu />}
 				<EcranAllume />
 			</LangueProvider>
 		</Orientation>

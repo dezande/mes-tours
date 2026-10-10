@@ -225,3 +225,51 @@ export function finale(tirage: Tirage, codeNote: number | null): Carte[] {
 	// Dans l'ordre tiré au sort de la fin, la réserve à la suite.
 	return [...restantes, ...tirage.reserve].filter((carte) => gardees.has(carte));
 }
+
+/**
+ * Les trois photos LIÉES, au lieu de trois copies identiques des paquets (réglage « photos ») :
+ * chaque photo garde ses trois colonnes de sept, mais seule une colonne compte — la photo 1 sa
+ * première colonne (les cartes qui valent 1), la photo 2 la deuxième (2), la photo 3 la troisième
+ * (4). Le spectateur dit seulement s'il voit sa carte sur la photo ; l'artiste retient la somme.
+ *
+ *   la colonne liée     les VRAIES cartes à forcer dont le code compte cette photo (quatre),
+ *                       complétées par du remplissage ;
+ *   les deux autres     du remplissage, mêlé de sosies — mais seulement de cartes de la colonne
+ *                       liée : un spectateur qui prendrait un sosie pour sa carte dit « oui » sur
+ *                       la bonne photo. Jamais une vraie carte à forcer.
+ *
+ * Aucune carte en double sur une photo ; d'une photo à l'autre, les cartes à forcer reviennent (c'est
+ * le principe) et le remplissage aussi. Les mêmes semis donnent toujours les mêmes photos.
+ */
+export function photosLiees(semis: number): CarteDuPaquet[][][] {
+	const tireur = new Tireur(semis ^ 0x9407);
+	return Array.from({ length: PAQUETS }, (_, photo) => {
+		const prises: Carte[] = [];
+		const prendre = (carte: Carte, k: number | null): CarteDuPaquet => {
+			prises.push(carte);
+			return { carte, code: k };
+		};
+		const remplir = (): CarteDuPaquet => prendre(tireur.parmi(REMPLISSAGE.filter((carte) => !contient(prises, carte))), null);
+		const codes = FORCEES.map((_, rang) => code(rang)).filter((k) => dansLePaquet(k, photo));
+		const liee = codes.map((k) => prendre(carteDuCode(k)!, k));
+		// Un sosie de chaque carte de la colonne liée, à pile ou face, dans les deux autres colonnes.
+		const sosies = codes.flatMap((k) => {
+			const possibles = sosiesPossibles(carteDuCode(k)!).filter((sosie) => !contient(prises, sosie));
+			return possibles.length > 0 && tireur.suivant() < .5 ? [prendre(tireur.parmi(possibles), k)] : [];
+		});
+		const colonneLiee = tireur.melanger([...liee, ...Array.from({ length: CARTES_PAR_PAQUET - liee.length }, remplir)]);
+		const autres = tireur.melanger([...sosies, ...Array.from({ length: 2 * CARTES_PAR_PAQUET - sosies.length }, remplir)]);
+		const colonnes = [autres.slice(0, CARTES_PAR_PAQUET), autres.slice(CARTES_PAR_PAQUET)];
+		colonnes.splice(photo, 0, colonneLiee);
+		return colonnes;
+	});
+}
+
+/**
+ * Les cartes faces en l'air du panneau 3 avec les photos liées : rien n'est noté, l'artiste retient
+ * la carte. Pour que la carte pensée ait disparu à coup sûr, la fin ne montre que du remplissage
+ * (aucune valeur d'une carte à forcer, ni sosie), FACES_DE_LA_FIN cartes tirées au sort.
+ */
+export function finaleLiee(semis: number): Carte[] {
+	return new Tireur(semis ^ 0xf1).melanger(REMPLISSAGE).slice(0, FACES_DE_LA_FIN);
+}

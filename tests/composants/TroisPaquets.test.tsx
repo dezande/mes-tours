@@ -160,3 +160,45 @@ test('écrou ⚙ : la couleur du dos se choisit, et vaut pour toutes les cartes'
 	await waitFor(() => expect(localStorage.getItem('trois-paquets:settings:v1')).toContain('rouge'));
 	expect(document.querySelectorAll('.salade .carte[data-couleur="rouge"]').length).toBeGreaterThan(7);
 });
+
+test('réglages : la carte face en bas peut rester à sa place ; le toucher fige quand même le tour', async () => {
+	localStorage.setItem('trois-paquets:settings:v1', JSON.stringify({ disparition: false }));
+	await ouvrir('#/tours/trois-paquets');
+	for (let i = 0; i < 6; i++) touche('ArrowRight');
+	const panneaux = document.getElementById('panneaux')!;
+	expect(panneaux.dataset.panneau).toBe('6');
+	touche(' ');
+	expect(document.querySelector('#derniere')!.classList.contains('disparue')).toBe(false);
+	expect(document.getElementById('annonce')).toHaveTextContent('Les cartes restantes');
+	touche('ArrowLeft');
+	touche('ArrowRight');
+	expect(panneaux.dataset.panneau).toBe('6');
+});
+
+test('écrou ⚙ : la case « La carte face en bas disparaît » est cochée par défaut, et se décoche', async () => {
+	await ouvrir('#/tours/trois-paquets?reglages');
+	const caseDisparition = document.getElementById('disparition') as HTMLInputElement;
+	expect(caseDisparition.checked).toBe(true);
+	fireEvent.click(caseDisparition);
+	await waitFor(() => expect(JSON.parse(localStorage.getItem('trois-paquets:settings:v1')!).disparition).toBe(false));
+});
+
+test('photos liées : chaque photo montre les vraies cartes dans sa colonne ; toucher ne note rien ; la fin, que du remplissage', async () => {
+	localStorage.setItem('trois-paquets:settings:v1', JSON.stringify({ photos: 'liees' }));
+	await ouvrir('#/tours/trois-paquets');
+	const colonne = (copie: number, c: number): string[] =>
+		[...document.querySelectorAll<HTMLElement>(`.panneau.paquets[data-copie="${copie}"] .paquet`)[c]!.querySelectorAll<HTMLElement>('.carte')].map((carte) => carte.dataset.carte!);
+	// La photo 1 et sa première colonne : le 4♣, le 5♦, le valet de ♦, la dame de ♠.
+	expect(colonne(1, 0)).toEqual(expect.arrayContaining(['4-trefle', '5-carreau', 'V-carreau', 'D-pique']));
+	// La photo 2 et sa deuxième colonne : le 8♥, le 5♦, le 10♠, la dame de ♠ ; la photo 3 et la troisième.
+	expect(colonne(2, 1)).toEqual(expect.arrayContaining(['8-coeur', '5-carreau', '10-pique', 'D-pique']));
+	expect(colonne(3, 2)).toEqual(expect.arrayContaining(['10-carreau', 'V-carreau', '10-pique', 'D-pique']));
+	for (let i = 0; i < 6; i++) {
+		touche('1');
+		touche('ArrowRight');
+	}
+	expect(document.getElementById('panneaux')!.dataset.panneau).toBe('6');
+	const fin = faces('fin');
+	expect(fin).toHaveLength(20);
+	for (const carte of fin) expect(['A', '3', '6', '7', '9', 'R']).toContain(carte.split('-')[0]);
+});

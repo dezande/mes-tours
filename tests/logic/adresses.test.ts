@@ -7,6 +7,11 @@ test('le menu : #/, ou une adresse vide', () => {
 	for (const hash of ['', '#', '#/']) expect(resoudre(hash, DOSSIERS), JSON.stringify(hash)).toStrictEqual({ page: 'menu' });
 });
 
+test('le journal des versions, à son adresse exacte', () => {
+	expect(resoudre('#/journal', DOSSIERS)).toStrictEqual({ page: 'journal' });
+	for (const hash of ['#/journal/', '#/Journal', '#/journal?x']) expect(resoudre(hash, DOSSIERS), hash).toStrictEqual({ page: 'refusee' });
+});
+
 test('un tour publié, à son adresse exacte, et ses réglages seuls', () => {
 	expect(resoudre('#/tours/pile-ou-face', DOSSIERS)).toStrictEqual({ page: 'tour', dossier: 'pile-ou-face', reglages: false });
 	expect(resoudre('#/tours/pile-ou-face?reglages', DOSSIERS)).toStrictEqual({ page: 'tour', dossier: 'pile-ou-face', reglages: true });

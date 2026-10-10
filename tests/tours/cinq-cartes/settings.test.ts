@@ -2,13 +2,13 @@
 import { DEFAULTS, rangDeLaPlace, sanitizeSettings } from '../../../src/tours/cinq-cartes/logic/settings.ts';
 
 test('des réglages valides sont gardés tels quels', () => {
-	const valides = { sens: 'droite', couleur: 'bleu', showHoldRing: false };
+	const valides = { sens: 'droite', couleur: 'bleu', famille: 'deuxieme', showHoldRing: false };
 	expect(sanitizeSettings(valides)).toStrictEqual(valides);
 });
 
 test('chaque champ invalide reprend sa valeur par défaut, sans toucher aux autres', () => {
-	expect(sanitizeSettings({ sens: 'haut', couleur: 'bleu', showHoldRing: false })).toStrictEqual({ sens: DEFAULTS.sens, couleur: 'bleu', showHoldRing: false });
-	expect(sanitizeSettings({ sens: 'droite', couleur: 'vert', showHoldRing: 'oui' })).toStrictEqual({ sens: 'droite', couleur: DEFAULTS.couleur, showHoldRing: DEFAULTS.showHoldRing });
+	expect(sanitizeSettings({ sens: 'haut', couleur: 'bleu', showHoldRing: false })).toStrictEqual({ sens: DEFAULTS.sens, couleur: 'bleu', famille: DEFAULTS.famille, showHoldRing: false });
+	expect(sanitizeSettings({ sens: 'droite', couleur: 'vert', showHoldRing: 'oui' })).toStrictEqual({ sens: 'droite', couleur: DEFAULTS.couleur, famille: DEFAULTS.famille, showHoldRing: DEFAULTS.showHoldRing });
 });
 
 test('n’importe quelle donnée abîmée donne les réglages par défaut', () => {
@@ -29,4 +29,10 @@ test('le dos « Arcade » ne se choisit pas : rouge par défaut, l’allure de B
 	expect(DEFAULTS.couleur).toBe('rouge');
 	// Le dessin de dos d'une version précédente est oublié, la couleur gardée.
 	expect(sanitizeSettings({ motif: 'pop', couleur: 'noir' })).toStrictEqual({ ...DEFAULTS, couleur: 'noir' });
+});
+
+test('la famille se code par défaut dans les coins de la cinquième ; un codage inconnu y revient', () => {
+	expect(DEFAULTS.famille).toBe('coins');
+	expect(sanitizeSettings({ famille: 'cinquieme' }).famille).toBe('cinquieme');
+	expect(sanitizeSettings({ famille: 'troisieme' }).famille).toBe('coins');
 });

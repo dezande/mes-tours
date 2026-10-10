@@ -84,3 +84,16 @@ export function coinsDeLaColonne(colonne: Boite, carte: Boite, hauteur: number):
 		return { x, y, largeur: droite ? colonne.x + colonne.largeur - mx : mx - colonne.x, hauteur: bas ? hauteur - my : my };
 	});
 }
+
+/**
+ * Les deux moitiés de la colonne `colonne` (de `hauteur` : celle de l'écran), coupée par le milieu
+ * de sa carte `carte` : en haut, puis en bas. Ce sont les coins de couleurDuPoint, deux à deux
+ * (logic/routine.ts : enHaut), pour le test des zones des codages en haut ou en bas.
+ */
+export function moitiesDeLaColonne(colonne: Boite, carte: Boite, hauteur: number): [Boite, Boite] {
+	const my = Math.min(hauteur, Math.max(0, carte.y + carte.hauteur / 2));
+	return [
+		{ x: colonne.x, y: 0, largeur: colonne.largeur, hauteur: my },
+		{ x: colonne.x, y: my, largeur: colonne.largeur, hauteur: hauteur - my },
+	];
+}

@@ -212,3 +212,28 @@ test('écrou ⚙ : le test des zones dessine les colonnes et les coins, sans ret
 	expect(document.querySelector('#menu .sheet')).not.toBeNull();
 	expect(document.getElementById('zones-cinq')).toBeNull();
 });
+
+test('écrou ⚙ : le codage de la famille se choisit, et le rappel du codage le suit', async () => {
+	await ouvrir('#/tours/cinq-cartes?reglages');
+	expect(document.querySelector('#famille-choix [data-valeur="coins"]')).toHaveAttribute('aria-checked', 'true');
+	fireEvent.click(document.querySelector('#famille-choix [data-valeur="deuxieme"]')!);
+	expect(JSON.parse(localStorage.getItem('cinq-cartes:settings:v1')!).famille).toBe('deuxieme');
+	expect(document.getElementById('codage')).toHaveTextContent('La deuxième touchée');
+});
+
+test('codage « rouge ou noire, puis la cinquième » : au clavier, les cartes comptent en haut', async () => {
+	localStorage.setItem('cinq-cartes:settings:v1', JSON.stringify({ famille: 'cinquieme' }));
+	await ouvrir('#/tours/cinq-cartes');
+	// 4 + 8, la première en haut (rouge), la cinquième en bas (mineure) : la Dame de carreau.
+	touches('3', '4', 't', '1', '2');
+	const face = cartes()[1]!.querySelector<SVGElement>('.face-carte')!;
+	expect(face.dataset.valeur).toBe('12');
+	expect(face.dataset.couleur).toBe('carreau');
+});
+
+test('test des zones, codage en haut ou en bas : chaque colonne coupée en deux', async () => {
+	localStorage.setItem('cinq-cartes:settings:v1', JSON.stringify({ famille: 'deuxieme' }));
+	await ouvrir('#/tours/cinq-cartes?reglages');
+	fireEvent.click(document.getElementById('test-btn')!);
+	expect([...document.querySelectorAll('#zones-cinq .zone-colonne .tag')].map((t) => t.textContent)).toStrictEqual(['1', '1', '2', '2', '4', '4', '8', '8', '♠♥', '♣♦']);
+});

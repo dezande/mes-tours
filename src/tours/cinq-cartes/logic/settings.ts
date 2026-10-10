@@ -5,7 +5,7 @@
  * tout passe par sanitizeSettings() avant d'être utilisé. La langue, elle, est celle du menu.
  */
 
-import { NOMBRE } from './routine.ts';
+import { CODAGES, NOMBRE, type CodageFamille } from './routine.ts';
 
 /**
  * Les couleurs du dos « Arcade », le dos en pixels du tour (logic/arcade.ts), telles qu'elles sont
@@ -27,6 +27,8 @@ export interface Settings {
 	sens: Sens;
 	/** Couleur du dos des cinq cartes. */
 	couleur: Teinte;
+	/** Comment se code la famille : les coins de la cinquième, ou rouge/noire puis majeure/mineure (logic/routine.ts). */
+	famille: CodageFamille;
 	/** Jauge de l'appui long : aide visuelle, à masquer si le public voit l'écran. */
 	showHoldRing: boolean;
 }
@@ -35,11 +37,13 @@ export const DEFAULTS: Readonly<Settings> = Object.freeze({
 	sens: 'gauche',
 	// Le dos en pixels, rouge : l'allure de Balatro (styles/tours/cinq-cartes/_balatro.scss).
 	couleur: 'rouge',
+	famille: 'coins',
 	showHoldRing: true,
 });
 
 const bool = (v: unknown, fallback: boolean): boolean => (typeof v === 'boolean' ? v : fallback);
 const isSens = (v: unknown): v is Sens => (SENS as readonly unknown[]).includes(v);
+const isCodage = (v: unknown): v is CodageFamille => (CODAGES as readonly unknown[]).includes(v);
 const isTeinte = (v: unknown): v is Teinte => (TEINTES as readonly string[]).includes(v as string);
 
 /** Réglages valides à partir de n'importe quelle donnée : chaque champ invalide reprend sa valeur par défaut. */
@@ -48,6 +52,7 @@ export function sanitizeSettings(raw: unknown): Settings {
 	return {
 		sens: isSens(src.sens) ? src.sens : DEFAULTS.sens,
 		couleur: isTeinte(src.couleur) ? src.couleur : DEFAULTS.couleur,
+		famille: isCodage(src.famille) ? src.famille : DEFAULTS.famille,
 		showHoldRing: bool(src.showHoldRing, DEFAULTS.showHoldRing),
 	};
 }

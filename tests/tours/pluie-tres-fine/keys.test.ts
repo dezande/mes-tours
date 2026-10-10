@@ -5,8 +5,8 @@ test('P, C, T, D retournent la carte sur la Dame de cette famille', () => {
 	for (const [key, couleur] of [['p', 'pique'], ['C', 'coeur'], ['t', 'trefle'], ['D', 'carreau']] as const) expect(keyAction(key), key).toBe(couleur);
 });
 
-test('remettre la carte face cachée, et le menu', () => {
-	for (const key of ['Home', 'r', 'R']) expect(keyAction(key), key).toBe('remettre');
+test('le menu ; aucune touche ne remet la carte face cachée', () => {
+	for (const key of ['Home', 'r', 'R']) expect(keyAction(key), key).toBeNull();
 	for (const key of ['Escape', 'm', 'M']) expect(keyAction(key), key).toBe('menu');
 });
 

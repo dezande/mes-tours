@@ -1,5 +1,5 @@
 // Où tombe un toucher : la carte sous le doigt, et le coin de la cinquième.
-import { boitesDeLaRangee, carteDuPoint, coinsDeLaColonne, couleurDuPoint, MARGE_PX, type Boite } from '../../../src/tours/cinq-cartes/logic/table.ts';
+import { boitesDeLaRangee, carteDuPoint, coinsDeLaColonne, couleurDuPoint, MARGE_PX, type Boite, moitiesDeLaColonne } from '../../../src/tours/cinq-cartes/logic/table.ts';
 
 // Cinq cartes de 100 × 140, à 20 px les unes des autres (des colonnes sans écart, pour les coins).
 const BOITES: Boite[] = [0, 1, 2, 3, 4].map((i) => ({ x: 20 + i * 120, y: 50, largeur: 100, hauteur: 140 }));
@@ -78,4 +78,13 @@ test('la rangée : une colonne par place, écarts compris, et chaque carte à sa
 	expect(cartes[2]!.x).toBeCloseTo(315 - 50 + 0.03 * 122);
 	expect(cartes[2]!.y).toBeCloseTo(20 - 7);
 	expect(carteDuPoint(131, colonnes), 'dans l’écart, le toucher va à la carte la plus proche').toBe(0);
+});
+
+test('une colonne coupée en deux par le milieu de sa carte, jusqu’aux bords de l’écran', () => {
+	const colonne = { x: 100, y: 40, largeur: 80, hauteur: 120 };
+	const carte = { x: 110, y: 40, largeur: 60, hauteur: 120 };
+	expect(moitiesDeLaColonne(colonne, carte, 400)).toStrictEqual([
+		{ x: 100, y: 0, largeur: 80, hauteur: 100 },
+		{ x: 100, y: 100, largeur: 80, hauteur: 300 },
+	]);
 });

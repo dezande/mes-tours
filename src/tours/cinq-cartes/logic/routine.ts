@@ -12,7 +12,10 @@
  *                  une carte la retourne (blanche) et ajoute sa valeur ; la toucher encore ne change
  *                  rien. Toucher la cinquième la retourne aussi (blanche, sauf Joker) et termine le
  *                  codage : le coin touché donne la couleur — en haut à gauche pique, en haut à
- *                  droite cœur, en bas à gauche trèfle, en bas à droite carreau.
+ *                  droite cœur, en bas à gauche trèfle, en bas à droite carreau. Deux autres
+ *                  codages de la famille se règlent (CODAGES) : en haut ou en bas de la première
+ *                  carte touchée (rouge ou noire), puis de la cinquième ou de la deuxième touchée
+ *                  (majeure ou mineure).
  *   la révélation  chaque toucher retourne la carte touchée. Elles sont blanches, sauf la dernière
  *                  retournée, quelle qu'elle soit : c'est la carte du spectateur. 15 retourne les
  *                  cinq cartes dès le codage : la cinquième est alors la dernière retournée, et
@@ -40,6 +43,19 @@ export const DERNIERE = NOMBRE - 1;
 export const COULEURS = ['pique', 'coeur', 'trefle', 'carreau'] as const;
 export type Couleur = (typeof COULEURS)[number];
 
+/**
+ * Comment se code la famille (réglable dans les réglages) :
+ *   coins      le coin touché de la cinquième carte (haut gauche pique, haut droite cœur, bas
+ *              gauche trèfle, bas droite carreau)
+ *   cinquieme  la première carte touchée, en haut rouge, en bas noire ; la cinquième, en haut une
+ *              famille majeure (pique, cœur), en bas une mineure (trèfle, carreau)
+ *   deuxieme   de même, mais c'est la deuxième carte touchée qui donne majeure ou mineure (la
+ *              cinquième, si une seule carte a été touchée avant elle)
+ * En haut ou en bas : la colonne de la carte est coupée par son milieu, jusqu'aux bords de l'écran.
+ */
+export const CODAGES = ['coins', 'cinquieme', 'deuxieme'] as const;
+export type CodageFamille = (typeof CODAGES)[number];
+
 /** Les valeurs, de l'As (1) au Roi (13). */
 export const VALEUR_MIN = 1;
 export const VALEUR_MAX = 13;
@@ -54,8 +70,11 @@ export interface CarteJouee {
 }
 
 export type Etat =
-	/** Le codage : la somme des cartes déjà touchées parmi les quatre premières (0 à 15), retournées dans cet ordre. */
-	| { readonly phase: 'codage'; readonly somme: number; readonly retournees: readonly number[] }
+	/**
+	 * Le codage : la somme des cartes déjà touchées parmi les quatre premières (0 à 15), retournées
+	 * dans cet ordre, et le coin où chacune a été touchée (null au clavier : en haut).
+	 */
+	| { readonly phase: 'codage'; readonly somme: number; readonly retournees: readonly number[]; readonly coins: readonly (Couleur | null)[] }
 	/**
 	 * La révélation : la carte codée, les cartes déjà retournées une fois, dans l'ordre (c'est cet
 	 * ordre qui donne les faces), et, la routine finie, celles qui ont été remises face cachée.
@@ -64,7 +83,7 @@ export type Etat =
 	| { readonly phase: 'revelation'; readonly carte: CarteJouee; readonly jokers: boolean; readonly retournees: readonly number[]; readonly cachees: readonly number[] };
 
 /** Cinq dos, rien de codé : l'état à l'ouverture du tour, et après chaque remise en place. */
-export const DEPART: Etat = Object.freeze({ phase: 'codage', somme: 0, retournees: Object.freeze([]) });
+export const DEPART: Etat = Object.freeze({ phase: 'codage', somme: 0, retournees: Object.freeze([]), coins: Object.freeze([]) });
 
 /** La valeur que vaut la carte d'`index` dans le codage : 1, 2, 4, 8 (0 pour la cinquième). */
 export const poids = (index: number): number => (index >= 0 && index < DERNIERE ? 2 ** index : 0);
@@ -77,14 +96,34 @@ export const estJoker = (carte: CarteJouee): boolean => carte.valeur === JOKER;
 
 const estIndex = (index: number): boolean => Number.isInteger(index) && index >= 0 && index < NOMBRE;
 
+/** Le coin est-il en haut de la carte (null, au clavier : en haut) ? */
+export const enHaut = (coin: Couleur | null | undefined): boolean => coin !== 'trefle' && coin !== 'carreau';
+
+/** La famille rouge ou noire, majeure (pique, cœur) ou mineure (trèfle, carreau). */
+const famille = (rouge: boolean, majeure: boolean): Couleur => (rouge ? (majeure ? 'coeur' : 'carreau') : (majeure ? 'pique' : 'trefle'));
+
 /**
- * État après un toucher sur la carte d'`index`. Pour la cinquième carte pendant le codage,
- * `couleur` est celle du coin touché ; sans elle, ce toucher ne compte pas.
+ * La famille codée quand la cinquième est touchée dans le coin `coin`, les cartes d'avant l'ayant
+ * été dans `avant`, selon le `codage`. null : il manque le coin de la cinquième, le toucher ne compte pas.
+ * Rien de touché avant la cinquième (que des Jokers) : son coin donne la couleur des Jokers.
  */
-export function toucher(etat: Etat, index: number, couleur?: Couleur | null): Etat {
+export function familleCodee(avant: readonly (Couleur | null)[], coin: Couleur | null, codage: CodageFamille): Couleur | null {
+	if (codage === 'coins' || avant.length === 0) return coin;
+	const rouge = enHaut(avant[0]);
+	if (codage === 'deuxieme' && avant.length > 1) return famille(rouge, enHaut(avant[1]));
+	return coin ? famille(rouge, enHaut(coin)) : null;
+}
+
+/**
+ * État après un toucher sur la carte d'`index`, dans le coin `coin` (null ou absent au clavier).
+ * La famille se code selon `codage` ; pour la cinquième carte pendant le codage, sans le coin dont
+ * elle a besoin, ce toucher ne compte pas.
+ */
+export function toucher(etat: Etat, index: number, coin?: Couleur | null, codage: CodageFamille = 'coins'): Etat {
 	if (!estIndex(index)) return etat;
 	if (etat.phase === 'codage') {
 		if (index === DERNIERE) {
+			const couleur = familleCodee(etat.coins, coin ?? null, codage);
 			if (!couleur) return etat;
 			const carte = { valeur: valeurDeLaSomme(etat.somme), couleur };
 			// Rien de codé avant la cinquième : que des Jokers.
@@ -93,7 +132,7 @@ export function toucher(etat: Etat, index: number, couleur?: Couleur | null): Et
 		}
 		// Une carte déjà retournée ne compte pas deux fois.
 		if (etat.retournees.includes(index)) return etat;
-		return { phase: 'codage', somme: etat.somme | poids(index), retournees: [...etat.retournees, index] };
+		return { phase: 'codage', somme: etat.somme | poids(index), retournees: [...etat.retournees, index], coins: [...etat.coins, coin ?? null] };
 	}
 	// La routine finie : la carte touchée se retourne, dans un sens ou dans l'autre.
 	if (etat.retournees.length === NOMBRE) {

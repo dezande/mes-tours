@@ -5,7 +5,10 @@
  *                   retourne, blanches, et ajoute 1, 2, 4, 8 à la valeur ; toucher la cinquième, à
  *                   l'autre bord, la retourne et termine le codage, et son coin donne la couleur
  *                   (haut gauche pique, haut droite cœur, bas gauche trèfle, bas droite carreau) :
- *                   sa colonne est coupée en quatre jusqu'aux bords de l'écran
+ *                   sa colonne est coupée en quatre jusqu'aux bords de l'écran. Autres codages de
+ *                   la famille, au choix dans les réglages : la première carte touchée en haut
+ *                   (rouge) ou en bas (noire), puis la cinquième, ou la deuxième touchée, en haut
+ *                   (majeure : pique, cœur) ou en bas (mineure : trèfle, carreau)
  *   la révélation   chaque toucher retourne la carte touchée : blanche, sauf la dernière retournée
  *                   (un Joker pour 14 et 15 ; la cinquième touchée directement : que des Jokers)
  *   la fin          les cinq cartes retournées, on ne peut plus que les retourner, dans un sens ou
@@ -46,10 +49,10 @@ import { usePont } from '../pont.tsx';
 import { Entrainement } from './components/Entrainement.tsx';
 import { annonce, Rangee } from './components/Rangee.tsx';
 import { Reglages } from './components/Reglages.tsx';
-import { TestDesZones, type Eclair } from './components/TestDesZones.tsx';
+import { TestDesZones, zoneDuToucher, type Eclair } from './components/TestDesZones.tsx';
 import { keyAction, toucheDeCarte } from './logic/keys.ts';
 import { nouveauSemis, rangee, type Position } from './logic/disposition.ts';
-import { carteAuHasard, DEPART, DERNIERE, NOMBRE, toucher, type CarteJouee, type Couleur, type Etat } from './logic/routine.ts';
+import { carteAuHasard, DEPART, NOMBRE, toucher, type CarteJouee, type Couleur, type Etat } from './logic/routine.ts';
 import { rangDeLaPlace, sanitizeSettings } from './logic/settings.ts';
 import { boitesDeLaRangee, carteDuPoint, couleurDuPoint, type Boite } from './logic/table.ts';
 
@@ -124,9 +127,9 @@ export default function CinqCartes() {
 		changer(DEPART);
 	}, [changer]);
 
-	const toucherCarte = useCallback((index: number, couleur?: Couleur | null): void => {
-		changer(toucher(etatRef.current, index, couleur));
-	}, [changer]);
+	const toucherCarte = useCallback((index: number, coin?: Couleur | null): void => {
+		changer(toucher(etatRef.current, index, coin, reglages.famille));
+	}, [changer, reglages.famille]);
 
 	/** Les colonnes et les cartes de la table, dans le repère de #app, le rang du codage de chaque place, et la hauteur de #app. */
 	const mesurer = useCallback(() => {
@@ -176,10 +179,11 @@ export default function CinqCartes() {
 		const place = carteDuPoint(x, boites.colonnes);
 		if (place === null) return;
 		const rang = boites.rangs[place]!;
-		const couleur = rang === DERNIERE ? couleurDuPoint(x, y, boites.cartes[place]!) : null;
+		// Le coin touché : il donne la couleur sur la cinquième, ou le haut et le bas de chaque carte.
+		const coin = couleurDuPoint(x, y, boites.cartes[place]!);
 		// Le test des zones allume la zone touchée, sans retourner de carte.
-		if (aide === 'zones') setEclair((avant) => ({ zone: couleur ? { rang, couleur } : { rang }, n: (avant?.n ?? 0) + 1 }));
-		else toucherCarte(rang, couleur);
+		if (aide === 'zones') setEclair((avant) => ({ zone: zoneDuToucher(rang, coin, reglages.famille), n: (avant?.n ?? 0) + 1 }));
+		else toucherCarte(rang, coin);
 	});
 
 	// 1 à 5 : toucher la carte de ce rang du codage (1 : celle qui vaut 1, 5 : celle de la couleur) ; P, C, T, D : la cinquième dans un coin ; R : remettre ; Échap ou M : menu.
@@ -210,7 +214,7 @@ export default function CinqCartes() {
 
 			{/* Les aides à la répétition, ouvertes depuis les réglages. */}
 			{enReglages && aide === 'entrainement' && <Entrainement langue={langue} demandee={demandee} etat={etat} surRecommencer={recommencer} surRetour={() => ouvrirAide(null)} />}
-			{enReglages && aide === 'zones' && <TestDesZones langue={langue} mesurer={mesurer} eclair={eclair} surReglages={() => ouvrirAide(null)} surQuitter={quitter} />}
+			{enReglages && aide === 'zones' && <TestDesZones langue={langue} famille={reglages.famille} mesurer={mesurer} eclair={eclair} surReglages={() => ouvrirAide(null)} surQuitter={quitter} />}
 
 			{/* Ouvert par l'écrou ⚙ : les réglages, que l'on ferme pour revenir au menu. */}
 			{panneau && <Reglages reglages={reglages} langue={langue} enregistrer={enregistrer} surEntrainement={() => ouvrirAide('entrainement')} surTestDesZones={() => ouvrirAide('zones')} />}

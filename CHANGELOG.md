@@ -49,6 +49,18 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
   - **Les réglages** : la couleur du dos (rouge, bleu, vert ou brun), choisie en regardant ; le rappel du trucage ; la jauge de l'appui long ; le test des zones (les quatre coins dessinés sur la scène).
   - Le menu resserré (tuiles de 56 px, icônes de 44 px) : dix tuiles tiennent sur l'écran sans défiler.
   - Tests de la routine, des coins, des dessins, des réglages, dans l'app et dans Chrome.
+  - **La Dame révélée ne change plus** : ni un toucher, ni un double toucher, ni la touche R ne la remettent face cachée. Seul le retour au menu (appui de 3 s) la libère : le tour rouvre face cachée.
+- **Les cinq cartes : deux nouveaux codages de la famille, au choix dans les réglages** (« Codage de la famille »). Les coins de la cinquième restent le codage par défaut.
+  - **Rouge ou noire, puis la cinquième** : la première carte touchée, quelle qu'elle soit, en haut pour une carte rouge, en bas pour une noire ; la cinquième, en haut pour une famille majeure (pique, cœur), en bas pour une mineure (trèfle, carreau).
+  - **Rouge ou noire, puis la deuxième** : de même, mais c'est la deuxième carte touchée qui dit majeure ou mineure (la cinquième, si une seule carte suffit à la valeur) ; la cinquième, touchée n'importe où, termine le codage.
+  - Le haut et le bas vont jusqu'aux bords de l'écran : la colonne de chaque carte est coupée en deux par son milieu. Le test des zones dessine ces moitiés, le rappel du codage suit le codage choisi. Au clavier, les cartes 1 à 5 comptent en haut.
+  - Tests du codage, des réglages et du test des zones.
+- **Les trois paquets : la disparition de la carte face en bas se règle** (« La carte face en bas disparaît », cochée par défaut). Décochée, la carte reste à sa place au toucher, sur le panneau 3 ; le toucher fige quand même le tour.
+- **Les trois paquets : les photos des paquets peuvent être liées, chacune à une colonne** (« Les trois photos des paquets » : « Identiques », par défaut, ou « Une colonne par photo »).
+  - Chaque photo garde ses trois colonnes de sept. La photo 1 est liée à la première colonne, qui porte les vraies cartes qui valent 1 (4♣, 5♦, valet de ♦, dame de ♠) ; la photo 2 à la deuxième (8♥, 5♦, 10♠, dame de ♠) ; la photo 3 à la troisième (10♦, valet de ♦, 10♠, dame de ♠). Plus de sosie à leur place.
+  - Les deux autres colonnes mêlent du remplissage et des sosies, mais seulement des cartes de la colonne liée : un spectateur qui prendrait un sosie pour sa carte dit « oui » sur la bonne photo.
+  - Rien ne se note au toucher : l'artiste retient la somme (1, 2, 4). La fin ne montre alors que des cartes de remplissage (As, 3, 6, 7, 9, Roi) : la carte pensée a disparu à coup sûr.
+- **Le journal des versions dans l'app** : un bouton « Journal des versions » sous la version, en bas du menu, ouvre ce que chaque version a changé, de la plus récente à la plus ancienne (#/journal). Le journal est celui-ci, lu tel quel, chargé seulement à l'ouverture de la page et gardé hors-ligne comme le reste de l'app. La croix, Échap ou le geste retour ramènent au menu ; en anglais, la page dit que le journal est écrit en français.
 
 ## [1.7.0] — 2026-10-09
 

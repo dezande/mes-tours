@@ -16,6 +16,22 @@ export const INTERFACE = {
 		en: 'Swipe left for the next panel, right to go back. First two mixes, cards face up or down, for nothing. Then 1: the salad, the eight force cards face up, and their doubles further down; others are too, but only an edge shows. 2, three identical times: three packets of seven; the spectator says where they see their card, and the sum of the packets (1, 2, 4) gives the card: no packet the 2♣, 1 the 4♣, 2 the 8♥, 3 the 5♦, 4 the 10♦, 5 the jack of ♦, 6 the 10♠, 7 the queen of ♠. Tap those packets, nothing shows (the last time you tap some counts): panel 3 will show no card of that value (no packet tapped: no 2). 3: no force card, and one face-down card, which vanishes when you tap. Then no swipe works any more: a 3 s press goes back to the menu, and the trick starts afresh next time.',
 	},
 	'menu.couleur': { fr: 'Couleur du dos', en: 'Back colour' },
+	'menu.photos': { fr: 'Les trois photos des paquets', en: 'The three packet photos' },
+	'photos.identiques': { fr: 'Identiques', en: 'Identical' },
+	'photos.liees': { fr: 'Une colonne par photo', en: 'One column per photo' },
+	'photos.identiques.aide': {
+		fr: 'Trois fois les mêmes paquets ; touchez ceux où le spectateur voit sa carte.',
+		en: 'The same packets three times; tap those where the spectator sees their card.',
+	},
+	'photos.liees.aide': {
+		fr: 'Chaque photo est liée à une colonne : la photo 1 à la première (les vraies cartes qui valent 1), la photo 2 à la deuxième (2), la photo 3 à la troisième (4). Le spectateur dit sur quelles photos il voit sa carte : retenez la somme, rien ne se note. Les autres colonnes mêlent des sosies des cartes de la colonne liée. Le panneau 3 ne montre alors aucune carte de valeur à forcer.',
+		en: 'Each photo is tied to one column: photo 1 to the first (the real cards worth 1), photo 2 to the second (2), photo 3 to the third (4). The spectator says on which photos they see their card: remember the sum, nothing is recorded. The other columns mix in lookalikes of the tied column’s cards. Panel 3 then shows no card of a force value.',
+	},
+	'menu.disparition': { fr: 'La carte face en bas disparaît', en: 'The face-down card vanishes' },
+	'menu.disparitionAide': {
+		fr: 'Décoché : sur le panneau 3, la carte face en bas reste à sa place au toucher. Le toucher fige quand même le tour.',
+		en: 'Unticked: on panel 3, the face-down card stays in place when you tap. The tap still freezes the trick.',
+	},
 	'menu.aides': {
 		fr: 'Aides visuelles : à masquer avant de jouer si le public voit l\'écran.',
 		en: 'Visual aids: hide them before performing if the audience can see the screen.',

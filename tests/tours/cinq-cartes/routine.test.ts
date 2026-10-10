@@ -1,6 +1,6 @@
 // La routine : chaque carte touchée se retourne aussitôt ; le codage des quatre premières cartes et
 // du coin de la cinquième, puis la révélation.
-import { carteAuHasard, DEPART, estJoker, estRetournee, faceDe, JOKER, memeCarte, poids, toucher, toutesRetournees, valeurDeLaSomme, type Couleur, type Etat } from '../../../src/tours/cinq-cartes/logic/routine.ts';
+import { carteAuHasard, familleCodee, DEPART, estJoker, estRetournee, faceDe, JOKER, memeCarte, poids, toucher, toutesRetournees, valeurDeLaSomme, type Couleur, type Etat } from '../../../src/tours/cinq-cartes/logic/routine.ts';
 
 /** Touche les cartes `indexes` pendant le codage, puis la cinquième dans le coin de `couleur`. */
 const coder = (indexes: number[], couleur: Couleur): Etat =>
@@ -83,7 +83,7 @@ test('une seule carte touchée avant la cinquième suffit : une seule carte a un
 
 test('la cinquième sans coin ne fait rien', () => {
 	const etat = toucher(toucher(DEPART, 1), 4);
-	expect(etat).toStrictEqual({ phase: 'codage', somme: 2, retournees: [1] });
+	expect(etat).toStrictEqual({ phase: 'codage', somme: 2, retournees: [1], coins: [null] });
 });
 
 test('un toucher hors des cinq cartes ne change rien', () => {
@@ -149,4 +149,55 @@ test('deux cartes sont la même si elles ont la même valeur et la même couleur
 	expect(memeCarte({ valeur: 5, couleur: 'pique' }, { valeur: 5, couleur: 'pique' })).toBe(true);
 	expect(memeCarte({ valeur: 5, couleur: 'pique' }, { valeur: 5, couleur: 'coeur' })).toBe(false);
 	expect(memeCarte({ valeur: 5, couleur: 'pique' }, { valeur: 6, couleur: 'pique' })).toBe(false);
+});
+
+describe('le codage de la famille en haut ou en bas', () => {
+	/** Touche les cartes `touchers` [index, coin] dans cet ordre, avec ce `codage`. */
+	const jouer = (touchers: [number, Couleur | null][], codage: 'cinquieme' | 'deuxieme'): Etat =>
+		touchers.reduce((etat, [i, coin]) => toucher(etat, i, coin, codage), DEPART);
+	const carte = (etat: Etat) => etat.phase === 'revelation' && etat.carte;
+	// Un coin du haut (pique, cœur) ou du bas (trèfle, carreau) : seul le haut ou le bas compte.
+	const H = 'coeur', B = 'trefle';
+
+	test('la première carte en haut ou en bas, la cinquième en haut ou en bas : les quatre familles', () => {
+		expect(carte(jouer([[2, H], [3, B], [4, H]], 'cinquieme'))).toStrictEqual({ valeur: 12, couleur: 'coeur' });
+		expect(carte(jouer([[2, H], [3, H], [4, B]], 'cinquieme'))).toStrictEqual({ valeur: 12, couleur: 'carreau' });
+		expect(carte(jouer([[2, B], [3, H], [4, H]], 'cinquieme'))).toStrictEqual({ valeur: 12, couleur: 'pique' });
+		expect(carte(jouer([[2, B], [3, H], [4, B]], 'cinquieme'))).toStrictEqual({ valeur: 12, couleur: 'trefle' });
+	});
+
+	test('c’est la première carte touchée qui compte, pas celle qui vaut 1', () => {
+		expect(carte(jouer([[3, B], [0, H], [4, B]], 'cinquieme'))).toStrictEqual({ valeur: 9, couleur: 'trefle' });
+	});
+
+	test('la deuxième carte touchée donne majeure ou mineure ; la cinquième, n’importe où, termine le codage', () => {
+		for (const coin of ['pique', 'coeur', 'trefle', 'carreau'] as const) {
+			expect(carte(jouer([[0, H], [2, B], [4, coin]], 'deuxieme')), coin).toStrictEqual({ valeur: 5, couleur: 'carreau' });
+			expect(carte(jouer([[0, B], [2, H], [3, B], [4, coin]], 'deuxieme')), coin).toStrictEqual({ valeur: 13, couleur: 'pique' });
+		}
+	});
+
+	test('une seule carte avant la cinquième : la cinquième est la deuxième touchée', () => {
+		expect(carte(jouer([[1, H], [4, H]], 'deuxieme'))).toStrictEqual({ valeur: 2, couleur: 'coeur' });
+		expect(carte(jouer([[1, B], [4, B]], 'deuxieme'))).toStrictEqual({ valeur: 2, couleur: 'trefle' });
+	});
+
+	test('la cinquième sans coin, quand elle en a besoin, ne fait rien ; au clavier, les autres comptent en haut', () => {
+		const avant = jouer([[0, null]], 'cinquieme');
+		expect(toucher(avant, 4, null, 'cinquieme')).toBe(avant);
+		expect(carte(toucher(avant, 4, B, 'cinquieme'))).toStrictEqual({ valeur: 1, couleur: 'carreau' });
+		// La deuxième déjà touchée : la cinquième n'a pas besoin de coin.
+		expect(carte(toucher(jouer([[0, B], [1, null]], 'deuxieme'), 4, null, 'deuxieme'))).toStrictEqual({ valeur: 3, couleur: 'pique' });
+	});
+
+	test('rien de codé avant la cinquième : que des Jokers, de la couleur de son coin', () => {
+		expect(familleCodee([], 'carreau', 'cinquieme')).toBe('carreau');
+		const etat = toucher(DEPART, 4, 'trefle', 'deuxieme');
+		expect(etat.phase === 'revelation' && etat.jokers).toBe(true);
+	});
+
+	test('les coins ne changent pas le codage d’origine', () => {
+		expect(carte(coder([2, 3], 'trefle'))).toStrictEqual({ valeur: 12, couleur: 'trefle' });
+		expect(familleCodee(['carreau'], 'pique', 'coins')).toBe('pique');
+	});
 });

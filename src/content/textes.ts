@@ -15,6 +15,11 @@ export const TEXTES = {
 	// « Réglages : Pile ou face » — le français met une espace avant les deux-points, pas l'anglais.
 	reglagesDe: { fr: 'Réglages : ', en: 'Settings: ' },
 	version: { fr: 'Version', en: 'Version' },
+	// Le journal des versions (src/pages/Journal.tsx), ouvert par un bouton du menu.
+	journal: { fr: 'Journal des versions', en: 'Release notes' },
+	journalEnFrancais: { fr: 'Le journal est écrit en français.', en: 'The release notes are written in French.' },
+	prochaineVersion: { fr: 'Prochaine version', en: 'Next version' },
+	fermer: { fr: 'Fermer', en: 'Close' },
 	// Le bandeau d'installation, quand l'app est ouverte dans le navigateur (src/pages/Installation.tsx).
 	installationTitre: { fr: 'Mes tours est une app', en: 'Mes tours is an app' },
 	installationIphone: {

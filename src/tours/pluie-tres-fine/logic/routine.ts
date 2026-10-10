@@ -11,13 +11,10 @@
  *   en bas à gauche   trèfle       en bas à droite   carreau
  *
  *   face cachée  ──toucher dans un coin──▶  retournée : la Dame de la famille du coin
- *   retournée    ──toucher──▶               rien : un doigt posé par mégarde ne change pas la carte
- *   retournée    ──double toucher──▶        face cachée, prête pour une nouvelle routine
+ *   retournée    ──n'importe quel geste──▶  rien : la Dame révélée ne change plus, ni ne se cache
  *
- * Le double toucher ne compte que si la carte était déjà retournée avant son premier toucher :
- * deux touchers vifs sur la carte face cachée la retournent, et ne la remettent pas aussitôt.
- *
- * Rien n'est enregistré : chaque ouverture du tour repart d'une carte face cachée.
+ * Seul le retour au menu (appui de 3 s) la libère : rien n'est enregistré, chaque ouverture du
+ * tour repart d'une carte face cachée.
  */
 
 /** Les quatre familles, dans l'ordre des coins de l'écran : haut gauche, haut droite, bas gauche, bas droite. */
@@ -34,18 +31,13 @@ export type Etat =
 export const CACHEE: Etat = Object.freeze({ phase: 'cachee' });
 
 /**
- * État après un geste dans le coin de la famille `couleur`. `geste` vaut « double » quand ce
- * toucher complète un double toucher ; `avantPremierTap` est l'état de la carte avant le premier
- * toucher de la paire.
+ * État après un toucher (simple ou double) dans le coin de la famille `couleur` : la carte face
+ * cachée se retourne sur cette Dame ; retournée, elle ne change plus.
  */
-export function apresGeste(etat: Etat, geste: 'tap' | 'double', couleur: Couleur | null, avantPremierTap: Etat): Etat {
-	if (geste === 'double' && avantPremierTap.phase === 'retournee') return CACHEE;
+export function apresToucher(etat: Etat, couleur: Couleur | null): Etat {
 	if (etat.phase === 'cachee' && couleur) return { phase: 'retournee', couleur };
 	return etat;
 }
-
-/** La carte revient face cachée (au clavier, R). */
-export const cacher = (): Etat => CACHEE;
 
 /** Une boîte dans le repère de l'app : celle de la carte, ou d'un coin de l'écran. */
 export interface Boite {

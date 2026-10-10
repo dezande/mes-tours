@@ -1,32 +1,19 @@
 // La routine de Pluie très fine : la carte, et la famille du coin touché.
-import { apresGeste, CACHEE, cacher, coinsDeLEcran, COULEURS, couleurDuPoint, type Etat } from '../../../src/tours/pluie-tres-fine/logic/routine.ts';
+import { apresToucher, CACHEE, coinsDeLEcran, COULEURS, couleurDuPoint, type Etat } from '../../../src/tours/pluie-tres-fine/logic/routine.ts';
 
 const retournee = (couleur: (typeof COULEURS)[number]): Etat => ({ phase: 'retournee', couleur });
 
 test('un toucher retourne la carte face cachée sur la Dame de la famille du coin', () => {
-	for (const couleur of COULEURS) expect(apresGeste(CACHEE, 'tap', couleur, CACHEE)).toStrictEqual(retournee(couleur));
+	for (const couleur of COULEURS) expect(apresToucher(CACHEE, couleur)).toStrictEqual(retournee(couleur));
 });
 
-test('retournée, un toucher ne change plus la carte, même dans un autre coin', () => {
-	expect(apresGeste(retournee('coeur'), 'tap', 'pique', retournee('coeur'))).toStrictEqual(retournee('coeur'));
-});
-
-test('le double toucher remet la carte face cachée, si elle était déjà retournée au premier toucher', () => {
-	expect(apresGeste(retournee('trefle'), 'double', 'carreau', retournee('trefle'))).toBe(CACHEE);
-});
-
-test('deux touchers vifs sur la carte face cachée la retournent, sans la remettre aussitôt', () => {
-	// Le premier toucher de la paire l'a retournée : le double ne compte pas.
-	const apresPremier = apresGeste(CACHEE, 'tap', 'coeur', CACHEE);
-	expect(apresGeste(apresPremier, 'double', 'coeur', CACHEE)).toStrictEqual(retournee('coeur'));
+test('retournée, plus rien ne change la carte, ni ne la remet face cachée', () => {
+	const dame = retournee('coeur');
+	for (const couleur of [...COULEURS, null]) expect(apresToucher(dame, couleur), String(couleur)).toBe(dame);
 });
 
 test('un toucher hors de tout coin (mesure impossible) ne retourne rien', () => {
-	expect(apresGeste(CACHEE, 'tap', null, CACHEE)).toBe(CACHEE);
-});
-
-test('au clavier, la carte revient face cachée', () => {
-	expect(cacher()).toBe(CACHEE);
+	expect(apresToucher(CACHEE, null)).toBe(CACHEE);
 });
 
 test('l’écran est coupé en quatre par le milieu de la carte : pique, cœur, trèfle, carreau', () => {

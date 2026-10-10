@@ -29,6 +29,7 @@ const commun = {
 	moduleNameMapper: {
 		'\\.(scss|css)$': '<rootDir>/tests/outils/style.ts',
 		'\\.(svg|png|jpg|webp|woff2)$': '<rootDir>/tests/outils/fichier.ts',
+		'CHANGELOG\\.md\\?raw$': '<rootDir>/tests/outils/journal.ts',
 	},
 	// Le second argument de expect() : le message qui dit ce qui a échoué.
 	setupFilesAfterEnv: ['jest-expect-message'],
