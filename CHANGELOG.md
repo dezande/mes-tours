@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.8.0] | 57 | 2026-10-10 | Pluie très fine, nouveau tour ; deux codages de la famille aux cinq cartes ; photos liées aux trois paquets ; le journal des versions dans l'app |
 | [1.7.0] | 54 | 2026-10-09 | Les cinq cartes : des Jokers de cinq styles, la couleur sur toute la colonne |
 | [1.6.0] | 52 | 2026-10-09 | Les trois paquets, nouveau tour : huit cartes forcées, trois paquets de sept, la carte pensée disparaît |
 | [1.5.0] | 50 | 2026-10-08 | Chaque tour de cartes a son dos, seule la couleur se règle ; un vrai valet de carreau pour la Princesse |
@@ -40,7 +41,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.8.0] — 2026-10-10
+
+57 commits
 
 - **Pluie très fine, un nouveau tour** (dixième tuile du menu, sur une ardoise de nuit où tombe une pluie très fine) : une seule carte face cachée, une Dame, dont la famille est choisie au moment où elle se retourne — le trucage de la carte de la couleur des cinq cartes.
   - **Le coin de l'écran touché** donne la famille : en haut à gauche pique, en haut à droite cœur, en bas à gauche trèfle, en bas à droite carreau. L'écran est coupé en quatre par le milieu de la carte, jusqu'à ses bords : le doigt n'a pas à tomber sur la carte. Au clavier : P, C, T, D.
@@ -376,6 +379,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.8.0]: https://github.com/dezande/mes-tours/releases/tag/v1.8.0
 [1.7.0]: https://github.com/dezande/mes-tours/releases/tag/v1.7.0
 [1.6.0]: https://github.com/dezande/mes-tours/releases/tag/v1.6.0
 [1.5.0]: https://github.com/dezande/mes-tours/releases/tag/v1.5.0
