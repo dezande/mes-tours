@@ -3,7 +3,7 @@ import { checkCartes, estRouge, type Carte } from '../../../src/tours/princesse/
 import { FORCEES } from '../../../src/tours/trois-paquets/content/cartes.ts';
 import {
 	CARTES_PAR_MELANGE, CARTES_PAR_PAQUET, carteDuCode, MELANGES, FACES_DE_LA_FIN, codeDesPaquets, dansLePaquet, DOS_DE_LA_SALADE, estForcee, FACES_CACHEES, finale, memeCarte, PAQUETS,
-	sosiesPossibles, tirer, VALEURS_DE_REMPLISSAGE,
+	finaleLiee, photosLiees, sosiesPossibles, tirer, VALEURS_DE_REMPLISSAGE,
 } from '../../../src/tours/trois-paquets/logic/tirage.ts';
 
 const nom = ({ valeur, enseigne }: Carte): string => `${valeur} de ${enseigne}`;
@@ -158,4 +158,63 @@ test('les mélanges : des cartes du jeu, rois compris, sans doublon, tantôt fac
 test('le même semis donne le même tirage', () => {
 	expect(tirer(1234)).toStrictEqual(tirer(1234));
 	expect(tirer(1234)).not.toStrictEqual(tirer(1235));
+});
+
+describe('les photos liées, chacune à une colonne', () => {
+	const cle = (c: { valeur: string; enseigne: string }): string => `${c.valeur}-${c.enseigne}`;
+
+	test('trois photos de trois colonnes de sept, sans double sur une photo', () => {
+		for (const semis of SEMIS.slice(0, 200)) {
+			const photos = photosLiees(semis);
+			expect(photos).toHaveLength(3);
+			for (const photo of photos) {
+				expect(photo.map((colonne) => colonne.length)).toStrictEqual([7, 7, 7]);
+				const cartes = photo.flat().map(({ carte }) => cle(carte));
+				expect(new Set(cartes).size, `semis ${semis}`).toBe(21);
+			}
+		}
+	});
+
+	test('la colonne liée porte les vraies cartes de son code ; aucune vraie carte à forcer ailleurs', () => {
+		for (const semis of SEMIS.slice(0, 200)) {
+			photosLiees(semis).forEach((photo, p) => {
+				const attendues = FORCEES.filter((_, k) => dansLePaquet(k, p)).map(cle).sort();
+				const vraies = photo[p]!.filter(({ carte }) => estForcee(carte)).map(({ carte }) => cle(carte)).sort();
+				expect(vraies, `semis ${semis}, photo ${p + 1}`).toStrictEqual(attendues);
+				for (const [c, colonne] of photo.entries()) {
+					if (c !== p) for (const { carte } of colonne) expect(estForcee(carte), `semis ${semis}, photo ${p + 1}, ${cle(carte)}`).toBe(false);
+				}
+			});
+		}
+	});
+
+	test('les sosies ne sont que ceux des cartes de la colonne liée : un « oui » sur un sosie reste juste', () => {
+		let sosies = 0;
+		for (const semis of SEMIS.slice(0, 200)) {
+			photosLiees(semis).forEach((photo, p) => {
+				for (const { carte, code } of photo.flat()) {
+					if (code === null) {
+						expect(VALEURS_DE_REMPLISSAGE).toContain(carte.valeur);
+						continue;
+					}
+					expect(dansLePaquet(code, p), `semis ${semis}, photo ${p + 1}, ${cle(carte)}`).toBe(true);
+					if (!estForcee(carte)) {
+						sosies++;
+						expect(sosiesPossibles(FORCEES[code]!).map(cle)).toContain(cle(carte));
+					}
+				}
+			});
+		}
+		expect(sosies).toBeGreaterThan(0);
+	});
+
+	test('la fin des photos liées : vingt cartes de remplissage, aucune valeur à forcer', () => {
+		for (const semis of SEMIS.slice(0, 50)) {
+			const fin = finaleLiee(semis);
+			expect(fin).toHaveLength(FACES_DE_LA_FIN);
+			expect(new Set(fin.map(cle)).size).toBe(FACES_DE_LA_FIN);
+			for (const carte of fin) expect(VALEURS_DE_REMPLISSAGE).toContain(carte.valeur);
+		}
+		expect(photosLiees(1234)).toStrictEqual(photosLiees(1234));
+	});
 });

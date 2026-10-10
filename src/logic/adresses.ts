@@ -5,6 +5,7 @@
  *   #/                          le menu principal (une adresse vide aussi)
  *   #/tours/<dossier>           un tour, prêt pour une nouvelle routine
  *   #/tours/<dossier>?reglages  seulement ses réglages (écrou ⚙ du menu)
+ *   #/journal                   le journal des versions (bouton du menu)
  *
  * Des adresses strictes : elles sont comparées telles quelles, caractère pour caractère, aux
  * adresses des tours publiés. Rien n'est décodé ni nettoyé. Toute autre adresse — un nom inventé
@@ -18,8 +19,12 @@
 /** Ce qu'une adresse ouvre. */
 export type Page =
 	| { readonly page: 'menu' }
+	| { readonly page: 'journal' }
 	| { readonly page: 'tour'; readonly dossier: string; readonly reglages: boolean }
 	| { readonly page: 'refusee' };
+
+/** L'adresse du journal des versions. */
+export const ADRESSE_DU_JOURNAL = '/journal';
 
 /** L'adresse d'un tour ; `reglages` : seulement ses réglages (écrou ⚙). */
 export const adresseDuTour = (dossier: string, reglages = false): string => `/tours/${dossier}${reglages ? '?reglages' : ''}`;
@@ -31,6 +36,7 @@ export const adresseDuTour = (dossier: string, reglages = false): string => `/to
 export function resoudre(hash: string, dossiers: readonly string[]): Page {
 	const adresse = hash.startsWith('#') ? hash.slice(1) : hash;
 	if (adresse === '' || adresse === '/') return { page: 'menu' };
+	if (adresse === ADRESSE_DU_JOURNAL) return { page: 'journal' };
 	for (const dossier of dossiers) {
 		if (adresse === adresseDuTour(dossier)) return { page: 'tour', dossier, reglages: false };
 		if (adresse === adresseDuTour(dossier, true)) return { page: 'tour', dossier, reglages: true };

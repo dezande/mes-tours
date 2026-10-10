@@ -53,7 +53,7 @@ export interface Etat {
 	readonly semis: number;
 	/** Pour chaque copie des paquets, les paquets notés (0, 1, 2), dans l'ordre où ils ont été touchés. */
 	readonly notes: readonly (readonly number[])[];
-	/** La fin : la carte face en bas a disparu. */
+	/** La fin : la carte face en bas a été touchée, le tour est figé (elle a disparu, sauf si les réglages la gardent). */
 	readonly disparue: boolean;
 }
 

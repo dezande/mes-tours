@@ -340,3 +340,109 @@ $fonds-des-tours: (
 	color: rgba($gris, .6);
 	text-align: center;
 }
+
+// Le bouton du journal des versions, sous la version : une petite fenêtre, discrète.
+#menu-principal #journal-btn {
+	margin-top: 10px;
+	padding: 6px 14px 8px;
+	color: $gris;
+	font: 600 13px/1 $pixel;
+	cursor: pointer;
+	@include fenetre(#2b3a7a, #141c48);
+}
+
+// La page du journal des versions (src/pages/Journal.tsx) : le ciel du menu, le texte dans une
+// fenêtre par version, lisible avant d'être pixel (seuls les titres sont en police pixel).
+#journal {
+	position: absolute;
+	inset: 0;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	padding: calc(var(--safe-t) + 18px) calc(var(--safe-r) + 16px) calc(var(--safe-b) + 24px) calc(var(--safe-l) + 16px);
+	background: linear-gradient(180deg, $nuit 0%, $crepuscule 100%);
+	color: $gris;
+	font: 15px/1.5 system-ui, sans-serif;
+
+	header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		max-width: 680px;
+		margin: 0 auto 14px;
+	}
+
+	h1 {
+		margin: 0;
+		font: 700 26px/1.1 $pixel;
+		color: $or;
+		text-shadow: 2px 2px 0 $ombre;
+	}
+
+	#journal-fermer {
+		flex: none;
+		width: 44px;
+		height: 44px;
+		color: $blanc;
+		font: 600 24px/1 $pixel;
+		cursor: pointer;
+		@include fenetre(#2b3a7a, #141c48);
+	}
+
+	.journal-langue {
+		max-width: 680px;
+		margin: 0 auto 12px;
+		font-size: 13px;
+		color: rgba($gris, .75);
+	}
+
+	.version {
+		max-width: 680px;
+		margin: 0 auto 14px;
+		padding: 12px 16px 6px;
+		@include fenetre(#22306a, #121a44);
+	}
+
+	h2 {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 12px;
+		margin: 0 0 6px;
+		font: 700 20px/1.2 $pixel;
+		color: $or;
+
+		.date {
+			font-size: 13px;
+			color: rgba($gris, .7);
+		}
+	}
+
+	.detail {
+		margin: 0 0 6px;
+		font-size: 12px;
+		color: rgba($gris, .65);
+	}
+
+	ul {
+		margin: 0 0 8px;
+		padding-left: 20px;
+	}
+
+	li {
+		margin-bottom: 6px;
+	}
+
+	li ul {
+		margin: 6px 0 0;
+	}
+
+	strong {
+		color: $blanc;
+	}
+
+	code {
+		font: 13px ui-monospace, monospace;
+		color: $or;
+	}
+}

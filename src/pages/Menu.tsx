@@ -4,7 +4,8 @@
  * de rôle qui montre la tuile touchée. Toucher la tuile lance le tour ; l'écrou ⚙ à côté ouvre ses réglages. Les boutons
  * agissent au lever du doigt, appui bref ou long (BoutonTactile).
  *
- * Le bouton FR / EN choisit la langue du menu et de tous les tours (langue/LangueContext.tsx).
+ * Le bouton FR / EN choisit la langue du menu et de tous les tours (langue/LangueContext.tsx). En
+ * bas, le bouton du journal des versions ouvre ce que chaque version a changé (pages/Journal.tsx).
  */
 
 import { BoutonTactile } from '../components/BoutonTactile.tsx';
@@ -15,7 +16,7 @@ import { LANGS } from '../logic/i18n.ts';
 import { TOURS } from '../content/tours.ts';
 import { BUILD } from '../version.ts';
 import { useLangue } from '../langue/LangueContext.tsx';
-import { adresseDuTour } from '../logic/adresses.ts';
+import { ADRESSE_DU_JOURNAL, adresseDuTour } from '../logic/adresses.ts';
 import { naviguer } from '../routeur.ts';
 import { Installation } from './Installation.tsx';
 import { APP_VERSION } from '../version.ts';
@@ -65,6 +66,8 @@ export function Menu() {
 			<Installation />
 
 			<p id="version">{`${TEXTES.version[langue]} ${APP_VERSION} — ${DETAIL_DU_BUILD}`}</p>
+			{/* Ce que chaque version a changé (pages/Journal.tsx). */}
+			<BoutonTactile id="journal-btn" onAction={() => naviguer(ADRESSE_DU_JOURNAL)}>{TEXTES.journal[langue]}</BoutonTactile>
 		</main>
 	);
 }

@@ -18,11 +18,16 @@
  *   toucher un paquet          le note, sans que rien ne se voie (toucher encore : il ne l'est plus)
  *   balayer vers la gauche     le panneau 2 encore, deux fois : les mêmes paquets, à l'identique ; la
  *                              dernière copie où des paquets sont notés donne le code
+ *                              Photos liées (réglages) : trois photos de trois colonnes, chacune liée
+ *                              à une colonne où sont les vraies cartes (1, 2, 4) ; le spectateur dit
+ *                              sur quelles photos il voit sa carte, l'artiste retient la somme, rien
+ *                              ne se note ; la fin ne montre que du remplissage
  *   balayer vers la gauche     panneau 3 : trois colonnes de sept, les cartes restantes, aucune à
  *                              forcer (ni aucune de la valeur pensée ; rien de noté : pas de 2), et au
  *                              milieu une carte face en bas
- *   toucher                    la carte face en bas disparaît ; le tour est alors figé : plus aucun
- *                              balayage (seulement R, au clavier, ou le retour au menu)
+ *   toucher                    la carte face en bas disparaît (ou reste à sa place, si les réglages
+ *                              le demandent) ; le tour est alors figé : plus aucun balayage
+ *                              (seulement R, au clavier, ou le retour au menu)
  *   balayer vers la gauche     avant le toucher, sur la fin : une nouvelle routine, le premier mélange
  *   balayer vers la droite     le panneau d'avant (sauf une fois la carte disparue)
  *   appui de 3 s n'importe où, Échap ou M : retour au menu principal
@@ -62,7 +67,7 @@ import { DEBORD_DES_MELANGES, desordreDesColonnes, doublon, faceCachee, grille, 
 import { keyAction, paquetDeLaTouche } from './logic/keys.ts';
 import { apresBalayage, apresToucher, codeNote, copieDuPanneau, depart, estPaquets, paquetDuPoint, SALADE, type Etat } from './logic/routine.ts';
 import { sanitizeSettings } from './logic/settings.ts';
-import { CARTES_PAR_PAQUET, DOS_PAR_DESSUS, finale, PAQUETS, tirer } from './logic/tirage.ts';
+import { CARTES_PAR_PAQUET, DOS_PAR_DESSUS, finale, finaleLiee, PAQUETS, photosLiees, tirer } from './logic/tirage.ts';
 import type { Carte as CarteAJouer } from '../princesse/logic/cartes.ts';
 
 /**
@@ -98,11 +103,11 @@ function placeDesPaquets(copie: number): { gauche: number; largeur: number } {
 }
 
 /** Ce qui est à l'écran, pour les lecteurs d'écran seulement. */
-function annonce(etat: Etat, langue: Lang): string {
+function annonce(etat: Etat, disparition: boolean, langue: Lang): string {
 	if (etat.panneau < SALADE) return ui('panneau.melange', langue);
 	if (etat.panneau === SALADE) return ui('panneau.salade', langue);
 	if (estPaquets(etat.panneau)) return ui('panneau.paquets', langue);
-	return etat.disparue ? ui('annonce.disparue', langue) : ui('panneau.fin', langue);
+	return etat.disparue && disparition ? ui('annonce.disparue', langue) : ui('panneau.fin', langue);
 }
 
 export default function TroisPaquets() {
@@ -171,12 +176,14 @@ export default function TroisPaquets() {
 	 * colonne du milieu. Les cartes dépendent des paquets notés, mais ne changent jamais sous les yeux
 	 * du public : seulement quand on arrive sur le panneau.
 	 */
+	const liees = reglages.photos === 'liees';
+	const photos = useMemo(() => (liees ? photosLiees(etat.semis) : null), [liees, etat.semis]);
 	const code = codeNote(etat);
 	const fin = useMemo(() => {
-		const cartes: (CarteAJouer | null)[] = finale(tirage, code);
+		const cartes: (CarteAJouer | null)[] = liees ? finaleLiee(etat.semis) : finale(tirage, code);
 		cartes.splice(MILIEU, 0, null);
 		return Array.from({ length: PAQUETS }, (_, p) => cartes.slice(p * CARTES_PAR_PAQUET, (p + 1) * CARTES_PAR_PAQUET));
-	}, [tirage, code]);
+	}, [tirage, code, liees, etat.semis]);
 
 	// Sans transition à l'ouverture comme à chaque nouvelle routine : le panneau 1 est là d'un coup.
 	const sansAnimation = useSansAnimation(etat.semis);
@@ -189,6 +196,8 @@ export default function TroisPaquets() {
 	const { scene, jauge } = useGestesBalayage(reglages.showHoldRing, (geste, { x }) => {
 		const avant = etatRef.current;
 		if (geste === 'tap') {
+			// Photos liées : rien ne se note, l'artiste retient la carte.
+			if (liees && estPaquets(avant.panneau)) return;
 			const { gauche, largeur } = placeDesPaquets(copieDuPanneau(avant.panneau) ?? 0);
 			changer(apresToucher(avant, paquetDuPoint(x, gauche, largeur)));
 		} else changer(apresBalayage(avant, geste, nouveauSemis()));
@@ -201,7 +210,7 @@ export default function TroisPaquets() {
 		if (action === 'remettre') changer(depart(nouveauSemis()));
 		else if (action === 'suivant' || action === 'precedent') changer(apresBalayage(avant, action, nouveauSemis()));
 		else if (action === 'toucher') changer(apresToucher(avant, null));
-		else changer(apresToucher(avant, paquetDeLaTouche(action)));
+		else if (!liees || !estPaquets(avant.panneau)) changer(apresToucher(avant, paquetDeLaTouche(action)));
 	});
 
 	/* ---------- Affichage ---------- */
@@ -210,11 +219,11 @@ export default function TroisPaquets() {
 		<>
 			{/* La scène reçoit tous les touchers. */}
 			<main id="stage" {...scene}>
-				<Panneaux etat={etat} melanges={melanges} salade={salade} desordre={desordre} paquets={tirage.paquets} fin={fin} sansAnimation={sansAnimation} couleur={reglages.couleur} langue={langue} />
+				<Panneaux etat={etat} disparition={reglages.disparition} melanges={melanges} salade={salade} desordre={desordre} paquets={tirage.paquets} fin={fin} photos={photos} sansAnimation={sansAnimation} couleur={reglages.couleur} langue={langue} />
 			</main>
 
 			{/* Ce qui est à l'écran, pour les lecteurs d'écran seulement. */}
-			<p id="annonce" className="sr-only" aria-live="polite">{annonce(etat, langue)}</p>
+			<p id="annonce" className="sr-only" aria-live="polite">{annonce(etat, reglages.disparition, langue)}</p>
 			<JaugeAppui jauge={jauge} />
 
 			{/* Ouvert par l'écrou ⚙ : les réglages, que l'on ferme pour revenir au menu. */}

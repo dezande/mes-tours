@@ -52,17 +52,14 @@ test('C retourne la carte sur la Dame de cœur, Judith ; un autre coin ne la cha
 	expect(face()!.dataset.couleur).toBe('coeur');
 });
 
-test('R remet la carte face cachée : une nouvelle routine, une autre famille, on reste dans le tour', async () => {
+test('la Dame révélée ne change plus : R ne la remet pas face cachée, on reste dans le tour', async () => {
 	await ouvrir('#/tours/pluie-tres-fine');
 	touches('t');
 	expect(face()!.dataset.couleur).toBe('trefle');
-	touches('r');
-	expect(carte()).not.toHaveClass('retournee');
-	expect(window.location.hash).toBe('#/tours/pluie-tres-fine');
-	touches('d');
+	touches('r', 'Home', 'd');
 	expect(carte()).toHaveClass('retournee');
-	expect(face()!.dataset.couleur).toBe('carreau');
-	expect(face()).toHaveTextContent('RACHEL');
+	expect(face()!.dataset.couleur).toBe('trefle');
+	expect(window.location.hash).toBe('#/tours/pluie-tres-fine');
 });
 
 test('en anglais, la Dame est une Queen, et ne porte pas de nom', async () => {

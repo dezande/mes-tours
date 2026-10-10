@@ -64,3 +64,32 @@ test('un doigt qui ne s’est pas posé sur le bouton ne déclenche rien, même 
 	fireEvent.click(tuile, { detail: 1 });
 	expect(window.location.hash).toBe('');
 });
+
+test('le bouton du journal des versions ouvre le journal ; la croix ramène au menu', async () => {
+	render(<App />);
+	toucher(screen.getByRole('button', { name: 'Journal des versions' }));
+	expect(window.location.hash).toBe('#/journal');
+	expect(await screen.findByRole('heading', { level: 1, name: 'Journal des versions' })).toBeInTheDocument();
+	// Les versions, la plus récente d'abord ; la version de l'app est dedans.
+	await screen.findByText('0.1.0');
+	expect(document.querySelector(`#journal .version[data-version="${APP_VERSION}"]`)).not.toBeNull();
+	expect(document.querySelectorAll('#journal .version').length).toBeGreaterThan(20);
+	expect(document.querySelector('#journal strong')).not.toBeNull();
+	await act(async () => {
+		toucher(screen.getByRole('button', { name: 'Fermer' }));
+		await new Promise((fin) => setTimeout(fin, 50));
+	});
+	expect(await screen.findByText('Choisis un tour')).toBeInTheDocument();
+});
+
+test('en anglais, le journal dit qu’il est écrit en français ; Échap le ferme', async () => {
+	localStorage.setItem('mes-tours:langue', '"en"');
+	window.location.hash = '#/journal';
+	render(<App />);
+	expect(await screen.findByRole('heading', { level: 1, name: 'Release notes' })).toBeInTheDocument();
+	expect(screen.getByText('The release notes are written in French.')).toBeInTheDocument();
+	act(() => {
+		fireEvent.keyDown(document, { key: 'Escape' });
+	});
+	expect(await screen.findByText('Pick a trick')).toBeInTheDocument();
+});

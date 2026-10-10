@@ -26,6 +26,11 @@
 	grid-template-columns: repeat(2, 1fr);
 }
 
+// Le codage de la famille : trois boutons l'un sous l'autre, leur nom en entier.
+#famille-choix {
+	grid-template-columns: 1fr;
+}
+
 .sens {
 	display: grid;
 	gap: 4px;

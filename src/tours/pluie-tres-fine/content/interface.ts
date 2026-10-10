@@ -29,8 +29,8 @@ export const INTERFACE = {
 		en: 'The card is a Queen, face down. The corner of the screen you tap picks her suit: top left spades, top right hearts, bottom left clubs, bottom right diamonds. The screen is cut in four through the middle of the card, right to its edges: your finger need not land on the card.',
 	},
 	'trucage.fin': {
-		fr: 'La carte se retourne aussitôt. Retournée, un toucher ne la change plus ; un double toucher la remet face cachée, prête pour une nouvelle routine. Appui de 3 s : retour au menu.',
-		en: 'The card turns over at once. Once face up, a tap no longer changes it; a double tap turns it face down again, ready for a new routine. Press and hold for 3 s: back to the menu.',
+		fr: 'La carte se retourne aussitôt. Retournée, plus rien ne la change, pas même un double toucher. Appui de 3 s : retour au menu, d\'où le tour rouvre face cachée.',
+		en: 'The card turns over at once. Once face up, nothing changes it any more, not even a double tap. Press and hold for 3 s: back to the menu, where the card starts face down again.',
 	},
 
 	// Le test des zones.

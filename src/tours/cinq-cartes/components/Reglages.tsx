@@ -1,6 +1,7 @@
 /*
  * Les réglages des cinq cartes, ouverts par l'écrou ⚙ du menu principal : le bord d'où part le
- * codage (comme le sens de comptage de Princesse), couleur du dos des cartes, le rappel du codage,
+ * codage (comme le sens de comptage de Princesse), le codage de la famille, couleur du dos des
+ * cartes, le rappel du codage,
  * jauge de l'appui long, mode entraînement et test des zones, réglages par défaut.
  */
 
@@ -8,6 +9,7 @@ import { ChoixIllustre } from '../../../components/cartes/ChoixIllustre.tsx';
 import { PanneauReglages } from '../../../components/PanneauReglages.tsx';
 import type { Lang } from '../../../logic/i18n.ts';
 import { ui, type CleInterface } from '../content/interface.ts';
+import { CODAGES } from '../logic/routine.ts';
 import { SENS, TEINTES, type Settings, type Teinte } from '../logic/settings.ts';
 import { DosArcade } from './DosArcade.tsx';
 
@@ -63,6 +65,20 @@ export function Reglages({ reglages, langue, enregistrer, surEntrainement, surTe
 				<p className="hint slider-hint">{ui('menu.sensAide', langue)}</p>
 			</div>
 
+			{/* Le codage de la famille : les coins de la cinquième, ou rouge/noire puis majeure/mineure. */}
+			<div className="card">
+				<div className="row-label">{ui('menu.famille', langue)}</div>
+				<ChoixIllustre
+					id="famille-choix"
+					etiquette={ui('menu.famille', langue)}
+					valeurs={CODAGES}
+					choisie={reglages.famille}
+					nom={(famille) => ui(`famille.${famille}`, langue)}
+					apercu={(famille) => <span className="sens"><span className="sens-nom">{ui(`famille.${famille}`, langue)}</span></span>}
+					choisir={(famille) => changer({ famille })}
+				/>
+			</div>
+
 			{/* Le dos « Arcade » est celui du tour : seule sa couleur se choisit, en regardant. */}
 			<div className="card">
 				<div className="row-label">{ui('menu.couleur', langue)}</div>
@@ -72,7 +88,7 @@ export function Reglages({ reglages, langue, enregistrer, surEntrainement, surTe
 			<div className="card" id="codage">
 				<div className="row-label">{ui('codage.titre', langue)}</div>
 				<p className="hint">{ui('codage.valeur', langue)}</p>
-				<p className="hint">{ui('codage.couleur', langue)}</p>
+				<p className="hint">{ui(reglages.famille === 'coins' ? 'codage.couleur' : `codage.couleur.${reglages.famille}`, langue)}</p>
 				<p className="hint">{ui('codage.revelation', langue)}</p>
 			</div>
 		</PanneauReglages>

@@ -18,6 +18,10 @@ export const INTERFACE = {
 	'sens.gauche': { fr: 'La gauche', en: 'The left' },
 	'sens.droite': { fr: 'La droite', en: 'The right' },
 	'menu.couleur': { fr: 'Couleur des dos', en: 'Back colour' },
+	'menu.famille': { fr: 'Codage de la famille', en: 'Suit code' },
+	'famille.coins': { fr: 'Les coins de la cinquième', en: 'The fifth card’s corners' },
+	'famille.cinquieme': { fr: 'Rouge ou noire, puis la cinquième', en: 'Red or black, then the fifth' },
+	'famille.deuxieme': { fr: 'Rouge ou noire, puis la deuxième', en: 'Red or black, then the second' },
 	'menu.aides': {
 		fr: 'Aides visuelles : à masquer avant de jouer si le public voit l\'écran.',
 		en: 'Visual aids: hide them before performing if the audience can see the screen.',
@@ -37,6 +41,11 @@ export const INTERFACE = {
 	'zones.invite': { fr: 'Touchez une zone', en: 'Tap a zone' },
 	'zones.carte': { fr: 'Carte', en: 'Card' },
 	'zones.couleur': { fr: 'Couleur', en: 'Suit' },
+	'zones.famille': { fr: 'Famille', en: 'Suit' },
+	'zones.haut': { fr: 'en haut', en: 'top' },
+	'zones.bas': { fr: 'en bas', en: 'bottom' },
+	'zones.haut.famille': { fr: 'majeure', en: 'major' },
+	'zones.bas.famille': { fr: 'mineure', en: 'minor' },
 
 	// Le codage, rappelé dans les réglages.
 	'codage.titre': { fr: 'Le codage', en: 'The code' },
@@ -47,6 +56,14 @@ export const INTERFACE = {
 	'codage.couleur': {
 		fr: 'Puis toucher la cinquième carte, à l\'autre bord, dans son coin (elle se retourne aussi, blanche) : en haut à gauche pique, en haut à droite cœur, en bas à gauche trèfle, en bas à droite carreau. Les coins vont jusqu\'aux bords de l\'écran : toute la colonne de la carte est coupée en quatre par son milieu.',
 		en: 'Then tap the fifth card, at the other edge, in its corner (it turns over too, blank): top left spades, top right hearts, bottom left clubs, bottom right diamonds. The corners reach the edges of the screen: the card’s whole column is cut in four through its middle.',
+	},
+	'codage.couleur.cinquieme': {
+		fr: 'La première carte touchée, quelle qu\'elle soit : en haut, une carte rouge ; en bas, une noire. Puis toucher la cinquième carte, à l\'autre bord (elle se retourne aussi, blanche) : en haut, une famille majeure (pique, cœur) ; en bas, une mineure (trèfle, carreau). Le haut et le bas vont jusqu\'aux bords de l\'écran : toute la colonne de la carte est coupée en deux par son milieu.',
+		en: 'The first card you tap, whichever it is: top for a red card, bottom for a black one. Then tap the fifth card, at the other edge (it turns over too, blank): top for a major suit (spades, hearts), bottom for a minor one (clubs, diamonds). Top and bottom reach the edges of the screen: the card’s whole column is cut in two through its middle.',
+	},
+	'codage.couleur.deuxieme': {
+		fr: 'La première carte touchée, quelle qu\'elle soit : en haut, une carte rouge ; en bas, une noire. La deuxième touchée : en haut, une famille majeure (pique, cœur) ; en bas, une mineure (trèfle, carreau). Si une seule carte suffit à la valeur, c\'est la cinquième, la deuxième touchée, qui le dit. Toucher la cinquième, à l\'autre bord, termine le codage (elle se retourne aussi, blanche). Le haut et le bas vont jusqu\'aux bords de l\'écran : toute la colonne de la carte est coupée en deux par son milieu.',
+		en: 'The first card you tap, whichever it is: top for a red card, bottom for a black one. The second card you tap: top for a major suit (spades, hearts), bottom for a minor one (clubs, diamonds). If one card is enough for the value, the fifth card, tapped second, tells it. Tapping the fifth card, at the other edge, ends the code (it turns over too, blank). Top and bottom reach the edges of the screen: the card’s whole column is cut in two through its middle.',
 	},
 	'codage.revelation': {
 		fr: 'Chaque toucher retourne ensuite la carte touchée : elles sont blanches, sauf la dernière retournée, la carte du spectateur. Au-delà du Roi (14, 15), c\'est un Joker ; la cinquième touchée directement, sans rien coder : toutes les cartes sont des Jokers. Les cinq retournées, on ne peut plus que les retourner, dans un sens ou dans l\'autre. Appui de 3 s : retour au menu, d\'où le tour rouvre prêt pour un nouveau codage.',

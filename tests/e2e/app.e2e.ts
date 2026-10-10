@@ -391,7 +391,7 @@ test('Les trois paquets : on balaie d’un panneau à l’autre (deux mélanges,
 	});
 }, TIMEOUT);
 
-test('Pluie très fine : le coin touché donne la famille de la Dame ; retournée, un toucher ne la change plus, le double toucher la remet face cachée', async () => {
+test('Pluie très fine : le coin touché donne la famille de la Dame ; retournée, ni un toucher ni un double toucher ne la changent, seul le menu la libère', async () => {
 	const carte = `document.querySelector('#table .carte')`;
 	const famille = `document.querySelector('#table .face-dame')?.dataset.couleur`;
 	await withApp(async (page) => {
@@ -405,11 +405,17 @@ test('Pluie très fine : le coin touché donne la famille de la Dame ; retourné
 		await page.tap({ x: 20, y: SCREEN.height - 30 });
 		await sleep(800);
 		expect(await page.evaluate(dansLeTour(famille)), 'un toucher a changé la Dame').toBe('coeur');
+		// Le double toucher non plus : la Dame reste révélée, on reste dans le tour.
 		await page.doubleTap(CENTRE);
-		await attendre(page, dansLeTour(`!${carte}.classList.contains('retournee')`), 'carte face cachée', 3000);
 		await sleep(800);
+		expect(await page.evaluate<boolean>(dansLeTour(`${carte}.classList.contains('retournee')`)), 'le double toucher a caché la Dame').toBe(true);
+		expect(await page.evaluate(dansLeTour(famille)), 'le double toucher a changé la Dame').toBe('coeur');
 		expect(await page.evaluate<boolean>(`location.hash.startsWith('#/tours/pluie-tres-fine')`), 'le double toucher a quitté le tour').toBe(true);
-		// Une nouvelle routine : en bas à gauche, trèfle.
+		// Seul le menu la libère : rouvert, le tour repart face cachée, pour une nouvelle routine.
+		await appuiLong(page);
+		await attendreLeMenu(page);
+		await ouvrir(page, 'pluie-tres-fine', `Boolean(document.querySelector('#table .carte .dos-ancien'))`);
+		expect(await page.evaluate<boolean>(dansLeTour(`${carte}.classList.contains('retournee')`)), 'le tour rouvert est déjà retourné').toBe(false);
 		await page.tap({ x: 20, y: SCREEN.height - 30 });
 		await attendre(page, dansLeTour(`${carte}.classList.contains('retournee')`), 'carte retournée à nouveau', 3000);
 		expect(await page.evaluate(dansLeTour(famille))).toBe('trefle');

@@ -5,8 +5,8 @@
  *   toucher l'écran     la carte se retourne aussitôt sur la Dame de la famille du coin touché :
  *                       l'écran est coupé en quatre par le milieu de la carte, jusqu'à ses bords
  *                       (haut gauche pique, haut droite cœur, bas gauche trèfle, bas droite carreau)
- *   la carte retournée  un toucher ne la change plus ; un double toucher (au clavier : R) la remet
- *                       face cachée, prête pour une nouvelle routine : on reste dans le tour
+ *   la carte retournée  plus rien ne la change, ni toucher ni double toucher : seul le retour au
+ *                       menu la remet face cachée, pour une nouvelle routine
  *   appui de 3 s n'importe où, Échap ou M : retour au menu principal
  *
  * Depuis les réglages (écrou ⚙) : la couleur du dos, et le test des zones (les quatre coins
@@ -37,7 +37,7 @@ import { annonce, Carte } from './components/Carte.tsx';
 import { Reglages } from './components/Reglages.tsx';
 import { TestDesZones, type Eclair } from './components/TestDesZones.tsx';
 import { keyAction } from './logic/keys.ts';
-import { apresGeste, CACHEE, couleurDuPoint, type Boite, type Couleur, type Etat } from './logic/routine.ts';
+import { apresToucher, CACHEE, couleurDuPoint, type Boite, type Couleur, type Etat } from './logic/routine.ts';
 import { sanitizeSettings } from './logic/settings.ts';
 
 /**
@@ -77,7 +77,7 @@ export default function PluieTresFine() {
 	const etatRef = useRef(etat);
 	const carteRef = useRef<HTMLElement>(null);
 
-	// Sans transition à l'ouverture comme à chaque remise en place au clavier.
+	// Sans transition à l'ouverture comme à chaque remise en place (en ouvrant le test des zones).
 	const [remises, setRemises] = useState(0);
 	const sansAnimation = useSansAnimation(remises);
 
@@ -88,7 +88,7 @@ export default function PluieTresFine() {
 		setEtat(suivant);
 	}, []);
 
-	/** La carte revient face cachée d'un coup (au clavier, R) : on reste dans le tour. */
+	/** La carte revient face cachée d'un coup : seulement en passant au test des zones, depuis les réglages. */
 	const remettre = useCallback((): void => {
 		if (etatRef.current === CACHEE) return;
 		setRemises((n) => n + 1);
@@ -117,13 +117,10 @@ export default function PluieTresFine() {
 
 	/* ---------- Gestes sur la scène, clavier ---------- */
 
-	/** État de la carte avant le dernier tap : un double toucher ne compte que sur une carte déjà retournée. */
-	const avantDernierTap = useRef<Etat>(CACHEE);
-
 	/**
-	 * Ce qu'un geste de la scène déclenche, au point (x, y) du repère de l'app :
-	 *   un tap        retourne la carte face cachée sur la Dame de la famille du coin touché ;
-	 *   un double     remet la carte face cachée, si elle était déjà retournée au premier toucher.
+	 * Ce qu'un geste de la scène déclenche, au point (x, y) du repère de l'app : il retourne la carte
+	 * face cachée sur la Dame de la famille du coin touché. Retournée, plus rien ne la change, pas
+	 * même un double toucher : seul le retour au menu (appui de 3 s) la libère.
 	 */
 	const { scene, jauge } = useGestesDoubleToucher(reglages.showHoldRing, (geste, { x, y }) => {
 		// Le panneau de réglages par-dessus : la scène cachée ne reçoit rien.
@@ -135,16 +132,13 @@ export default function PluieTresFine() {
 			if (couleur && geste === 'tap') setEclair((avant) => ({ couleur, n: (avant?.n ?? 0) + 1 }));
 			return;
 		}
-		const avant = etatRef.current;
-		changer(apresGeste(avant, geste, couleur, geste === 'double' ? avantDernierTap.current : avant));
-		if (geste === 'tap') avantDernierTap.current = avant;
+		changer(apresToucher(etatRef.current, couleur));
 	});
 
-	// P, C, T, D : la Dame de cette famille ; R : la carte face cachée ; Échap ou M : menu.
+	// P, C, T, D : la Dame de cette famille ; Échap ou M : menu.
 	// Le panneau de réglages ouvert, seules Échap et M comptent ; le test des zones ne retourne rien.
 	useClavier(keyAction, (action) => {
-		if (action === 'remettre') remettre();
-		else if (!testDesZones) changer(apresGeste(etatRef.current, 'tap', action, etatRef.current));
+		if (!testDesZones) changer(apresToucher(etatRef.current, action));
 	}, panneau);
 
 	/* ---------- Affichage ---------- */
