@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.9.0] | 59 | 2026-10-10 | Trois questions, nouveau tour : 52 cartes, une galerie de photos, la carte retrouvée par ses colonnes |
 | [1.8.0] | 57 | 2026-10-10 | Pluie très fine, nouveau tour ; deux codages de la famille aux cinq cartes ; photos liées aux trois paquets ; le journal des versions dans l'app |
 | [1.7.0] | 54 | 2026-10-09 | Les cinq cartes : des Jokers de cinq styles, la couleur sur toute la colonne |
 | [1.6.0] | 52 | 2026-10-09 | Les trois paquets, nouveau tour : huit cartes forcées, trois paquets de sept, la carte pensée disparaît |
@@ -41,7 +42,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.9.0] — 2026-10-10
+
+59 commits
 
 - **Trois questions, un nouveau tour** (onzième tuile du menu, une photo de la galerie entre ses bandes noires) : un paquet de 52 cartes, sans Joker, trois questions, et la carte du spectateur retrouvée par ses trois réponses.
   - **Le codage** : chaque carte a un code de trois chiffres en base 4, sa place à chaque question (0 de côté, 1 à 3 la colonne) ; dix codes sont écartés (000, 111, 222, 333, 012, 123, 230, 301, 010, 101), les autres donnés dans l'ordre croissant aux cartes dans l'ordre du paquet ; les deux derniers, 331 et 332, ne sont ceux d'aucune carte. À chaque question, 13 cartes de côté, jamais montrées, et 12 à 14 dans chaque colonne. Les trois colonnes commencent et finissent à la même hauteur, et l'index de chaque carte se lit en entier.
@@ -391,6 +394,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.9.0]: https://github.com/dezande/mes-tours/releases/tag/v1.9.0
 [1.8.0]: https://github.com/dezande/mes-tours/releases/tag/v1.8.0
 [1.7.0]: https://github.com/dezande/mes-tours/releases/tag/v1.7.0
 [1.6.0]: https://github.com/dezande/mes-tours/releases/tag/v1.6.0
