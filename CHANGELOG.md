@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.10.0] | 61 | 2026-10-11 | Trois, six, neuf, Dame, nouveau tour : la valeur par la carte touchée, la famille par son coin, « À 1 carte près » |
 | [1.9.0] | 59 | 2026-10-10 | Trois questions, nouveau tour : 52 cartes, une galerie de photos, la carte retrouvée par ses colonnes |
 | [1.8.0] | 57 | 2026-10-10 | Pluie très fine, nouveau tour ; deux codages de la famille aux cinq cartes ; photos liées aux trois paquets ; le journal des versions dans l'app |
 | [1.7.0] | 54 | 2026-10-09 | Les cinq cartes : des Jokers de cinq styles, la couleur sur toute la colonne |
@@ -42,7 +43,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.10.0] — 2026-10-11
+
+61 commits
 
 - **Trois, six, neuf, Dame, un nouveau tour** (huitième tuile du menu, juste après les cinq cartes, le tourbillon de Balatro tourné vers le bleu) : la reprise des cinq cartes, avec leur table, leurs dos et leurs faces. Cinq cartes face cachée, en ligne : un As, un 3, un 6, un 9 et une Dame, depuis le bord réglé (l'As à gauche par défaut).
   - **Le choix** : le premier toucher choisit la carte du spectateur — la carte touchée donne la valeur, le coin touché la famille (haut gauche pique, haut droite cœur, bas gauche trèfle, bas droite carreau ; la colonne de la carte coupée en quatre jusqu'aux bords de l'écran). Elle se retourne aussitôt sur la carte du spectateur.
@@ -404,6 +407,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.10.0]: https://github.com/dezande/mes-tours/releases/tag/v1.10.0
 [1.9.0]: https://github.com/dezande/mes-tours/releases/tag/v1.9.0
 [1.8.0]: https://github.com/dezande/mes-tours/releases/tag/v1.8.0
 [1.7.0]: https://github.com/dezande/mes-tours/releases/tag/v1.7.0
