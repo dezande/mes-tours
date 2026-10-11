@@ -1,0 +1,10 @@
+// Les couleurs du tour : celles des cinq cartes, dont il reprend la table, les dos et les faces.
+@forward "../cinq-cartes/tokens";
+@use "../cinq-cartes/tokens" as cinq;
+
+// Le fond de sa tuile au menu : le tourbillon de Balatro des cinq cartes, à l'arrêt, tourné vers
+// le bleu et le violet (aucun autre tour n'a ce fond : README, « Ajouter un tour »).
+$fond: (
+	radial-gradient(120% 90% at 50% 50%, transparent 50%, rgba(0, 0, 0, .45) 100%),
+	conic-gradient(from 20deg at 70% 40%, cinq.$balatro-bleu, cinq.$balatro-violet 30%, cinq.$balatro-rouge 55%, cinq.$balatro-sarcelle 80%, cinq.$balatro-bleu),
+);

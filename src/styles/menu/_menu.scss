@@ -7,6 +7,7 @@
 @use "../tours/six-predictions/tokens" as six-predictions;
 @use "../tours/morpion/tokens" as morpion;
 @use "../tours/cinq-cartes/tokens" as cinq;
+@use "../tours/trois-six-neuf-dame/tokens" as trois-six-neuf;
 @use "../tours/trois-paquets/tokens" as trois-paquets;
 @use "../tours/pluie-tres-fine/tokens" as pluie;
 @use "../tours/trois-questions/tokens" as trois-questions;
@@ -104,7 +105,7 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 
 // « Choisis un tour » clignote, en tout ou rien, comme l'écran titre d'un jeu.
 #menu-principal .invite {
-	margin: 10px 0 12px;
+	margin: 6px 0 8px;
 	font-size: 16px;
 	letter-spacing: 1px;
 	color: $blanc;
@@ -128,8 +129,8 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 	width: 100%;
 	max-width: 520px;
 	display: grid;
-	// Onze tuiles tiennent sur un écran de téléphone, sans faire défiler (tests dans Chrome).
-	gap: 4px;
+	// Douze tuiles tiennent sur un écran de téléphone, sans faire défiler (tests dans Chrome).
+	gap: 3px;
 	// La place de la main, qui déborde à gauche des tuiles.
 	padding-left: 14px;
 	// L'écart minimal avec le bandeau d'installation, quand le menu défile.
@@ -165,8 +166,8 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 /*
  * Le fond de chaque tuile (et de son écrou) : celui de son tour, en petit. Le velours de la boule,
  * le chêne de la carte de visite, le bleu gravé de pile ou face, le velours pourpre de la
- * princesse, le cuir des six prédictions, le ciel du morpion, le tourbillon des cinq cartes, le
- * feutre vert des trois paquets, l'ardoise sous la pluie de Pluie très fine, la photo entre les
+ * princesse, le cuir des six prédictions, le ciel du morpion, le tourbillon des cinq cartes et
+ * celui de Trois, six, neuf, Dame, le feutre vert des trois paquets, l'ardoise sous la pluie de Pluie très fine, la photo entre les
  * bandes noires de la galerie des trois questions, l'écran de l'analyseur. Touchée, la tuile s'éclaire au lieu de passer au bleu.
  */
 $fonds-des-tours: (
@@ -191,6 +192,7 @@ $fonds-des-tours: (
 		radial-gradient(120% 90% at 50% 50%, transparent 50%, rgba(0, 0, 0, .45) 100%),
 		conic-gradient(from 200deg at 30% 60%, cinq.$balatro-rouge, cinq.$balatro-violet 25%, cinq.$balatro-bleu 50%, cinq.$balatro-sarcelle 70%, cinq.$balatro-rouge),
 	),
+	"trois-six-neuf-dame": trois-six-neuf.$fond,
 	"trois-paquets": trois-paquets.$fond,
 	"pluie-tres-fine": pluie.$fond,
 	"trois-questions": trois-questions.$fond,
@@ -220,9 +222,9 @@ $fonds-des-tours: (
 	display: flex;
 	align-items: center;
 	gap: 14px;
-	// 54 px plutôt que 72 : onze tuiles tiennent sur l'écran.
-	min-height: 54px;
-	padding: 3px 12px;
+	// 48 px plutôt que 72 : douze tuiles tiennent sur l'écran.
+	min-height: 48px;
+	padding: 2px 12px;
 	text-align: left;
 }
 
@@ -246,7 +248,7 @@ $fonds-des-tours: (
 
 #menu-principal .tour-icone {
 	flex: none;
-	// 44 px plutôt que 64 : onze tuiles tiennent sur l'écran.
+	// 44 px plutôt que 64 : douze tuiles tiennent sur l'écran.
 	width: 44px;
 	height: 44px;
 	filter: drop-shadow(2px 3px 0 rgba(5, 6, 26, .7));

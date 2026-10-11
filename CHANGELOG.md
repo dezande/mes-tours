@@ -42,6 +42,16 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **Trois, six, neuf, Dame, un nouveau tour** (huitième tuile du menu, juste après les cinq cartes, le tourbillon de Balatro tourné vers le bleu) : la reprise des cinq cartes, avec leur table, leurs dos et leurs faces. Cinq cartes face cachée, en ligne : un As, un 3, un 6, un 9 et une Dame, depuis le bord réglé (l'As à gauche par défaut).
+  - **Le choix** : le premier toucher choisit la carte du spectateur — la carte touchée donne la valeur, le coin touché la famille (haut gauche pique, haut droite cœur, bas gauche trèfle, bas droite carreau ; la colonne de la carte coupée en quatre jusqu'aux bords de l'écran). Elle se retourne aussitôt sur la carte du spectateur.
+  - **La révélation** : chaque toucher retourne la carte touchée, blanche. Mais si la carte choisie n'est pas l'As et que l'As est retourné ensuite, toutes les cartes sauf celle du spectateur, l'As compris, retournées ou non, portent « À 1 carte près ».
+  - **La fin** : les cinq retournées, on ne peut plus que les retourner, dans un sens ou dans l'autre ; l'appui de 3 s ramène au menu, d'où le tour rouvre sur cinq dos (au clavier, R).
+  - Réglages : le bord où est posé l'As, la couleur du dos, le rappel du codage, la jauge ; le mode entraînement (une carte à trouver, tirée au hasard) et le test des zones (les vingt coins).
+  - Le menu resserré encore (tuiles de 48 px) : douze tuiles tiennent sur l'écran sans défiler.
+  - Tests de la routine, des touches, des réglages, dans l'app et dans Chrome.
+
 ## [1.9.0] — 2026-10-10
 
 59 commits

@@ -49,6 +49,10 @@ export const REGISTRE: Readonly<Record<string, EntreeDuRegistre>> = {
 		charger: () => import('./cinq-cartes/index.tsx'),
 		couleurTheme: '#1e2a4a',
 	},
+	'trois-six-neuf-dame': {
+		charger: () => import('./trois-six-neuf-dame/index.tsx'),
+		couleurTheme: '#1e2a4a',
+	},
 	'trois-paquets': {
 		charger: () => import('./trois-paquets/index.tsx'),
 		couleurTheme: '#04230f',
