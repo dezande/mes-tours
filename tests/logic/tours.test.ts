@@ -27,6 +27,14 @@ test('chaque tour a son code, ses styles et sa place dans le registre', () => {
 	}
 });
 
+test('chaque tour dit la version qui l’a publié, une version du journal', () => {
+	const journal = readFileSync('CHANGELOG.md', 'utf8');
+	for (const tour of TOURS) {
+		expect(tour.publie, `${tour.dossier} : version « ${tour.publie} »`).toMatch(/^\d+\.\d+\.\d+$/);
+		expect(journal, `${tour.dossier} : la version ${tour.publie} n’est pas dans CHANGELOG.md`).toContain(`## [${tour.publie}]`);
+	}
+});
+
 test('chaque texte du menu existe dans les deux langues', () => {
 	for (const [cle, texte] of Object.entries(TEXTES)) {
 		for (const lang of LANGS) expect(texte[lang].trim(), `« ${cle} » vide en ${lang}`).not.toBe('');

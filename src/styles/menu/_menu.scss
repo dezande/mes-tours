@@ -1,6 +1,6 @@
 // Le menu principal façon console 16 bits, dans l'esprit des menus de jeux de rôle : fenêtres
-// bleues en dégradé bordées de blanc, police pixel, icônes ombrées, et la main qui montre la tuile
-// touchée. Tout est rangé sous #menu-principal (src/pages/Menu.tsx) : rien ne déborde sur les tours.
+// bleues en dégradé bordées de blanc, tuiles carrées, police pixel, icônes ombrées, et la main qui
+// montre la tuile touchée. Tout est rangé sous #menu-principal (src/pages/Menu.tsx) : rien ne déborde sur les tours.
 @use "../abstracts/mixins" as *;
 @use "../tours/pile-ou-face/tokens" as pile-ou-face;
 @use "../tours/princesse/tokens" as princesse;
@@ -13,30 +13,83 @@
 @use "../tours/trois-questions/tokens" as trois-questions;
 @use "../tours/analyseur-q/tokens" as analyseur;
 
-$nuit: #0b0b2b;
-$crepuscule: #2a1f5a;
-$fenetre-haut: #3a5ad0;
-$fenetre-bas: #142272;
-$fenetre-active-haut: #5878f0;
-$fenetre-active-bas: #2338a0;
-$bordure: #f4f4f4;
+// Le logo et le nom des tuiles (sur le fond de leur tour) : les mêmes dans les deux apparences.
 $ombre: #05061a;
-$gris: #b8c4e0;
 $blanc: #ffffff;
 $or: #ffd86b;
 $or-sombre: #c98c2e;
 $pixel: "Pixelify Sans", ui-monospace, monospace;
 
+/*
+ * LES DEUX APPARENCES (src/apparence/) : html[data-theme="sombre"], le ciel de nuit d'origine, et
+ * html[data-theme="clair"], un ciel de jour aux fenêtres claires bordées de bleu nuit. Elles valent
+ * pour le menu, les réglages généraux et le journal ; les tuiles gardent le fond de leur tour.
+ */
+:root,
+:root[data-theme="sombre"] {
+	--m-ciel-haut: #0b0b2b;
+	--m-ciel-bas: #2a1f5a;
+	--m-etoile: #ffffff;
+	--m-etoile-douce: #b8c4e0;
+	--m-astre: #ffd86b;
+	--m-fenetre-haut: #3a5ad0;
+	--m-fenetre-bas: #142272;
+	--m-active-haut: #5878f0;
+	--m-active-bas: #2338a0;
+	--m-douce-haut: #2b3a7a;
+	--m-douce-bas: #141c48;
+	--m-ligne-haut: #22306a;
+	--m-ligne-bas: #121a44;
+	--m-choisi-haut: #3a5ad0;
+	--m-choisi-bas: #142272;
+	--m-choisi: #ffd86b;
+	--m-bordure: #f4f4f4;
+	--m-liseret: #05061a;
+	--m-ombre-portee: #05061a;
+	--m-texte: #b8c4e0;
+	--m-texte-fort: #ffffff;
+	--m-texte-ombre: #05061a;
+	--m-titre: #ffd86b;
+	color-scheme: dark;
+}
+
+:root[data-theme="clair"] {
+	--m-ciel-haut: #8fcfff;
+	--m-ciel-bas: #fff0c9;
+	--m-etoile: rgba(255, 255, 255, .95);
+	--m-etoile-douce: rgba(255, 255, 255, .7);
+	--m-astre: #ffc93c;
+	--m-fenetre-haut: #ffffff;
+	--m-fenetre-bas: #d7e2fa;
+	--m-active-haut: #fffaf0;
+	--m-active-bas: #ffe9ad;
+	--m-douce-haut: #f6f8ff;
+	--m-douce-bas: #d9e2f6;
+	--m-ligne-haut: #ffffff;
+	--m-ligne-bas: #e6ecfa;
+	--m-choisi-haut: #fffaf0;
+	--m-choisi-bas: #ffe39a;
+	--m-choisi: #b8730b;
+	--m-bordure: #26336b;
+	--m-liseret: rgba(255, 255, 255, .7);
+	--m-ombre-portee: rgba(38, 51, 107, .4);
+	--m-texte: #3b4675;
+	--m-texte-fort: #141c48;
+	--m-texte-ombre: rgba(255, 255, 255, .85);
+	--m-titre: #a8590a;
+	color-scheme: light;
+}
+
 // Un ciel de nuit qui s'éclaircit vers l'horizon, semé d'étoiles carrées.
 #menu-principal {
 	background:
-		radial-gradient(circle at 12% 14%, $blanc 0 1.5px, transparent 2px),
-		radial-gradient(circle at 84% 8%, $or 0 2px, transparent 2.5px),
-		radial-gradient(circle at 70% 27%, $gris 0 1px, transparent 1.5px),
-		radial-gradient(circle at 33% 6%, $gris 0 1px, transparent 1.5px),
-		radial-gradient(circle at 23% 92%, $gris 0 1.5px, transparent 2px),
-		radial-gradient(circle at 91% 78%, $blanc 0 1px, transparent 1.5px),
-		linear-gradient(180deg, $nuit 0%, $crepuscule 100%);
+		radial-gradient(circle at 12% 14%, var(--m-etoile) 0 1.5px, transparent 2px),
+		radial-gradient(circle at 84% 8%, var(--m-astre) 0 2px, transparent 2.5px),
+		radial-gradient(circle at 70% 27%, var(--m-etoile-douce) 0 1px, transparent 1.5px),
+		radial-gradient(circle at 33% 6%, var(--m-etoile-douce) 0 1px, transparent 1.5px),
+		radial-gradient(circle at 23% 92%, var(--m-etoile-douce) 0 1.5px, transparent 2px),
+		radial-gradient(circle at 91% 78%, var(--m-etoile) 0 1px, transparent 1.5px),
+		linear-gradient(180deg, var(--m-ciel-haut) 0%, var(--m-ciel-bas) 100%);
 	position: absolute;
 	inset: 0;
 	overflow-y: auto;
@@ -49,10 +102,43 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 	font-family: $pixel;
 }
 
+/*
+ * Une fenêtre de jeu de rôle 16 bits : dégradé bleu, bordure blanche aux coins arrondis, un liseré
+ * sombre à l'intérieur et une ombre portée sans flou.
+ */
+@mixin fenetre($haut: var(--m-fenetre-haut), $bas: var(--m-fenetre-bas)) {
+	border: 3px solid var(--m-bordure);
+	border-radius: 8px;
+	background: linear-gradient(180deg, $haut 0%, $bas 100%);
+	box-shadow:
+		inset 0 0 0 2px var(--m-liseret),
+		inset 0 3px 0 2px rgba(255, 255, 255, .18),
+		0 4px 0 var(--m-ombre-portee);
+}
+
+// Les fenêtres d'un choix fait (langue, ordre, favori, réglages ouverts) : bordées d'or.
+@mixin fenetre-choisie {
+	@include fenetre(var(--m-choisi-haut), var(--m-choisi-bas));
+	border-color: var(--m-choisi);
+}
+
+// En haut : le titre au milieu, l'écrou ⚙ à droite (sa place gardée à gauche).
+#menu-principal #menu-entete {
+	width: 100%;
+	max-width: 640px;
+	display: grid;
+	grid-template-columns: 52px 1fr 52px;
+	align-items: center;
+	gap: 8px;
+}
+
 // Le titre, en lettres d'or sur un contour sombre, comme l'écran titre d'un jeu.
 #menu-principal h1 {
+	grid-column: 2;
 	margin: 0;
-	font: 700 44px/1 $pixel;
+	text-align: center;
+	white-space: nowrap;
+	font: 700 34px/1 $pixel;
 	letter-spacing: 1px;
 	color: $or;
 	text-shadow:
@@ -64,52 +150,48 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 		0 6px 0 $ombre;
 }
 
-/*
- * Une fenêtre de jeu de rôle 16 bits : dégradé bleu, bordure blanche aux coins arrondis, un liseré
- * sombre à l'intérieur et une ombre portée sans flou.
- */
-@mixin fenetre($haut: $fenetre-haut, $bas: $fenetre-bas) {
-	border: 3px solid $bordure;
-	border-radius: 8px;
-	background: linear-gradient(180deg, $haut 0%, $bas 100%);
-	box-shadow:
-		inset 0 0 0 2px $ombre,
-		inset 0 3px 0 2px rgba(255, 255, 255, .18),
-		0 4px 0 $ombre;
-}
+// L'écrou ⚙ des réglages : une petite fenêtre carrée, bordée d'or quand les réglages sont ouverts.
+#menu-principal #menu-bascule {
+	grid-column: 3;
+	grid-row: 1;
+	width: 52px;
+	height: 52px;
+	display: grid;
+	place-items: center;
+	padding: 0;
+	cursor: pointer;
+	@include fenetre(var(--m-douce-haut), var(--m-douce-bas));
 
-// Le bouton FR / EN : deux petites fenêtres, la langue choisie en or.
-#menu-principal #langues {
-	display: flex;
-	gap: 12px;
-	margin-top: 16px;
+	.ecrou {
+		width: 32px;
+		height: 32px;
+		filter: drop-shadow(2px 2px 0 $ombre);
+	}
 
-	button {
-		min-width: 58px;
-		padding: 6px 12px 8px;
-		color: $gris;
-		font: 600 16px/1 $pixel;
-		cursor: pointer;
-		@include fenetre(#2b3a7a, #141c48);
+	&[aria-pressed="true"] {
+		@include fenetre-choisie;
+	}
 
-		&[aria-checked="true"] {
-			color: $or;
-			@include fenetre;
-		}
+	&:active {
+		transform: translateY(2px);
+	}
 
-		&:active {
-			transform: translateY(2px);
-		}
+	&:focus-visible {
+		outline: 2px solid var(--m-choisi);
+		outline-offset: 2px;
 	}
 }
 
-// « Choisis un tour » clignote, en tout ou rien, comme l'écran titre d'un jeu.
+// « Choisis un tour » clignote, en tout ou rien, comme l'écran titre d'un jeu ; « Réglages », non.
 #menu-principal .invite {
-	margin: 6px 0 8px;
-	font-size: 16px;
+	margin: 12px 0;
+	font: 400 16px/1.2 $pixel;
 	letter-spacing: 1px;
-	color: $blanc;
-	text-shadow: 2px 2px 0 $ombre;
+	color: var(--m-texte-fort);
+	text-shadow: 2px 2px 0 var(--m-texte-ombre);
+}
+
+#menu-principal p.invite {
 	animation: menu-clignote 1.2s steps(1, end) infinite;
 }
 
@@ -120,51 +202,136 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	#menu-principal .invite {
+	#menu-principal p.invite {
 		animation: none;
 	}
 }
 
+// La ligne des réglages généraux : une fenêtre en largeur, qui ouvre leur page.
+#menu-principal #reglages-generaux-btn {
+	width: 100%;
+	max-width: 640px;
+	margin-bottom: 14px;
+	padding: 10px 14px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	color: inherit;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+	@include fenetre(var(--m-ligne-haut), var(--m-ligne-bas));
+
+	.ecrou {
+		flex: none;
+		width: 30px;
+		height: 30px;
+		filter: drop-shadow(2px 2px 0 $ombre);
+	}
+
+	.libelle {
+		flex: 1;
+		min-width: 0;
+		display: grid;
+		gap: 3px;
+	}
+
+	.titre {
+		font-size: 18px;
+		font-weight: 700;
+		color: var(--m-titre);
+		text-shadow: 2px 2px 0 var(--m-texte-ombre);
+	}
+
+	.detail {
+		font-size: 13px;
+		color: var(--m-texte);
+	}
+
+	.fleche {
+		font-size: 30px;
+		line-height: 1;
+		color: var(--m-texte-fort);
+		text-shadow: 2px 2px 0 var(--m-texte-ombre);
+	}
+
+	&:active {
+		transform: translateY(2px);
+		@include fenetre(var(--m-active-haut), var(--m-active-bas));
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--m-choisi);
+		outline-offset: 2px;
+	}
+}
+
+// Les tuiles carrées : trois de front sur un téléphone tenu droit, autant qu'il en tient en largeur.
 #menu-principal #tours {
 	width: 100%;
-	max-width: 520px;
+	max-width: 640px;
+	padding-bottom: 12px;
+}
+
+#menu-principal .grille {
 	display: grid;
-	// Douze tuiles tiennent sur un écran de téléphone, sans faire défiler (tests dans Chrome).
-	gap: 3px;
-	// La place de la main, qui déborde à gauche des tuiles.
-	padding-left: 14px;
-	// L'écart minimal avec le bandeau d'installation, quand le menu défile.
-	margin-bottom: 24px;
+	grid-template-columns: repeat(auto-fill, minmax(98px, 1fr));
+	gap: 10px;
+}
+
+// « ★ Favoris », « Les autres tours » : au-dessus de leurs tuiles.
+#menu-principal .rangee-titre {
+	margin: 0 0 8px;
+	font: 700 16px/1.2 $pixel;
+	letter-spacing: .5px;
+	color: var(--m-titre);
+	text-shadow: 2px 2px 0 var(--m-texte-ombre);
+}
+
+#menu-principal .grille + .rangee-titre {
+	margin-top: 18px;
 }
 
 #menu-principal .tour {
-	display: flex;
-	align-items: stretch;
-	gap: 10px;
+	min-width: 0;
 }
 
 #menu-principal .tour-lancer,
 #menu-principal .tour-reglages {
 	position: relative;
+	width: 100%;
+	// Toutes les tuiles exactement carrées, quel que soit leur nom : la hauteur ne suit jamais le
+	// contenu (min-height: 0), et le contenu se règle sur la largeur de la tuile (unités cqi).
+	aspect-ratio: 1;
+	min-height: 0;
+	overflow: hidden;
+	container-type: inline-size;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+	padding: 5px;
 	color: inherit;
 	font: inherit;
+	text-align: center;
 	cursor: pointer;
 	@include fenetre;
 
 	// Touchée : la fenêtre s'illumine et s'enfonce.
 	&:active {
 		transform: translateY(2px);
-		@include fenetre($fenetre-active-haut, $fenetre-active-bas);
+		@include fenetre(var(--m-active-haut), var(--m-active-bas));
 	}
 
 	&:focus-visible {
-		outline: 2px solid $or;
+		outline: 2px solid var(--m-choisi);
 		outline-offset: 2px;
 	}
 }
 
 /*
- * Le fond de chaque tuile (et de son écrou) : celui de son tour, en petit. Le velours de la boule,
+ * Le fond de chaque tuile, dans les deux panneaux : celui de son tour, en petit. Le velours de la boule,
  * le chêne de la carte de visite, le bleu gravé de pile ou face, le velours pourpre de la
  * princesse, le cuir des six prédictions, le ciel du morpion, le tourbillon des cinq cartes et
  * celui de Trois, six, neuf, Dame, le feutre vert des trois paquets, l'ardoise sous la pluie de Pluie très fine, la photo entre les
@@ -216,53 +383,39 @@ $fonds-des-tours: (
 	}
 }
 
-#menu-principal .tour-lancer {
-	flex: 1;
-	min-width: 0;
-	display: flex;
-	align-items: center;
-	gap: 14px;
-	// 48 px plutôt que 72 : douze tuiles tiennent sur l'écran.
-	min-height: 48px;
-	padding: 2px 12px;
-	text-align: left;
-}
-
-// La main des jeux de rôle : elle apparaît à gauche de la tuile touchée (ou choisie au clavier).
+// La main des jeux de rôle : elle apparaît dans le coin de la tuile touchée (ou choisie au clavier).
 #menu-principal .main {
 	position: absolute;
-	left: -22px;
-	top: 50%;
-	width: 32px;
-	height: 24px;
-	margin-top: -12px;
+	left: 4px;
+	top: 6px;
+	width: 24px;
+	height: 18px;
 	visibility: hidden;
 	filter: drop-shadow(2px 2px 0 $ombre);
-
 }
 
-#menu-principal .tour-lancer:active .main,
-#menu-principal .tour-lancer:focus-visible .main {
+#menu-principal :is(.tour-lancer, .tour-reglages):is(:active, :focus-visible) .main {
 	visibility: visible;
 }
 
 #menu-principal .tour-icone {
 	flex: none;
-	// 44 px plutôt que 64 : douze tuiles tiennent sur l'écran.
-	width: 44px;
-	height: 44px;
+	width: 44cqi;
+	height: 44cqi;
 	filter: drop-shadow(2px 3px 0 rgba(5, 6, 26, .7));
 }
 
 // Le nom en blanc, cerné de sombre de tous côtés et ombré en dessous, comme les dialogues des jeux
 // 16 bits : il ressort sur tous les fonds, même le ciel clair du morpion.
 #menu-principal .tour-nom {
-	min-width: 0;
-	font-size: 22px;
+	max-width: 100%;
+	// 15 px dans une tuile de 104 px ; deux lignes au plus.
+	font-size: 14.5cqi;
 	font-weight: 700;
-	// Serré : un nom sur deux lignes ne rend pas sa tuile plus haute qu'il ne faut.
+	// Serré : un nom sur deux lignes tient dans la tuile.
 	line-height: 1.05;
-	letter-spacing: .5px;
+	letter-spacing: .3px;
+	text-wrap: balance;
 	color: $blanc;
 	text-shadow:
 		-2px 0 0 $ombre,
@@ -273,87 +426,183 @@ $fonds-des-tours: (
 		2px -2px 0 $ombre,
 		-2px 2px 0 $ombre,
 		2px 2px 0 $ombre,
-		3px 4px 0 $ombre;
+		2px 3px 0 $ombre;
 }
 
-// L'écrou ⚙ : les réglages du tour, sans le lancer.
-#menu-principal .tour-reglages {
-	flex: none;
-	width: 62px;
-	display: grid;
-	place-items: center;
-	padding: 0;
-}
-
-#menu-principal .ecrou {
-	width: 36px;
-	height: 36px;
+// Dans le panneau des réglages, un petit écrou dans le coin de chaque tuile.
+#menu-principal .tour-reglages .ecrou {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	width: 22px;
+	height: 22px;
 	filter: drop-shadow(2px 2px 0 $ombre);
 }
 
-// « Mes tours est une app » : une fenêtre bordée d'or, en bas du menu, tant qu'elle n'est pas installée.
-#menu-principal #installation {
-	width: 100%;
-	max-width: 520px;
-	margin: auto 0 0;
-	padding: 10px 14px 12px;
-	text-align: center;
-	@include fenetre(#2b3a7a, #141c48);
-	border-color: $or;
+// Téléphone tenu en largeur : moins de marges en hauteur, le titre plus petit, les tuiles en largeur.
+@media (orientation: landscape) and (max-height: 500px) {
+	#menu-principal {
+		padding-top: calc(var(--safe-t) + 10px);
+	}
 
-	// Le bandeau est poussé en bas : la version reste juste dessous.
-	&:not([hidden]) + #version {
-		margin-top: 0;
+	#menu-principal #menu-entete,
+	#menu-principal #reglages-generaux-btn,
+	#menu-principal #tours {
+		max-width: 960px;
+	}
+
+	#menu-principal h1 {
+		font-size: 32px;
+	}
+
+	#menu-principal .invite {
+		margin: 8px 0;
+	}
+
+	#menu-principal .grille {
+		grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
 	}
 }
 
-#menu-principal .installation-titre {
-	margin: 0;
-	font-size: 16px;
-	font-weight: 600;
-	color: $or;
-	text-shadow: 2px 2px 0 $ombre;
-}
+// La page des réglages généraux (src/pages/ReglagesGeneraux.tsx) : le ciel du menu, une fenêtre
+// par réglage.
+#page-reglages-generaux {
+	position: absolute;
+	inset: 0;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	touch-action: manipulation;
+	padding: calc(var(--safe-t) + 18px) calc(var(--safe-r) + 16px) calc(var(--safe-b) + 24px) calc(var(--safe-l) + 16px);
+	background: linear-gradient(180deg, var(--m-ciel-haut) 0%, var(--m-ciel-bas) 100%);
+	color: var(--m-texte);
+	font-family: $pixel;
 
-#menu-principal .installation-comment {
-	margin: 6px 0 0;
-	font-size: 13px;
-	line-height: 1.3;
-	text-wrap: balance;
-	color: $gris;
-	text-shadow: 1px 1px 0 $ombre;
-}
-
-#menu-principal .installation-bouton {
-	margin-top: 10px;
-	padding: 6px 16px 8px;
-	color: $or;
-	font: 600 15px/1 $pixel;
-	cursor: pointer;
-	@include fenetre;
-
-	&:active {
-		transform: translateY(2px);
-		@include fenetre($fenetre-active-haut, $fenetre-active-bas);
+	header,
+	.reglage {
+		max-width: 640px;
+		margin: 0 auto 14px;
 	}
-}
 
-#menu-principal #version {
-	margin: auto 0 0;
-	padding-top: 24px;
-	font-size: 12px;
-	color: rgba($gris, .6);
-	text-align: center;
-}
+	header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+	}
 
-// Le bouton du journal des versions, sous la version : une petite fenêtre, discrète.
-#menu-principal #journal-btn {
-	margin-top: 10px;
-	padding: 6px 14px 8px;
-	color: $gris;
-	font: 600 13px/1 $pixel;
-	cursor: pointer;
-	@include fenetre(#2b3a7a, #141c48);
+	h1 {
+		margin: 0;
+		font: 700 26px/1.1 $pixel;
+		color: var(--m-titre);
+		text-shadow: 2px 2px 0 var(--m-texte-ombre);
+	}
+
+	#reglages-generaux-fermer {
+		flex: none;
+		width: 44px;
+		height: 44px;
+		color: var(--m-texte-fort);
+		font: 600 24px/1 $pixel;
+		cursor: pointer;
+		@include fenetre(var(--m-douce-haut), var(--m-douce-bas));
+	}
+
+	.reglage {
+		padding: 12px 14px 14px;
+		@include fenetre(var(--m-ligne-haut), var(--m-ligne-bas));
+	}
+
+	h2 {
+		margin: 0 0 10px;
+		font: 700 18px/1.2 $pixel;
+		color: var(--m-titre);
+		text-shadow: 2px 2px 0 var(--m-texte-ombre);
+	}
+
+	.aide,
+	#version {
+		margin: 0 0 10px;
+		font: 13px/1.35 system-ui, sans-serif;
+		color: color-mix(in srgb, var(--m-texte) 80%, transparent);
+	}
+
+	// Les choix (langue, ordre) : de petites fenêtres, celle choisie en or.
+	.choix {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.choix button,
+	#journal-btn {
+		min-width: 52px;
+		padding: 7px 12px 9px;
+		color: var(--m-texte);
+		font: 600 15px/1 $pixel;
+		cursor: pointer;
+		@include fenetre(var(--m-douce-haut), var(--m-douce-bas));
+
+		&[aria-checked="true"] {
+			color: var(--m-choisi);
+			@include fenetre-choisie;
+		}
+
+		&:active {
+			transform: translateY(2px);
+		}
+	}
+
+	// Les favoris : une ligne par tour, l'étoile d'or allumée pour chaque favori.
+	#favoris {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+		gap: 8px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	#favoris button {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 5px 12px 5px 8px;
+		color: var(--m-texte-fort);
+		font: 600 16px/1.1 $pixel;
+		text-align: left;
+		cursor: pointer;
+		@include fenetre(var(--m-douce-haut), var(--m-douce-bas));
+
+		.tour-icone {
+			flex: none;
+			width: 32px;
+			height: 32px;
+		}
+
+		.tour-nom {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.etoile {
+			font-size: 22px;
+			color: color-mix(in srgb, var(--m-texte) 35%, transparent);
+		}
+
+		&[aria-checked="true"] {
+			@include fenetre-choisie;
+
+			.etoile {
+				color: var(--m-titre);
+				text-shadow: 2px 2px 0 var(--m-texte-ombre);
+			}
+		}
+
+		&:active {
+			transform: translateY(2px);
+		}
+	}
 }
 
 // La page du journal des versions (src/pages/Journal.tsx) : le ciel du menu, le texte dans une
@@ -364,8 +613,8 @@ $fonds-des-tours: (
 	overflow-y: auto;
 	overscroll-behavior: contain;
 	padding: calc(var(--safe-t) + 18px) calc(var(--safe-r) + 16px) calc(var(--safe-b) + 24px) calc(var(--safe-l) + 16px);
-	background: linear-gradient(180deg, $nuit 0%, $crepuscule 100%);
-	color: $gris;
+	background: linear-gradient(180deg, var(--m-ciel-haut) 0%, var(--m-ciel-bas) 100%);
+	color: var(--m-texte);
 	font: 15px/1.5 system-ui, sans-serif;
 
 	header {
@@ -380,32 +629,32 @@ $fonds-des-tours: (
 	h1 {
 		margin: 0;
 		font: 700 26px/1.1 $pixel;
-		color: $or;
-		text-shadow: 2px 2px 0 $ombre;
+		color: var(--m-titre);
+		text-shadow: 2px 2px 0 var(--m-texte-ombre);
 	}
 
 	#journal-fermer {
 		flex: none;
 		width: 44px;
 		height: 44px;
-		color: $blanc;
+		color: var(--m-texte-fort);
 		font: 600 24px/1 $pixel;
 		cursor: pointer;
-		@include fenetre(#2b3a7a, #141c48);
+		@include fenetre(var(--m-douce-haut), var(--m-douce-bas));
 	}
 
 	.journal-langue {
 		max-width: 680px;
 		margin: 0 auto 12px;
 		font-size: 13px;
-		color: rgba($gris, .75);
+		color: color-mix(in srgb, var(--m-texte) 75%, transparent);
 	}
 
 	.version {
 		max-width: 680px;
 		margin: 0 auto 14px;
 		padding: 12px 16px 6px;
-		@include fenetre(#22306a, #121a44);
+		@include fenetre(var(--m-ligne-haut), var(--m-ligne-bas));
 	}
 
 	h2 {
@@ -415,18 +664,18 @@ $fonds-des-tours: (
 		gap: 12px;
 		margin: 0 0 6px;
 		font: 700 20px/1.2 $pixel;
-		color: $or;
+		color: var(--m-titre);
 
 		.date {
 			font-size: 13px;
-			color: rgba($gris, .7);
+			color: color-mix(in srgb, var(--m-texte) 70%, transparent);
 		}
 	}
 
 	.detail {
 		margin: 0 0 6px;
 		font-size: 12px;
-		color: rgba($gris, .65);
+		color: color-mix(in srgb, var(--m-texte) 65%, transparent);
 	}
 
 	ul {
@@ -443,11 +692,11 @@ $fonds-des-tours: (
 	}
 
 	strong {
-		color: $blanc;
+		color: var(--m-texte-fort);
 	}
 
 	code {
 		font: 13px ui-monospace, monospace;
-		color: $or;
+		color: var(--m-titre);
 	}
 }

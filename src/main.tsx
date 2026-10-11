@@ -13,6 +13,7 @@
  *   components/  composants partagés : boutons tactiles, panneau de réglages, jauge, dos de cartes…
  *   hooks/       hooks partagés (toucher au lever du doigt)
  *   langue/      la langue de l'app (FR / EN), pour le menu et tous les tours
+ *   apparence/   le mode clair ou sombre du menu, des réglages généraux et du journal
  *   content/     LA LISTE DES TOURS (tours.ts), le texte du menu, les dessins en pixels
  *   tours/       les tours, un dossier chacun : index.tsx (le tour), components/, logic/ (logique
  *                pure, testée sous Node), content/ (textes) ; registre.ts les relie au menu
