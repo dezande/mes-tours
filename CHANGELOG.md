@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.11.0] | 64 | 2026-10-12 | Le menu d'accueil refait : tuiles carrées, deux panneaux, réglages généraux, favoris, mode clair et sombre |
 | [1.10.1] | 62 | 2026-10-11 | La CI en parallèle : tests dans Chrome sur trois machines, publication à part |
 | [1.10.0] | 61 | 2026-10-11 | Trois, six, neuf, Dame, nouveau tour : la valeur par la carte touchée, la famille par son coin, « À 1 carte près » |
 | [1.9.0] | 59 | 2026-10-10 | Trois questions, nouveau tour : 52 cartes, une galerie de photos, la carte retrouvée par ses colonnes |
@@ -44,7 +45,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.11.0] — 2026-10-12
+
+64 commits
 
 - **Le menu d'accueil refait, en tuiles carrées et en deux panneaux.**
   - **Les tours** : une tuile carrée par tour, son icône et son nom, au fond de son tour ; la toucher lance le tour, directement. Trois tuiles de front sur un téléphone tenu droit.
@@ -429,6 +432,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.11.0]: https://github.com/dezande/mes-tours/releases/tag/v1.11.0
 [1.10.1]: https://github.com/dezande/mes-tours/releases/tag/v1.10.1
 [1.10.0]: https://github.com/dezande/mes-tours/releases/tag/v1.10.0
 [1.9.0]: https://github.com/dezande/mes-tours/releases/tag/v1.9.0

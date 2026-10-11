@@ -4,7 +4,7 @@
  * tests/logic/version.test.ts refuse un écart entre les deux.
  */
 
-export const APP_VERSION = '1.10.1';
+export const APP_VERSION = '1.11.0';
 
 /**
  * Numéro de build (nombre de commits) et commit court, inscrits au build par outils/stamp-build.ts.
