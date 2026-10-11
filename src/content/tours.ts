@@ -55,6 +55,13 @@ export const TOURS: readonly Tour[] = [
 		nom: { fr: 'Les cinq cartes', en: 'The five cards' },
 	},
 	{
+		// La reprise des cinq cartes : un As, un 3, un 6, un 9 et une Dame face cachée ; la carte touchée
+		// donne la valeur, le coin touché la famille, les autres sont blanches — ou « À 1 carte près »
+		// quand l'As est retourné après une autre.
+		dossier: 'trois-six-neuf-dame',
+		nom: { fr: 'Trois, six, neuf, Dame', en: 'Three, six, nine, Queen' },
+	},
+	{
 		// Sept cartes à forcer, trois paquets de sept : la carte pensée, dite par ses paquets, disparaît.
 		dossier: 'trois-paquets',
 		nom: { fr: 'Les trois paquets', en: 'The three packets' },

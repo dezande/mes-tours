@@ -1,0 +1,25 @@
+/*
+ * Trois, six, neuf, Dame (src/tours/trois-six-neuf-dame/) : la reprise des cinq cartes, avec leur
+ * table, leurs dos et leurs faces. Ses styles sont ceux des cinq cartes (styles/tours/cinq-cartes/),
+ * rangés sous .scene-trois-six-neuf-dame, la page du tour (src/pages/PageTour.tsx), plus « À 1
+ * carte près », écrit sur les cartes blanches.
+ */
+@use "sass:meta";
+@use "tokens";
+
+// Le fond derrière #app quand elle pivote, et sous la barre du téléphone.
+html[data-tour="trois-six-neuf-dame"],
+html[data-tour="trois-six-neuf-dame"] body {
+	background: tokens.$balatro-fond;
+}
+
+.scene-trois-six-neuf-dame {
+	@include meta.load-css("../cinq-cartes/base");
+	@include meta.load-css("../cinq-cartes/table");
+	@include meta.load-css("../cinq-cartes/cartes");
+	@include meta.load-css("../cinq-cartes/overlays");
+	@include meta.load-css("../cinq-cartes/aides");
+	@include meta.load-css("../cinq-cartes/balatro");
+	@include meta.load-css("../cinq-cartes/menu");
+	@include meta.load-css("pres");
+}

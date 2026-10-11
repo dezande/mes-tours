@@ -249,6 +249,35 @@ def cinq_cartes():
     for (u,v) in ((0,0),(0,1),(1,0),(1,1),(0,2)): t[9+v][21+u]=rouges[0]
     return contour(t,'#160a10')
 
+# ---------- Trois, six, neuf, Dame : cinq cartes en ligne, un As, un 3, un 6, un 9 et une Dame couronnée ----------
+def trois_six_neuf_dame():
+    t=toile()
+    blancs=['#e6dcc4','#fbf6ea','#ffffff']
+    rouge='#c8102e'; noir='#0b0b12'; filet='#160a10'; or_='#e0aa44'
+    def carte(x0,y0,w,h):
+        for y in range(y0,y0+h):
+            for x in range(x0,x0+w):
+                if (x in (x0,x0+w-1)) and (y in (y0,y0+h-1)): continue   # coins arrondis
+                v=0.9-0.5*((x-x0)/w)-0.25*((y-y0)/h)
+                t[y][x]=ramp(v,blancs,x,y)
+    signes={'A':[".X.","X.X","XXX","X.X","X.X"],'3':["XXX","..X",".XX","..X","XXX"],'6':["XXX","X..","XXX","X.X","XXX"],'9':["XXX","X.X","XXX","..X","XXX"],
+            'D':["X.X.X","XXXXX","XXXXX","X.X.X","XXXXX"]}
+    # cinq cartes étroites qui se chevauchent un peu, chacune un peu plus haut ou plus bas
+    for i,(x0,y0,c,teinte) in enumerate(((1,9,'A',rouge),(6,7,'3',noir),(12,10,'6',rouge),(18,8,'9',noir),(24,9,'D',or_))):
+        carte(x0,y0,7,14)
+        # le bord gauche de la carte, posé sur la précédente
+        if i:
+            for y in range(y0+1,y0+13): t[y][x0]=filet
+        motif=signes[c]
+        ox=x0+(7-len(motif[0]))//2+(1 if i and len(motif[0])<5 else 0)
+        for v,l in enumerate(motif):
+            for u,ch in enumerate(l):
+                if ch=='X': t[y0+4+v][ox+u]=teinte
+        # la couronne de la Dame posée sur une bande rouge et or
+        if c=='D':
+            for u in range(5): t[y0+10][ox+u]=rouge if u%2==0 else or_
+    return contour(t,'#160a10')
+
 # ---------- Les trois paquets : trois paquets de cartes en colonnes, l'index de chacune visible ----------
 def trois_paquets():
     t=toile()
@@ -425,7 +454,7 @@ def en_grille(t):
         lignes.append(l)
     return lignes
 
-icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'morpion':morpion(),'princesse':princesse(),'six-predictions':eventail(),'cinq-cartes':cinq_cartes(),'trois-paquets':trois_paquets(),'pluie-tres-fine':pluie_tres_fine(),'trois-questions':trois_questions(),'analyseur-q':analyseur()}
+icones={'boule-de-cristal':boule(),'carte-de-visite':carte_de_visite(),'pile-ou-face':piece(),'morpion':morpion(),'princesse':princesse(),'six-predictions':eventail(),'cinq-cartes':cinq_cartes(),'trois-six-neuf-dame':trois_six_neuf_dame(),'trois-paquets':trois_paquets(),'pluie-tres-fine':pluie_tres_fine(),'trois-questions':trois_questions(),'analyseur-q':analyseur()}
 gear=ecrou()
 # palette commune
 couleurs=[]

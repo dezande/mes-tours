@@ -1,0 +1,19 @@
+@use "tokens" as *;
+
+// « À 1 carte près », écrit au milieu des cartes blanches quand l'As est retourné après une autre
+// carte (components/Rangee.tsx) : la police pixel des index, à l'encre noire des cartes, à la
+// taille de la carte.
+.mot-pres {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	margin: 0;
+	padding: 0 8%;
+	font-family: "Pixelify Sans", $sans;
+	font-weight: 700;
+	font-size: calc(var(--carte-w) * .2);
+	line-height: 1.1;
+	text-align: center;
+	color: $noir;
+}
