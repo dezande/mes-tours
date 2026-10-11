@@ -44,6 +44,20 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **Le menu d'accueil refait, en tuiles carrées et en deux panneaux.**
+  - **Les tours** : une tuile carrée par tour, son icône et son nom, au fond de son tour ; la toucher lance le tour, directement. Trois tuiles de front sur un téléphone tenu droit.
+  - **Les réglages**, par l'écrou ⚙ en haut à droite (à sa propre adresse, `#/reglages`) : une ligne pour les réglages généraux, puis les mêmes tuiles, un petit écrou dans le coin, qui ouvrent chacune les réglages de son tour. L'écrou, de nouveau, Échap ou le geste retour ramènent aux tours ; fermer les réglages d'un tour ramène au panneau des réglages.
+  - **Toutes les tuiles sont des carrés égaux**, sur tous les téléphones : un nom sur deux lignes ne rend plus sa tuile plus haute sur un écran étroit (360 px), l'icône et le nom se règlent sur la largeur de la tuile.
+  - **Une page de réglages généraux** (`#/reglages-generaux`) : la langue FR / EN, l'apparence, l'ordre des tuiles, les favoris, la version et le journal des versions.
+  - **Un mode clair et un mode sombre**, comme les autres applications : automatique (le défaut, comme le téléphone, et même quand il change de lui-même), clair ou sombre. Le sombre est le ciel de nuit d'origine ; le clair, un ciel de jour aux fenêtres claires bordées de bleu nuit. Ils valent pour le menu, les réglages généraux et le journal, avec la couleur de la barre du téléphone ; les tuiles et les tours gardent leur décor de scène.
+  - **Les favoris**, choisis dans les réglages généraux d'une étoile, en tête du menu (« ★ Favoris »), puis « Les autres tours ».
+  - **L'ordre des tuiles**, au choix : par date de publication (le défaut ; la version qui a publié chaque tour est écrite dans la liste des tours) ou alphabétique, dans la langue du menu.
+  - **Le menu suit l'orientation de l'écran** : téléphone tenu en largeur, il ne pivote plus pour rester droit, et ses tuiles se rangent sur plusieurs colonnes, toutes à l'écran. Sur Android, l'app installée lève le verrou portrait le temps du menu, et le reprend dès qu'un tour s'ouvre. Les tours gardent leur orientation.
+  - **Plus d'encadré « Mes tours est une app »** en bas du menu.
+  - Tests du menu, des deux panneaux, des tuiles carrées sur petit écran, des réglages généraux, de l'apparence, des favoris, de l'ordre, des adresses et de l'orientation, dans l'app et dans Chrome.
+
 ## [1.10.1] — 2026-10-11
 
 62 commits

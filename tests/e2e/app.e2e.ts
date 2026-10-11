@@ -83,8 +83,30 @@ async function attendre(page: Page, expression: string, quoi: string, timeoutMs 
 	throw new Error(`Attente dépassée (${timeoutMs} ms) : ${quoi}`);
 }
 
-/** Touche la tuile du tour (ou son écrou ⚙), puis attend que la page du tour soit prête. */
+/** Le centre d'un élément, à l'écran : amené à l'écran d'abord, si la page défile. */
+async function centreDe(page: Page, selecteur: string): Promise<Point> {
+	return page.evaluate<Point>(`(() => { const e = document.querySelector('${selecteur}'); e.scrollIntoView({ block: 'nearest' }); const r = e.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()`);
+}
+
+/** Le menu sur le panneau voulu : les tours à lancer, ou les réglages (écrou ⚙ en haut à droite). */
+async function panneau(page: Page, voulu: 'tours' | 'reglages'): Promise<void> {
+	const affiche = `document.querySelector('#menu-principal')?.dataset.panneau === '${voulu}'`;
+	await attendre(page, `Boolean(document.querySelector('#menu-principal'))`, 'menu affiché');
+	if (await page.evaluate<boolean>(affiche)) return;
+	await page.tap(await centreDe(page, '#menu-bascule'));
+	await attendre(page, affiche, `panneau « ${voulu} »`, 2000);
+}
+
+/** Ouvre la page des réglages généraux : l'écrou ⚙ du menu, puis leur ligne. */
+async function ouvrirReglagesGeneraux(page: Page): Promise<void> {
+	await panneau(page, 'reglages');
+	await page.tap(await centreDe(page, '#reglages-generaux-btn'));
+	await attendre(page, `location.hash === '#/reglages-generaux' && Boolean(document.querySelector('#page-reglages-generaux #langues'))`, 'réglages généraux ouverts', 2000);
+}
+
+/** Touche la tuile du tour (dans le panneau des réglages : ses réglages), puis attend que la page du tour soit prête. */
 async function ouvrir(page: Page, dossier: string, pret: string, reglages = false): Promise<void> {
+	await panneau(page, reglages ? 'reglages' : 'tours');
 	const bouton = `#tours .tour[data-dossier="${dossier}"] ${reglages ? '.tour-reglages' : '.tour-lancer'}`;
 	// Le menu défile : avec les marges d'une caméra frontale, la dernière tuile peut être sous le bord.
 	const centre = await page.evaluate<Point>(`(() => { const b = document.querySelector('${bouton}'); b.scrollIntoView({ block: 'nearest' }); const r = b.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()`);
@@ -112,23 +134,93 @@ async function pressKey(page: Page, key: string): Promise<void> {
 
 /* ================= Le menu principal ================= */
 
-test('le menu 16 bits montre les douze tours, chacun avec son icône et son écrou ⚙', async () => {
+test('le menu 16 bits montre les douze tours en tuiles carrées ; l’écrou ⚙ en haut à droite, leurs réglages', async () => {
 	await withApp(async (page) => {
-		const tuiles = await page.evaluate<{ nom: string; icone: boolean; ecrou: string | null }[]>(`[...document.querySelectorAll('#tours .tour')].map((t) => ({
-			nom: t.querySelector('.tour-nom').textContent,
-			icone: t.querySelectorAll('svg.tour-icone rect').length > 10,
-			ecrou: t.querySelector('.tour-reglages svg.ecrou rect') ? t.querySelector('.tour-reglages').getAttribute('aria-label') : null,
-		}))`);
-		expect(tuiles.map((t) => t.nom)).toStrictEqual(TOURS.map((t) => t.nom.fr));
-		expect(tuiles.every((t) => t.icone), 'une icône ne s’affiche pas').toBeTruthy();
-		expect(tuiles.map((t) => t.ecrou)).toStrictEqual(TOURS.map((t) => `Réglages : ${t.nom.fr}`));
-		expect(await page.evaluate<string>(`document.querySelector('#version').textContent`)).toMatch(new RegExp(APP_VERSION.replace(/\./g, '\\.')));
+		const tuiles = `[...document.querySelectorAll('#tours .tour')].map((t) => {
+			const b = t.querySelector('button').getBoundingClientRect();
+			return {
+				nom: t.querySelector('.tour-nom').textContent,
+				icone: t.querySelectorAll('svg.tour-icone rect').length > 10,
+				carree: Math.abs(b.width - b.height) < 1 && b.width >= 90,
+				ecrou: t.querySelector('.tour-reglages svg.ecrou rect') ? t.querySelector('.tour-reglages').getAttribute('aria-label') : null,
+			};
+		})`;
+		const lancer = await page.evaluate<{ nom: string; icone: boolean; carree: boolean; ecrou: string | null }[]>(tuiles);
+		expect(lancer.map((t) => t.nom).sort()).toStrictEqual(TOURS.map((t) => t.nom.fr).sort());
+		expect(lancer.every((t) => t.icone), 'une icône ne s’affiche pas').toBeTruthy();
+		expect(lancer.every((t) => t.carree), 'une tuile n’est pas carrée').toBeTruthy();
+		expect(lancer.every((t) => t.ecrou === null), 'un écrou sur une tuile qui lance son tour').toBeTruthy();
+		// L'écrou en haut à droite de l'écran.
+		const ecrou = await centreDe(page, '#menu-bascule');
+		expect(ecrou.x > SCREEN.width * 3 / 4 && ecrou.y < SCREEN.height / 8, `écrou à ${ecrou.x}, ${ecrou.y}`).toBeTruthy();
 		// La police pixel, embarquée avec l'app, est bien chargée.
 		await attendre(page, `document.fonts.check('16px "Pixelify Sans"')`, 'police pixel absente', 3000);
 		// L'app a son propre identifiant, dans son dossier du site : pas celui de la racine.
 		expect(await page.evaluate(`fetch('manifest.json').then((r) => r.json()).then((m) => [m.id, m.start_url, m.scope])`)).toStrictEqual(['/mes-tours/', './', './']);
 		const bas = await page.evaluate<number>(`Math.round(document.querySelector('#tours').getBoundingClientRect().bottom)`);
 		expect(bas <= SCREEN.height, `les tuiles descendent jusqu’à ${bas} px pour un écran de ${SCREEN.height}`).toBeTruthy();
+
+		// Le panneau des réglages : la ligne générale, puis les mêmes tuiles, qui ouvrent les réglages.
+		await panneau(page, 'reglages');
+		const reglages = await page.evaluate<{ nom: string; icone: boolean; carree: boolean; ecrou: string | null }[]>(tuiles);
+		expect(reglages.map((t) => t.ecrou).sort()).toStrictEqual(TOURS.map((t) => `Réglages : ${t.nom.fr}`).sort());
+		expect(reglages.every((t) => t.carree), 'une tuile de réglages n’est pas carrée').toBeTruthy();
+		const general = await page.evaluate<number>(`document.querySelector('#reglages-generaux-btn').getBoundingClientRect().bottom - document.querySelector('#tours').getBoundingClientRect().top`);
+		expect(general <= 0, 'la ligne des réglages généraux n’est pas au-dessus des tuiles').toBeTruthy();
+
+		// Les réglages généraux : la langue, l'ordre, les favoris, la version et son journal.
+		await ouvrirReglagesGeneraux(page);
+		expect(await page.evaluate<string>(`document.querySelector('#page-reglages-generaux #version').textContent`)).toMatch(new RegExp(APP_VERSION.replace(/\./g, '\\.')));
+		expect(await page.evaluate<number>(`document.querySelectorAll('#langues button, #tri button, #journal-btn').length`)).toBe(5);
+		expect(await page.evaluate<number>(`document.querySelectorAll('#favoris [role="switch"]').length`)).toBe(TOURS.length);
+		// Deux favoris, puis le menu : ils sont en tête.
+		for (const dossier of ['princesse', 'morpion']) await page.tap(await centreDe(page, `#favoris [data-dossier="${dossier}"]`));
+		await page.evaluate(`history.back()`);
+		await panneau(page, 'tours');
+		expect(await page.evaluate<string[]>(`[...document.querySelectorAll('#tours .tour')].slice(0, 2).map((t) => t.dataset.dossier)`)).toStrictEqual(['morpion', 'princesse']);
+	});
+}, TIMEOUT);
+
+test('sur un petit téléphone aussi, toutes les tuiles sont des carrés égaux, noms sur deux lignes compris', async () => {
+	await withApp(async (page) => {
+		for (const largeur of [320, 360]) {
+			await page.send('Emulation.setDeviceMetricsOverride', { width: largeur, height: 720, deviceScaleFactor: 3, mobile: true });
+			for (const voulu of ['tours', 'reglages'] as const) {
+				await panneau(page, voulu);
+				await sleep(200);
+				const tailles = await page.evaluate<string[]>(`[...new Set([...document.querySelectorAll('#tours .tour button')].map((b) => { const r = b.getBoundingClientRect(); return Math.round(r.width) + '×' + Math.round(r.height); }))]`);
+				expect(tailles, `${largeur} px, panneau « ${voulu} » : des tuiles de tailles différentes`).toHaveLength(1);
+				const [l, h] = tailles[0]!.split('×').map(Number);
+				expect(l, `${largeur} px : tuiles pas carrées (${tailles[0]})`).toBe(h);
+				// Aucun nom ne déborde de sa tuile.
+				const debordes = await page.evaluate<string[]>(`[...document.querySelectorAll('#tours .tour-nom')].filter((n) => { const r = n.getBoundingClientRect(), t = n.closest('button').getBoundingClientRect(); return r.left < t.left || r.right > t.right || r.bottom > t.bottom; }).map((n) => n.textContent)`);
+				expect(debordes, `${largeur} px : des noms débordent`).toStrictEqual([]);
+			}
+		}
+	});
+}, TIMEOUT);
+
+test('apparence : automatique comme le téléphone, ou claire, ou sombre ; la barre du téléphone suit', async () => {
+	await withApp(async (page) => {
+		const etat = `[document.documentElement.dataset.theme, getComputedStyle(document.body).backgroundColor, document.querySelector('meta[name="theme-color"]').content]`;
+		await page.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'light' }] });
+		await attendre(page, `document.documentElement.dataset.theme === 'clair'`, 'automatique : le téléphone clair');
+		expect(await page.evaluate(etat)).toStrictEqual(['clair', 'rgb(143, 207, 255)', '#8fcfff']);
+		await page.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'dark' }] });
+		await attendre(page, `document.documentElement.dataset.theme === 'sombre'`, 'automatique : le téléphone sombre');
+		expect(await page.evaluate(etat)).toStrictEqual(['sombre', 'rgb(11, 11, 43)', '#0b0b2b']);
+
+		// Choisie claire : même téléphone sombre, gardée au rechargement, et reprise au retour d'un tour.
+		await ouvrirReglagesGeneraux(page);
+		await page.tap(await centreDe(page, '#apparence [data-apparence="clair"]'));
+		await attendre(page, `document.documentElement.dataset.theme === 'clair'`, 'apparence claire choisie');
+		await page.reload();
+		await attendre(page, `document.documentElement.dataset.theme === 'clair'`, 'apparence claire gardée');
+		await page.evaluate(`history.back()`);
+		await ouvrir(page, 'pile-ou-face', `Boolean(document.querySelector('#table .carte'))`);
+		await page.evaluate(`history.back()`);
+		await attendreLeMenu(page);
+		expect(await page.evaluate(etat)).toStrictEqual(['clair', 'rgb(143, 207, 255)', '#8fcfff']);
 	});
 }, TIMEOUT);
 
@@ -140,27 +232,6 @@ test('l’écran reste allumé : la vidéo muette joue dès l’ouverture, au me
 		await page.tap(HAUT);
 		await attendre(page, video, 'la vidéo muette ne joue plus dans le tour');
 		expect(await page.evaluate<number>(`document.querySelectorAll('video#keep-awake').length`), 'une seule vidéo, même après un changement de page').toBe(1);
-	});
-}, TIMEOUT);
-
-test('ouverte dans le navigateur, le menu dit que c’est une app ; installée, il ne le dit plus', async () => {
-	await withApp(async (page) => {
-		const bandeau = `(() => { const b = document.querySelector('#installation'); const r = b.getBoundingClientRect(); return { visible: !b.hidden && r.height > 0, titre: b.querySelector('.installation-titre').textContent, haut: r.top, basDesTuiles: document.querySelector('#tours').getBoundingClientRect().bottom }; })()`;
-		const ouvert = await page.evaluate<{ visible: boolean; titre: string; haut: number; basDesTuiles: number }>(bandeau);
-		expect(ouvert.visible, 'bandeau absent dans le navigateur').toBe(true);
-		expect(ouvert.titre).toBe('Mes tours est une app');
-		expect(ouvert.haut >= ouvert.basDesTuiles, 'le bandeau recouvre les tuiles').toBeTruthy();
-
-		// En anglais aussi.
-		await page.evaluate(`document.querySelector('#langues [data-langue="en"]').click()`);
-		expect((await page.evaluate<{ titre: string }>(bandeau)).titre).toBe('Mes tours is an app');
-
-		// Installée, comme sur l'écran d'accueil d'un iPhone (Chrome ne sait pas simuler le
-		// « display-mode: standalone » d'Android).
-		await page.send('Page.addScriptToEvaluateOnNewDocument', { source: `Object.defineProperty(navigator, 'standalone', { value: true })` });
-		await page.reload();
-		await page.waitFor(PRET, 'menu construit');
-		expect(await page.evaluate<boolean>(`document.querySelector('#installation').hidden`), 'bandeau affiché dans l’app installée').toBe(true);
 	});
 }, TIMEOUT);
 
@@ -539,18 +610,21 @@ test('Carte de visite : un coin la retourne sur son numéro, le double toucher l
 	});
 }, TIMEOUT);
 
-test('Verrou portrait : téléphone tourné, l’app pivote pour rester droite ; la carte de visite quittée, le menu revient en portrait', async () => {
+test('Orientation : le menu suit l’écran ; dans un tour, l’app pivote pour rester droite ; la carte de visite quittée, le menu revient droit', async () => {
 	await withApp(async (page) => {
 		const etat = `(() => { const app = document.querySelector('#app'); return { rotation: app.dataset.rotation, largeur: app.style.getPropertyValue('--app-w'), hauteur: app.style.getPropertyValue('--app-h') }; })()`;
 		expect(await page.evaluate(etat), 'menu au démarrage').toStrictEqual({ rotation: '0', largeur: `${SCREEN.width}px`, hauteur: `${SCREEN.height}px` });
 
-		// Téléphone tourné vers la gauche : l'écran passe en paysage, l'app pivote de -90° et garde sa taille portrait.
+		// Téléphone tourné vers la gauche : l'écran passe en paysage, le menu aussi, sans pivoter.
 		await page.send('Emulation.setDeviceMetricsOverride', { width: SCREEN.height, height: SCREEN.width, deviceScaleFactor: 3, mobile: true, screenOrientation: { type: 'landscapePrimary', angle: 90 } });
-		await attendre(page, `document.querySelector('#app').dataset.rotation === '-90'`, 'l’app n’a pas pivoté');
-		expect(await page.evaluate(etat), 'menu, téléphone tourné').toStrictEqual({ rotation: '-90', largeur: `${SCREEN.width}px`, hauteur: `${SCREEN.height}px` });
-		// Une tuile touchée à l'écran, là où elle s'affiche une fois pivotée, ouvre bien son tour.
+		await attendre(page, `document.querySelector('#app').style.getPropertyValue('--app-w') === '${SCREEN.height}px'`, 'le menu n’a pas suivi l’écran');
+		expect(await page.evaluate(etat), 'menu, téléphone tourné').toStrictEqual({ rotation: '0', largeur: `${SCREEN.height}px`, hauteur: `${SCREEN.width}px` });
+		// En largeur, les tuiles se rangent sur plusieurs colonnes : toutes à l'écran, sans défiler.
+		const basDesTuiles = await page.evaluate<number>(`Math.round(document.querySelector('#tours').getBoundingClientRect().bottom)`);
+		expect(basDesTuiles <= SCREEN.width, `en paysage, les tuiles descendent jusqu’à ${basDesTuiles} px pour ${SCREEN.width}`).toBeTruthy();
+		// Le tour, lui, pivote pour rester dans l'axe du téléphone.
 		await ouvrir(page, 'boule-de-cristal', `Boolean(document.querySelector('#number'))`);
-		expect(await page.evaluate(dansLeTour(`document.querySelector('#app').dataset.rotation`)), 'le tour ne reste pas droit').toBe('-90');
+		await attendre(page, dansLeTour(`document.querySelector('#app').dataset.rotation === '-90'`), 'le tour ne reste pas droit');
 		await page.send('Emulation.setDeviceMetricsOverride', { ...SCREEN, deviceScaleFactor: 3, mobile: true, screenOrientation: { type: 'portraitPrimary', angle: 0 } });
 		await attendre(page, `document.querySelector('#app').dataset.rotation === '0'`, 'l’app n’est pas revenue droite');
 		await appuiLong(page);
@@ -632,6 +706,8 @@ test('de retour au menu, une tuile répond au premier toucher, tout de suite', a
 		const tuile = async (dossier: string) => page.evaluate<Point>(`(() => { const r = document.querySelector('#tours .tour[data-dossier="${dossier}"] .tour-lancer').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()`);
 		const autreTuileOuvre = async (comment: string) => {
 			await attendreLeMenu(page);
+			// La croix des réglages ramène au panneau des réglages : l'écrou ⚙, pour les tours.
+			await panneau(page, 'tours');
 			await page.tap(await tuile('six-predictions'));
 			await attendre(page, `location.hash.startsWith('#/tours/six-predictions')`, `tuile ouverte au premier toucher après ${comment}`, 2000);
 			await page.evaluate(`history.back()`);
@@ -659,8 +735,9 @@ test('un appui long sur une tuile ou un écrou ⚙ agit aussi, au lever du doigt
 	// (les clics du clavier, sans doigt, passent toujours).
 	await withApp(async (page) => {
 		await page.evaluate(`document.addEventListener('click', (e) => { if (e.detail > 0) e.stopImmediatePropagation(); }, true)`);
-		const centre = async (selecteur: string) => page.evaluate<Point>(`(() => { const r = document.querySelector('${selecteur}').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()`);
-		for (const selecteur of ['#tours .tour[data-dossier="six-predictions"] .tour-lancer', '#tours .tour[data-dossier="pile-ou-face"] .tour-reglages']) {
+		const centre = async (selecteur: string) => centreDe(page, selecteur);
+		for (const [voulu, selecteur] of [['tours', '#tours .tour[data-dossier="six-predictions"] .tour-lancer'], ['reglages', '#tours .tour[data-dossier="pile-ou-face"] .tour-reglages']] as const) {
+			await panneau(page, voulu);
 			await page.touchStart(await centre(selecteur));
 			await sleep(1500);
 			await page.touchEnd();
@@ -668,7 +745,14 @@ test('un appui long sur une tuile ou un écrou ⚙ agit aussi, au lever du doigt
 			await page.evaluate(`history.back()`);
 			await attendreLeMenu(page);
 		}
+		// L'écrou ⚙ en haut à droite aussi.
+		await panneau(page, 'tours');
+		await page.touchStart(await centre('#menu-bascule'));
+		await sleep(1500);
+		await page.touchEnd();
+		await attendre(page, `location.hash === '#/reglages'`, 'appui long sur l’écrou du menu', 2000);
 		// Le choix de la langue aussi.
+		await ouvrirReglagesGeneraux(page);
 		await page.touchStart(await centre('#langues button[data-langue="en"]'));
 		await sleep(1500);
 		await page.touchEnd();
@@ -712,6 +796,8 @@ test('un doigt qui glisse hors du bouton ne déclenche rien', async () => {
 
 test('l’historique ne grandit pas d’un tour à l’autre', async () => {
 	await withApp(async (page) => {
+		// Mesuré depuis le panneau des réglages du menu (une page de l'historique, comme le menu).
+		await panneau(page, 'reglages');
 		const depart = await page.evaluate<number>(`history.length`);
 		for (let i = 0; i < 3; i++) {
 			await ouvrir(page, 'pile-ou-face', `Boolean(document.querySelector('#menu')) && !document.querySelector('#menu').hidden`, true);
@@ -738,11 +824,13 @@ test('geste retour d’Android pendant un tour : retour au menu', async () => {
 
 /* ================= L'écrou ⚙ ================= */
 
-/** Touche le bouton de langue du menu principal. */
+/** Touche le bouton de langue des réglages généraux, puis revient au panneau des réglages du menu. */
 async function choisirLangue(page: Page, lang: 'fr' | 'en'): Promise<void> {
-	const centre = await page.evaluate<Point>(`(() => { const r = document.querySelector('#langues button[data-langue="${lang}"]').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; })()`);
-	await page.tap(centre);
+	await ouvrirReglagesGeneraux(page);
+	await page.tap(await centreDe(page, `#langues button[data-langue="${lang}"]`));
 	await page.waitFor(`document.documentElement.lang === '${lang}'`, `menu en ${lang}`);
+	await page.tap(await centreDe(page, '#reglages-generaux-fermer'));
+	await attendre(page, `document.querySelector('#menu-principal')?.dataset.panneau === 'reglages'`, 'retour au panneau des réglages');
 }
 
 test('Trois questions : une colonne touchée, le double toucher pour « aucune », la carte du spectateur à la révélation', async () => {
@@ -1003,12 +1091,16 @@ test('le dessin des dos a la même marge en haut, en bas et sur les côtés', as
 test('FR / EN : le menu change de langue, et s’en souvient', async () => {
 	await withApp(async (page) => {
 		expect(await page.evaluate(`document.documentElement.lang`), 'téléphone en français : menu en français').toBe('fr');
+		await ouvrirReglagesGeneraux(page);
 		expect(await page.evaluate(`document.querySelector('#langues button[data-langue="fr"]').getAttribute('aria-checked')`)).toBe('true');
+		await page.evaluate(`history.back()`);
 		await choisirLangue(page, 'en');
 		const noms = await page.evaluate<string[]>(`[...document.querySelectorAll('#tours .tour-nom')].map((n) => n.textContent)`);
-		expect(noms).toStrictEqual(TOURS.map((t) => t.nom.en));
-		expect(await page.evaluate(`document.querySelector('.invite').textContent`)).toBe('Pick a trick');
+		expect(noms.sort()).toStrictEqual(TOURS.map((t) => t.nom.en).sort());
+		expect(await page.evaluate(`document.querySelector('.invite').textContent`)).toBe('Settings');
 		expect(await page.evaluate(`document.querySelector('.tour-reglages').getAttribute('aria-label')`)).toBe(`Settings: ${TOURS[0]!.nom.en}`);
+		await panneau(page, 'tours');
+		expect(await page.evaluate(`document.querySelector('.invite').textContent`)).toBe('Pick a trick');
 		await page.reload();
 		await page.waitFor(PRET, 'menu rechargé');
 		expect(await page.evaluate(`document.documentElement.lang`), 'la langue choisie est gardée').toBe('en');

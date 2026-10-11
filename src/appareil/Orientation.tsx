@@ -6,6 +6,10 @@
  * - Verrou portrait, par défaut : l'app installée sur Android le demande au système (manifest.json :
  *   "orientation": "portrait") ; sur iPhone, une page web ne peut pas verrouiller l'orientation :
  *   quand le téléphone passe en paysage, #app pivote pour rester dans l'axe du téléphone.
+ * - Orientation libre, demandée par le menu principal : useOrientationLibre(). Rien ne pivote, le
+ *   menu suit l'écran et se range en largeur quand le téléphone est tenu en paysage. Sur Android,
+ *   l'app installée lève le verrou portrait du système le temps du menu (screen.orientation.lock),
+ *   et le reprend dès qu'un tour s'ouvre ; sur iPhone, l'écran tourne déjà de lui-même.
  * - Verrou paysage, demandé par un tour joué téléphone tenu en largeur (la carte de visite) le temps
  *   de sa scène et du test des zones : useVerrouPaysage(actif). Ses réglages, ouverts depuis le
  *   menu, téléphone tenu droit, restent en portrait.
@@ -26,14 +30,28 @@ import { appSize, landscapeRotation, portraitRotation, toAppPoint, type Rotation
 interface ContexteOrientation {
 	/** Point de l'écran (clientX, clientY) dans le repère de #app, pivotée ou non. */
 	appPoint: (clientX: number, clientY: number) => { x: number; y: number };
-	/** Demande le verrou paysage (vrai) ou rend le verrou portrait (faux). */
-	demanderPaysage: (paysage: boolean) => void;
+	/** Demande un mode : le verrou paysage, l'orientation libre, ou le verrou portrait. */
+	demander: (mode: Mode) => void;
+}
+
+/** Ce que demande la page affichée : portrait par défaut. */
+type Mode = 'portrait' | 'paysage' | 'libre';
+
+/** Le verrou du système, sur Android (app installée en plein écran) ; ailleurs, refusé sans bruit. */
+function verrouSysteme(libre: boolean): void {
+	const orientation = screen.orientation as (ScreenOrientation & { lock?: (o: string) => Promise<void> }) | undefined;
+	try {
+		if (libre) void orientation?.lock?.('any').catch(() => undefined);
+		else orientation?.unlock?.();
+	} catch {
+		// Pas de verrou possible ici (navigateur, ordinateur) : l'app pivote elle-même.
+	}
 }
 
 /** Hors de <Orientation> (un composant testé seul) : rien ne pivote. */
 const Contexte = createContext<ContexteOrientation>({
 	appPoint: (x, y) => ({ x, y }),
-	demanderPaysage: () => undefined,
+	demander: () => undefined,
 });
 
 /** Écran tactile (pointeur grossier) : sur ordinateur, le verrou portrait ne pivote jamais. */
@@ -50,7 +68,7 @@ function fenetre(grossier: MediaQueryList | null): Viewport {
 }
 
 export function Orientation({ children }: { children: ComponentChildren }) {
-	const paysage = useRef(false);
+	const mode = useRef<Mode>('portrait');
 	const rotation = useRef<Rotation>(0);
 	/** Rotation et taille déjà appliquées à #app : un « resize » n'est relancé que si elles changent. */
 	const appliquee = useRef('');
@@ -61,7 +79,9 @@ export function Orientation({ children }: { children: ComponentChildren }) {
 		/** Recalcule la rotation et l'applique à #app. */
 		const appliquer = (): void => {
 			const v = fenetre(grossier);
-			rotation.current = paysage.current ? landscapeRotation(v.width, v.height) : portraitRotation(v);
+			rotation.current = mode.current === 'paysage' ? landscapeRotation(v.width, v.height)
+				: mode.current === 'libre' ? 0
+					: portraitRotation(v);
 			const app = document.getElementById('app');
 			if (!app) return;
 			const taille = appSize(v, rotation.current);
@@ -80,9 +100,10 @@ export function Orientation({ children }: { children: ComponentChildren }) {
 			appliquer,
 			contexte: {
 				appPoint: (clientX: number, clientY: number) => toAppPoint(clientX, clientY, fenetre(grossier), rotation.current),
-				demanderPaysage: (oui: boolean) => {
-					if (paysage.current === oui) return;
-					paysage.current = oui;
+				demander: (demande: Mode) => {
+					if (mode.current === demande) return;
+					if ((mode.current === 'libre') !== (demande === 'libre')) verrouSysteme(demande === 'libre');
+					mode.current = demande;
 					appliquer();
 				},
 			} satisfies ContexteOrientation,
@@ -115,9 +136,18 @@ export const useOrientation = (): Pick<ContexteOrientation, 'appPoint'> => useCo
  * composant parti, l'app revient en portrait pour le menu.
  */
 export function useVerrouPaysage(actif: boolean): void {
-	const { demanderPaysage } = useContext(Contexte);
+	const { demander } = useContext(Contexte);
 	useLayoutEffect(() => {
-		demanderPaysage(actif);
-	}, [actif, demanderPaysage]);
-	useLayoutEffect(() => () => demanderPaysage(false), [demanderPaysage]);
+		demander(actif ? 'paysage' : 'portrait');
+	}, [actif, demander]);
+	useLayoutEffect(() => () => demander('portrait'), [demander]);
+}
+
+/** Le menu suit l'orientation de l'écran ; le composant parti, l'app revient au verrou portrait. */
+export function useOrientationLibre(): void {
+	const { demander } = useContext(Contexte);
+	useLayoutEffect(() => {
+		demander('libre');
+		return () => demander('portrait');
+	}, [demander]);
 }

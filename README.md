@@ -21,17 +21,18 @@ Tous mes accessoires de scène dans **une seule application** : https://dezande.
 
 | Geste | Effet |
 | --- | --- |
-| **FR / EN**, sous le titre | La langue du menu **et de tous les tours** ; gardée d'une ouverture à l'autre |
-| **Toucher une tuile** (bref ou long) | Le tour s'ouvre en plein écran, prêt pour une nouvelle routine ; les boutons du menu agissent au lever du doigt |
-| **Toucher l'écrou ⚙** d'une tuile | Les réglages du tour, seuls ; la **croix** en haut à droite ramène au menu |
+| **Toucher une tuile** (bref ou long) | Le tour s'ouvre en plein écran, prêt pour une nouvelle routine ; les boutons du menu agissent au lever du doigt. Les **favoris** d'abord, puis les autres tours |
+| **Toucher l'écrou ⚙** en haut à droite du menu | Le panneau des réglages : la ligne des **réglages généraux**, puis une tuile par tour, qui ouvre ses réglages seuls (la **croix** en haut à droite ramène au panneau) ; l'écrou, de nouveau, ramène aux tours |
+| **Réglages généraux** | La langue **FR / EN** du menu **et de tous les tours**, l'apparence **claire ou sombre** (automatique : comme le téléphone ; les tours gardent leur décor), l'ordre des tuiles (par date de publication ou alphabétique), les favoris, la version et le journal des versions ; tout est gardé d'une ouverture à l'autre |
+| **Tourner le téléphone** au menu | Le menu suit l'écran : en largeur, les tuiles se rangent sur plusieurs colonnes. Les tours gardent leur orientation |
 | **Fin de la routine** (voir le tableau) | Le tour se remet en place pour une nouvelle routine : **on reste dans le tour** |
 | **Appui de 3 s** pendant un tour | **Le seul geste qui ramène au menu**, à tout moment de la routine |
 | **Geste retour** d'Android | Retour au menu |
 | Touche **R** (télécommande) | Remise en place du tour ; **Échap** ou **M** : retour au menu |
 
-**Les réglages de tous les tours ont la même structure**, chacun dans ses couleurs : une barre d'en-tête qui reste en haut quand on fait défiler — « Réglages » et, dessous, le nom du tour, avec la croix qui ferme —, puis les réglages propres au tour, les aides à la répétition (le test des zones de la boule, de la carte de visite, des cinq cartes, de Trois, six, neuf, Dame et de Pluie très fine y est, et le mode entraînement des cinq cartes et de Trois, six, neuf, Dame), et « Rétablir les réglages par défaut ». Plus de version, d'état de l'écran, d'aide des gestes ni d'informations techniques : la version de l'app est en bas du menu principal.
+**Les réglages de tous les tours ont la même structure**, chacun dans ses couleurs : une barre d'en-tête qui reste en haut quand on fait défiler — « Réglages » et, dessous, le nom du tour, avec la croix qui ferme —, puis les réglages propres au tour, les aides à la répétition (le test des zones de la boule, de la carte de visite, des cinq cartes, de Trois, six, neuf, Dame et de Pluie très fine y est, et le mode entraînement des cinq cartes et de Trois, six, neuf, Dame), et « Rétablir les réglages par défaut ». Plus de version, d'état de l'écran, d'aide des gestes ni d'informations techniques : la version de l'app est dans les réglages généraux du menu.
 
-**La langue se choisit une fois, dans le menu principal** : les tours n'ont plus de choix de langue à eux (ni dans leurs réglages, ni sur la première slide de l'analyseur). En anglais, Pile ou face écrit « 0.20 euro / tails » et « heads ». La boule de cristal et la carte de visite n'ont qu'une interface en français ; ce qu'elles montrent au public, un nombre dans une boule ou au dos de la carte du Théâtre Robert-Houdin, n'a pas à changer de langue. À la toute première ouverture, l'app suit la langue du téléphone.
+**La langue se choisit une fois, dans les réglages généraux du menu** : les tours n'ont plus de choix de langue à eux (ni dans leurs réglages, ni sur la première slide de l'analyseur). En anglais, Pile ou face écrit « 0.20 euro / tails » et « heads ». La boule de cristal et la carte de visite n'ont qu'une interface en français ; ce qu'elles montrent au public, un nombre dans une boule ou au dos de la carte du Théâtre Robert-Houdin, n'a pas à changer de langue. À la toute première ouverture, l'app suit la langue du téléphone.
 
 Les réglages de chaque tour (couleur du dos des cartes, délai, routine de la boule…) sont gardés d'une ouverture à l'autre ; le menu du tour ne s'ouvre plus pendant la routine, seulement par l'écrou ⚙. Le doigt de l'appui de 3 s, relevé sur le menu, ne relance pas la tuile placée dessous ; après la croix ou l'appui de 3 s, le menu répond au premier toucher.
 
@@ -50,7 +51,10 @@ Jusqu'à la version 0.1.0, l'app était à la racine du site (`https://dezande.g
 
 | Adresse | Page |
 | --- | --- |
-| `#/` | le menu principal |
+| `#/` | le menu principal : les tours |
+| `#/reglages` | le menu principal : les réglages (écrou ⚙) |
+| `#/reglages-generaux` | les réglages généraux |
+| `#/journal` | le journal des versions |
 | `#/tours/<dossier>` | le tour, prêt pour une nouvelle routine |
 | `#/tours/<dossier>?reglages` | seulement ses réglages (écrou ⚙) |
 
@@ -66,13 +70,15 @@ src/
   App.tsx               le menu, ou le tour demandé par l'adresse ; l'orientation (<Orientation>)
                         et l'écran allumé (<EcranAllume />)
   routeur.ts            le routeur maison : suit l'adresse, navigue dans l'historique
-  pages/                Menu.tsx (le menu 16 bits), PageTour.tsx (la page qui accueille un tour)
+  pages/                Menu.tsx (le menu 16 bits), ReglagesGeneraux.tsx, Journal.tsx,
+                        PageTour.tsx (la page qui accueille un tour)
   components/           les briques des tours (voir « Ajouter un tour ») : PanneauReglages,
                         JaugeAppui, BoutonTactile, PixelArt ; cartes/ (tours à cartes),
                         zones/ (tours à zones : TourAZones, prêt à l'emploi)
   hooks/                appui long, clavier, gestes, réglages enregistrés, ajustement du texte…
   logic/                logique pure partagée, testée sous Node : langues, gestes, zones, orientation
   langue/               la langue FR / EN, pour le menu et tous les tours (LangueContext)
+  apparence/            le mode clair ou sombre du menu (ApparenceContext)
   content/              LA LISTE DES TOURS (tours.ts), le texte du menu, les dessins en pixels
   tours/
     registre.ts         chaque tour : son composant (chargé à sa première ouverture), sa couleur

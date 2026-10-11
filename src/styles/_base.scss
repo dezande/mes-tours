@@ -19,7 +19,8 @@ body {
 	height: 100%;
 	overflow: hidden;
 	overscroll-behavior: none;
-	background: #0b0b2b;
+	// Le haut du ciel du menu, clair ou sombre (styles/menu/_menu.scss).
+	background: var(--m-ciel-haut, #0b0b2b);
 	color: #fff;
 }
 

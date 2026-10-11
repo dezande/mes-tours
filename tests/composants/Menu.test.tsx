@@ -1,5 +1,7 @@
-// Le menu principal (src/pages/Menu.tsx) : une tuile par tour, son écrou ⚙, la langue FR / EN.
-import { act, fireEvent, render, screen, within } from '@testing-library/preact';
+// Le menu principal (src/pages/Menu.tsx) : une tuile carrée par tour ; l'écrou ⚙ en haut à droite
+// ouvre le panneau des réglages : la ligne des réglages généraux (leur page : langue, ordre des
+// tours, favoris, journal), et les réglages de chaque tour.
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/preact';
 import { App } from '../../src/App.tsx';
 import { TOURS } from '../../src/content/tours.ts';
 import { APP_VERSION } from '../../src/version.ts';
@@ -18,28 +20,184 @@ function toucher(element: HTMLElement): void {
 	fireEvent.touchEnd(element, { touches: [], changedTouches: [doigt] });
 }
 
-test('une tuile par tour, avec son nom et son écrou ⚙', () => {
+/** Les tours des tuiles, dans l'ordre affiché. */
+const dossiersAffiches = (): string[] => [...document.querySelectorAll<HTMLElement>('#tours .tour')].map((t) => t.dataset.dossier!);
+const tuile = (dossier: string): HTMLElement => document.querySelector<HTMLElement>(`#tours .tour[data-dossier="${dossier}"]`)!;
+
+/** Touche l'écrou ⚙ en haut à droite : d'un panneau à l'autre. */
+async function basculer(): Promise<void> {
+	await act(async () => toucher(screen.getByRole('button', { name: 'Réglages' })));
+}
+
+test('une tuile par tour, avec son nom, qui lance le tour ; ni réglages ni langue sur ce panneau', () => {
 	render(<App />);
-	const tuiles = document.querySelectorAll<HTMLElement>('#tours .tour');
-	expect([...tuiles].map((tuile) => tuile.dataset.dossier)).toStrictEqual(TOURS.map((tour) => tour.dossier));
-	for (const [i, tour] of TOURS.entries()) {
-		expect(within(tuiles[i]!).getByText(tour.nom.fr)).toBeInTheDocument();
-		expect(within(tuiles[i]!).getByRole('button', { name: `Réglages : ${tour.nom.fr}` })).toBeInTheDocument();
+	expect([...dossiersAffiches()].sort()).toStrictEqual(TOURS.map((tour) => tour.dossier).sort());
+	for (const tour of TOURS) {
+		expect(within(tuile(tour.dossier)).getByRole('button', { name: tour.nom.fr })).toHaveClass('tour-lancer');
 	}
-	expect(document.querySelector('#version')).toHaveTextContent(`Version ${APP_VERSION}`);
+	expect(document.querySelector('.tour-reglages')).toBeNull();
+	expect(document.querySelector('#reglages-generaux-btn')).toBeNull();
+	// Ni favoris, ni titres de rangées : une seule grille, par date de publication.
+	expect(document.querySelectorAll('#tours .grille')).toHaveLength(1);
+	expect(document.querySelector('.rangee-titre')).toBeNull();
+	expect(dossiersAffiches().slice(0, 5)).toStrictEqual(['boule-de-cristal', 'pile-ou-face', 'six-predictions', 'analyseur-q', 'carte-de-visite']);
+	expect(screen.getByRole('button', { name: 'Réglages' })).toHaveAttribute('aria-pressed', 'false');
 });
 
-test('FR / EN : le menu change de langue, et s’en souvient', () => {
-	const { unmount } = render(<App />);
+test('l’écrou ⚙ en haut à droite ouvre les réglages : la ligne générale, puis une tuile de réglages par tour', async () => {
+	render(<App />);
+	await basculer();
+	expect(window.location.hash).toBe('#/reglages');
+	expect(screen.getByRole('button', { name: 'Réglages' })).toHaveAttribute('aria-pressed', 'true');
+	// La ligne des réglages généraux, au-dessus des tuiles.
+	expect(screen.getByRole('button', { name: /^Réglages généraux/ })).toBeInTheDocument();
+	expect(screen.queryByRole('radio', { name: 'FR' })).toBeNull();
+	for (const tour of TOURS) {
+		expect(within(tuile(tour.dossier)).getByRole('button', { name: `Réglages : ${tour.nom.fr}` })).toBeInTheDocument();
+	}
+	expect(document.querySelector('.tour-lancer')).toBeNull();
+
+	// L'écrou, de nouveau : retour aux tours.
+	await basculer();
+	expect(await screen.findByText('Choisis un tour')).toBeInTheDocument();
+	expect(window.location.hash).toBe('');
+	// Et de nouveau les réglages : le menu, gardé d'un panneau à l'autre, répond encore.
+	await basculer();
+	expect(window.location.hash).toBe('#/reglages');
+});
+
+test('le geste retour referme les réglages ; l’écrou les rouvre ensuite', async () => {
+	render(<App />);
+	await basculer();
+	expect(window.location.hash).toBe('#/reglages');
+	await act(async () => {
+		history.back();
+		await new Promise((fin) => setTimeout(fin, 50));
+	});
+	expect(await screen.findByText('Choisis un tour')).toBeInTheDocument();
+	await basculer();
+	expect(window.location.hash).toBe('#/reglages');
+});
+
+test('ouvert à son adresse, le panneau des réglages se ferme par Échap, vers les tours', async () => {
+	window.location.hash = '#/reglages';
+	render(<App />);
+	expect(screen.getByRole('button', { name: /^Réglages généraux/ })).toBeInTheDocument();
+	act(() => {
+		fireEvent.keyDown(document, { key: 'Escape' });
+	});
+	expect(window.location.hash).toBe('#/');
+	expect(await screen.findByText('Choisis un tour')).toBeInTheDocument();
+});
+
+/** Ouvre les réglages généraux depuis le menu : l'écrou ⚙, puis leur ligne. */
+async function ouvrirReglagesGeneraux(): Promise<void> {
+	render(<App />);
+	await basculer();
+	await act(async () => toucher(screen.getByRole('button', { name: /^Réglages généraux/ })));
+	expect(window.location.hash).toBe('#/reglages-generaux');
+	expect(await screen.findByRole('heading', { level: 1, name: 'Réglages généraux' })).toBeInTheDocument();
+}
+
+/** Ferme la page par sa croix, et attend la page d'avant. */
+async function fermer(): Promise<void> {
+	await act(async () => {
+		toucher(screen.getByRole('button', { name: /^(Fermer|Close)$/ }));
+		await new Promise((fin) => setTimeout(fin, 50));
+	});
+}
+
+test('FR / EN, dans les réglages généraux : le menu change de langue, et s’en souvient', async () => {
+	await ouvrirReglagesGeneraux();
 	expect(screen.getByRole('radio', { name: 'FR' })).toHaveAttribute('aria-checked', 'true');
 	fireEvent.click(screen.getByRole('radio', { name: 'EN' }));
-	expect(screen.getByText('Pick a trick')).toBeInTheDocument();
-	expect(screen.getByText(TOURS[0]!.nom.en)).toBeInTheDocument();
+	expect(screen.getByRole('heading', { level: 1, name: 'General settings' })).toBeInTheDocument();
 	expect(document.documentElement.lang).toBe('en');
-	unmount();
+	await fermer();
+	expect(await screen.findByRole('heading', { level: 2, name: 'Settings' })).toBeInTheDocument();
+	expect(screen.getByRole('button', { name: `Settings: ${TOURS[0]!.nom.en}` })).toBeInTheDocument();
+	cleanup();
 
 	render(<App />);
-	expect(screen.getByRole('radio', { name: 'EN' })).toHaveAttribute('aria-checked', 'true');
+	expect(document.documentElement.lang).toBe('en');
+});
+
+test('l’ordre des tours : par date de publication, ou alphabétique, gardé d’une ouverture à l’autre', async () => {
+	await ouvrirReglagesGeneraux();
+	expect(screen.getByRole('radio', { name: 'Par date de publication' })).toHaveAttribute('aria-checked', 'true');
+	fireEvent.click(screen.getByRole('radio', { name: 'Par ordre alphabétique' }));
+	await fermer();
+	await basculer();
+	const noms = TOURS.map((tour) => tour.nom.fr).sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
+	expect(dossiersAffiches().map((d) => TOURS.find((t) => t.dossier === d)!.nom.fr)).toStrictEqual(noms);
+	expect(dossiersAffiches()[0]).toBe('analyseur-q');
+});
+
+test('les favoris : touchés dans les réglages généraux, en tête du menu, puis les autres tours', async () => {
+	await ouvrirReglagesGeneraux();
+	const favori = (nom: string) => within(document.querySelector<HTMLElement>('#favoris')!).getByRole('switch', { name: nom });
+	expect(favori('Morpion')).toHaveAttribute('aria-checked', 'false');
+	fireEvent.click(favori('Morpion'));
+	fireEvent.click(favori('Pile ou face'));
+	expect(favori('Morpion')).toHaveAttribute('aria-checked', 'true');
+	// Touché une seconde fois : retiré.
+	fireEvent.click(favori('Princesse'));
+	fireEvent.click(favori('Princesse'));
+	expect(favori('Princesse')).toHaveAttribute('aria-checked', 'false');
+	expect(JSON.parse(localStorage.getItem('mes-tours:favoris')!)).toStrictEqual(['morpion', 'pile-ou-face']);
+	await fermer();
+	await basculer();
+	expect(await screen.findByText('Choisis un tour')).toBeInTheDocument();
+
+	// Les favoris d'abord (dans l'ordre choisi : par date de publication), puis les autres.
+	expect(screen.getByRole('heading', { level: 3, name: 'Favoris' })).toBeInTheDocument();
+	expect(screen.getByRole('heading', { level: 3, name: 'Les autres tours' })).toBeInTheDocument();
+	const favoris = [...document.querySelectorAll<HTMLElement>('.grille[data-rangee="favoris"] .tour')].map((t) => t.dataset.dossier);
+	expect(favoris).toStrictEqual(['pile-ou-face', 'morpion']);
+	expect(dossiersAffiches()).toHaveLength(TOURS.length);
+	expect(dossiersAffiches().slice(2)).not.toContain('morpion');
+});
+
+test('l’apparence : automatique par défaut, puis claire ou sombre au choix, gardée', async () => {
+	await ouvrirReglagesGeneraux();
+	// jsdom ne dit pas le mode du téléphone : automatique, le menu reste sombre, son allure d'origine.
+	expect(screen.getByRole('radio', { name: 'Automatique' })).toHaveAttribute('aria-checked', 'true');
+	expect(document.documentElement.dataset.theme).toBe('sombre');
+	fireEvent.click(screen.getByRole('radio', { name: 'Clair' }));
+	expect(document.documentElement.dataset.theme).toBe('clair');
+	expect(document.querySelector('meta[name="color-scheme"]')?.getAttribute('content') ?? 'light').toBe('light');
+	expect(JSON.parse(localStorage.getItem('mes-tours:apparence')!)).toBe('clair');
+	cleanup();
+
+	render(<App />);
+	expect(document.documentElement.dataset.theme).toBe('clair');
+});
+
+test('automatique, l’apparence suit le téléphone, même quand il change', async () => {
+	let sombre = false;
+	const ecouteurs = new Set<() => void>();
+	window.matchMedia = ((requete: string) => ({
+		get matches() { return requete.includes('dark') ? sombre : requete.includes('light') ? !sombre : false; },
+		addEventListener: (_: string, f: () => void) => ecouteurs.add(f),
+		removeEventListener: (_: string, f: () => void) => ecouteurs.delete(f),
+	})) as unknown as typeof window.matchMedia;
+	try {
+		render(<App />);
+		expect(document.documentElement.dataset.theme).toBe('clair');
+		sombre = true;
+		act(() => ecouteurs.forEach((f) => f()));
+		expect(document.documentElement.dataset.theme).toBe('sombre');
+	} finally {
+		delete (window as { matchMedia?: unknown }).matchMedia;
+	}
+});
+
+test('des favoris abîmés ou inconnus sont ignorés', () => {
+	localStorage.setItem('mes-tours:favoris', '["tour-secret","morpion","morpion"]');
+	localStorage.setItem('mes-tours:tri', '"au-hasard"');
+	render(<App />);
+	expect([...document.querySelectorAll<HTMLElement>('.grille[data-rangee="favoris"] .tour')].map((t) => t.dataset.dossier)).toStrictEqual(['morpion']);
+	expect(dossiersAffiches()[1]).toBe('boule-de-cristal');
 });
 
 test('un appui long sur une tuile agit au lever du doigt, sans attendre de clic', async () => {
@@ -49,7 +207,8 @@ test('un appui long sur une tuile agit au lever du doigt, sans attendre de clic'
 	expect(window.location.hash).toBe('#/tours/pile-ou-face');
 });
 
-test('l’écrou ⚙ ouvre seulement les réglages du tour', async () => {
+test('dans le panneau des réglages, une tuile ouvre seulement les réglages du tour', async () => {
+	window.location.hash = '#/reglages';
 	render(<App />);
 	await act(async () => {
 		fireEvent.click(screen.getByRole('button', { name: 'Réglages : Pile ou face' }));
@@ -65,8 +224,9 @@ test('un doigt qui ne s’est pas posé sur le bouton ne déclenche rien, même 
 	expect(window.location.hash).toBe('');
 });
 
-test('le bouton du journal des versions ouvre le journal ; la croix ramène au menu', async () => {
-	render(<App />);
+test('le bouton du journal des versions ouvre le journal ; la croix ramène aux réglages généraux', async () => {
+	await ouvrirReglagesGeneraux();
+	expect(document.querySelector('#version')).toHaveTextContent(`Version ${APP_VERSION}`);
 	toucher(screen.getByRole('button', { name: 'Journal des versions' }));
 	expect(window.location.hash).toBe('#/journal');
 	expect(await screen.findByRole('heading', { level: 1, name: 'Journal des versions' })).toBeInTheDocument();
@@ -79,7 +239,7 @@ test('le bouton du journal des versions ouvre le journal ; la croix ramène au m
 		toucher(screen.getByRole('button', { name: 'Fermer' }));
 		await new Promise((fin) => setTimeout(fin, 50));
 	});
-	expect(await screen.findByText('Choisis un tour')).toBeInTheDocument();
+	expect(await screen.findByRole('heading', { level: 1, name: 'Réglages généraux' })).toBeInTheDocument();
 });
 
 test('en anglais, le journal dit qu’il est écrit en français ; Échap le ferme', async () => {

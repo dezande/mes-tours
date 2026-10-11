@@ -11,6 +11,22 @@ import type { Traduction } from '../logic/i18n.ts';
 export const TEXTES = {
 	invite: { fr: 'Choisis un tour', en: 'Pick a trick' },
 	langue: { fr: 'Langue', en: 'Language' },
+	// Le panneau des réglages du menu, ouvert par l'écrou ⚙ en haut à droite.
+	reglages: { fr: 'Réglages', en: 'Settings' },
+	// La page des réglages généraux (src/pages/ReglagesGeneraux.tsx), ouverte depuis ce panneau.
+	reglagesGeneraux: { fr: 'Réglages généraux', en: 'General settings' },
+	reglagesGenerauxDetail: { fr: 'Langue, apparence, favoris, ordre', en: 'Language, appearance, favourites, order' },
+	ordre: { fr: 'Ordre des tours', en: 'Order of tricks' },
+	apparence: { fr: 'Apparence', en: 'Appearance' },
+	apparenceAuto: { fr: 'Automatique', en: 'Automatic' },
+	apparenceClair: { fr: 'Clair', en: 'Light' },
+	apparenceSombre: { fr: 'Sombre', en: 'Dark' },
+	apparenceAide: { fr: 'Automatique : comme le téléphone. Les tours gardent leur décor.', en: 'Automatic: like the phone. Tricks keep their own scenery.' },
+	triPublication: { fr: 'Par date de publication', en: 'By release date' },
+	triAlphabetique: { fr: 'Par ordre alphabétique', en: 'Alphabetical' },
+	favoris: { fr: 'Favoris', en: 'Favourites' },
+	favorisAide: { fr: 'Touche un tour pour l’ajouter à tes favoris, en tête du menu, ou l’en retirer.', en: 'Tap a trick to add it to your favourites, at the top of the menu, or to remove it.' },
+	autresTours: { fr: 'Les autres tours', en: 'Other tricks' },
 	tours: { fr: 'Tours', en: 'Tricks' },
 	// « Réglages : Pile ou face » — le français met une espace avant les deux-points, pas l'anglais.
 	reglagesDe: { fr: 'Réglages : ', en: 'Settings: ' },
@@ -20,20 +36,4 @@ export const TEXTES = {
 	journalEnFrancais: { fr: 'Le journal est écrit en français.', en: 'The release notes are written in French.' },
 	prochaineVersion: { fr: 'Prochaine version', en: 'Next version' },
 	fermer: { fr: 'Fermer', en: 'Close' },
-	// Le bandeau d'installation, quand l'app est ouverte dans le navigateur (src/pages/Installation.tsx).
-	installationTitre: { fr: 'Mes tours est une app', en: 'Mes tours is an app' },
-	installationIphone: {
-		fr: 'Installe-la pour l’avoir en plein écran, même hors-ligne : Partager → Sur l’écran d’accueil.',
-		en: 'Install it to get it full screen, even offline: Share → Add to Home Screen.',
-	},
-	installationAutres: {
-		fr: 'Installe-la pour l’avoir en plein écran, même hors-ligne : menu ⋮ → Installer l’application.',
-		en: 'Install it to get it full screen, even offline: menu ⋮ → Install app.',
-	},
-	// Quand le navigateur propose lui-même l'installation : le bouton suffit.
-	installationDirecte: {
-		fr: 'Installe-la pour l’avoir en plein écran, même hors-ligne.',
-		en: 'Install it to get it full screen, even offline.',
-	},
-	installer: { fr: 'Installer', en: 'Install' },
 } as const satisfies Record<string, Traduction>;

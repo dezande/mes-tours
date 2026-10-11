@@ -4,15 +4,15 @@
  * journal n'est chargé qu'à l'ouverture de la page (un fichier à part, gardé hors-ligne comme le
  * reste de l'app). Il est écrit en français : en anglais, la page le dit.
  *
- * La croix, Échap ou M ramènent au menu, comme le geste retour.
+ * La croix, Échap ou M ramènent à la page d'avant, comme le geste retour (useFermerPage).
  */
 
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { BoutonTactile } from '../components/BoutonTactile.tsx';
 import { TEXTES } from '../content/textes.ts';
+import { useFermerPage } from '../hooks/useFermerPage.ts';
 import { useLangue } from '../langue/LangueContext.tsx';
 import { lireJournal, segments, type Version } from '../logic/journal.ts';
-import { naviguer } from '../routeur.ts';
 
 /** Du texte, avec son gras et son code. */
 function Texte({ texte }: { texte: string }) {
@@ -33,26 +33,7 @@ export function Journal({ depuisLApp }: { depuisLApp: boolean }) {
 		};
 	}, []);
 
-	// Une seule sortie, même sur deux touchers rapides : la page d'avant, ou le menu.
-	const parti = useRef(false);
-	const fermer = useCallback(() => {
-		if (parti.current) return;
-		parti.current = true;
-		if (depuisLApp) history.back();
-		else naviguer('/', { remplacer: true });
-	}, [depuisLApp]);
-
-	useEffect(() => {
-		const surTouche = (event: KeyboardEvent): void => {
-			if (event.metaKey || event.ctrlKey || event.altKey) return;
-			if (event.key === 'Escape' || event.key === 'm' || event.key === 'M') {
-				event.preventDefault();
-				fermer();
-			}
-		};
-		document.addEventListener('keydown', surTouche);
-		return () => document.removeEventListener('keydown', surTouche);
-	}, [fermer]);
+	const fermer = useFermerPage(depuisLApp);
 
 	return (
 		<main id="journal">

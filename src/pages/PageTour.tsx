@@ -13,14 +13,12 @@
 
 import type { ComponentType } from 'preact';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { couleurDuMenu } from '../apparence/ApparenceContext.tsx';
 import { TOURS } from '../content/tours.ts';
 import { useLangue } from '../langue/LangueContext.tsx';
 import { naviguer } from '../routeur.ts';
 import { PontContext, type Pont } from '../tours/pont.tsx';
 import { entreeDuRegistre } from '../tours/registre.ts';
-
-/** La couleur de la barre du téléphone sur le menu (index.html). */
-const COULEUR_DU_MENU = '#0b0b2b';
 
 function couleurTheme(couleur: string): void {
 	document.querySelector('meta[name="theme-color"]')?.setAttribute('content', couleur);
@@ -76,7 +74,7 @@ export function PageTour({ dossier, enReglages, depuisLApp }: Props) {
 		couleurTheme(entree.couleurTheme);
 		return () => {
 			delete document.documentElement.dataset.tour;
-			couleurTheme(COULEUR_DU_MENU);
+			couleurTheme(couleurDuMenu());
 		};
 	}, [dossier, entree]);
 

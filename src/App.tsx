@@ -9,11 +9,13 @@ import { useEffect } from 'preact/hooks';
 import { EcranAllume } from './appareil/EcranAllume.tsx';
 import { Orientation } from './appareil/Orientation.tsx';
 import { TOURS } from './content/tours.ts';
+import { ApparenceProvider } from './apparence/ApparenceContext.tsx';
 import { LangueProvider } from './langue/LangueContext.tsx';
 import { resoudre } from './logic/adresses.ts';
 import { Journal } from './pages/Journal.tsx';
 import { Menu } from './pages/Menu.tsx';
 import { PageTour } from './pages/PageTour.tsx';
+import { ReglagesGeneraux } from './pages/ReglagesGeneraux.tsx';
 import { naviguer, useAdresse } from './routeur.ts';
 import { entreeDuRegistre } from './tours/registre.ts';
 
@@ -32,13 +34,17 @@ export function App() {
 	return (
 		<Orientation>
 			<LangueProvider>
+				<ApparenceProvider>
 				{page.page === 'tour'
 					// Une clé par ouverture : rouvrir un tour repart toujours d'une nouvelle routine.
 					? <PageTour key={adresse.cle} dossier={page.dossier} enReglages={page.reglages} depuisLApp={adresse.depuisLApp} />
 					: page.page === 'journal'
 						? <Journal key={adresse.cle} depuisLApp={adresse.depuisLApp} />
-						: <Menu />}
+						: page.page === 'reglages-generaux'
+							? <ReglagesGeneraux key={adresse.cle} depuisLApp={adresse.depuisLApp} />
+							: <Menu panneau={page.page === 'reglages' ? 'reglages' : 'tours'} depuisLApp={adresse.depuisLApp} />}
 				<EcranAllume />
+				</ApparenceProvider>
 			</LangueProvider>
 		</Orientation>
 	);

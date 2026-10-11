@@ -7,6 +7,8 @@
  * l'appui de 3 s.
  *
  *   dossier      le dossier du tour dans l'app (et le nom de son dépôt d'origine) ;
+ *   publie       la version de l'app qui l'a publié (CHANGELOG.md) : l'ordre de publication du
+ *                menu (réglages généraux), les tours d'une même version dans l'ordre de cette liste ;
  *   nom          ce qui est écrit sur la tuile, en français et en anglais.
  *
  * L'icône de chaque tour est dessinée en pixels dans content/pixels.ts. Les tests
@@ -17,41 +19,49 @@ import type { Traduction } from '../logic/i18n.ts';
 
 export interface Tour {
 	dossier: string;
+	publie: string;
 	nom: Traduction;
 }
 
 export const TOURS: readonly Tour[] = [
 	{
 		dossier: 'boule-de-cristal',
+		publie: '0.1.0',
 		nom: { fr: 'Boule de cristal', en: 'Crystal ball' },
 	},
 	{
 		// La routine Arcane Système, qui était jouée dans la boule de cristal : la carte de visite d'une
 		// carte du Théâtre Robert-Houdin, avec le numéro au dos.
 		dossier: 'carte-de-visite',
+		publie: '0.10.0',
 		nom: { fr: 'Carte de visite', en: 'Business card' },
 	},
 	{
 		dossier: 'pile-ou-face',
+		publie: '0.1.0',
 		nom: { fr: 'Pile ou face', en: 'Heads or tails' },
 	},
 	{
 		// Le même système que Pile ou face : le haut ou le bas de l'écran choisit la grille.
 		dossier: 'morpion',
+		publie: '1.1.0',
 		nom: { fr: 'Morpion', en: 'Tic-tac-toe' },
 	},
 	{
 		// La version de « The Princess Card Trick » : cinq cartes, celle qui est pensée disparaît.
 		dossier: 'princesse',
+		publie: '1.2.0',
 		nom: { fr: 'Princesse', en: 'Princess' },
 	},
 	{
 		dossier: 'six-predictions',
+		publie: '0.1.0',
 		nom: { fr: 'Les six prédictions', en: 'The six predictions' },
 	},
 	{
 		// Cinq cartes face cachée : toutes blanches, sauf celle du spectateur, codée en les touchant.
 		dossier: 'cinq-cartes',
+		publie: '1.3.0',
 		nom: { fr: 'Les cinq cartes', en: 'The five cards' },
 	},
 	{
@@ -59,27 +69,32 @@ export const TOURS: readonly Tour[] = [
 		// donne la valeur, le coin touché la famille, les autres sont blanches — ou « À 1 carte près »
 		// quand l'As est retourné après une autre.
 		dossier: 'trois-six-neuf-dame',
+		publie: '1.10.0',
 		nom: { fr: 'Trois, six, neuf, Dame', en: 'Three, six, nine, Queen' },
 	},
 	{
 		// Sept cartes à forcer, trois paquets de sept : la carte pensée, dite par ses paquets, disparaît.
 		dossier: 'trois-paquets',
+		publie: '1.6.0',
 		nom: { fr: 'Les trois paquets', en: 'The three packets' },
 	},
 	{
 		// Une seule carte, une Dame : sa famille est choisie par le coin touché, comme dans les cinq cartes.
 		dossier: 'pluie-tres-fine',
+		publie: '1.8.0',
 		nom: { fr: 'Pluie très fine', en: 'Very fine rain' },
 	},
 	{
 		// 52 cartes, trois questions : la carte du spectateur dite par ses colonnes, notées en faisant
 		// défiler une galerie de photos.
 		dossier: 'trois-questions',
+		publie: '1.9.0',
 		nom: { fr: 'Trois questions', en: 'Three questions' },
 	},
 	{
 		// « Analyseur Q » est le nom de l'appareil : le même dans les deux langues, comme dans le tour.
 		dossier: 'analyseur-q',
+		publie: '0.1.0',
 		nom: { fr: 'Analyseur Q', en: 'Analyseur Q' },
 	},
 ];

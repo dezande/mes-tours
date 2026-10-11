@@ -7,6 +7,16 @@ test('le menu : #/, ou une adresse vide', () => {
 	for (const hash of ['', '#', '#/']) expect(resoudre(hash, DOSSIERS), JSON.stringify(hash)).toStrictEqual({ page: 'menu' });
 });
 
+test('le panneau des réglages du menu, à son adresse exacte', () => {
+	expect(resoudre('#/reglages', DOSSIERS)).toStrictEqual({ page: 'reglages' });
+	for (const hash of ['#/reglages/', '#/Reglages', '#/reglages?x', '#/réglages']) expect(resoudre(hash, DOSSIERS), hash).toStrictEqual({ page: 'refusee' });
+});
+
+test('la page des réglages généraux, à son adresse exacte', () => {
+	expect(resoudre('#/reglages-generaux', DOSSIERS)).toStrictEqual({ page: 'reglages-generaux' });
+	for (const hash of ['#/reglages-generaux/', '#/reglages/generaux', '#/reglages-generaux?x']) expect(resoudre(hash, DOSSIERS), hash).toStrictEqual({ page: 'refusee' });
+});
+
 test('le journal des versions, à son adresse exacte', () => {
 	expect(resoudre('#/journal', DOSSIERS)).toStrictEqual({ page: 'journal' });
 	for (const hash of ['#/journal/', '#/Journal', '#/journal?x']) expect(resoudre(hash, DOSSIERS), hash).toStrictEqual({ page: 'refusee' });
