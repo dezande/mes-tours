@@ -1,5 +1,6 @@
 // Tests de bout en bout : l'app compilée (dist/) dans un vrai Chrome sans interface, sur un écran
 // de téléphone, avec de vrais événements tactiles. Lancer : npm run build && npm run test:e2e
+// (une partie seulement : E2E_PARTIE=1/3 npm run test:e2e)
 //
 // Chaque tour est joué en entier, depuis sa tuile jusqu'au retour au menu principal. Le détail de
 // chaque tour (gestes fins, réglages, rotation…) est testé dans son dépôt d'origine ; ici, on teste
@@ -19,6 +20,14 @@ const PRET = `document.querySelectorAll('#tours .tour').length === ${TOURS.lengt
 const AU_MENU = `!location.hash.startsWith('#/tours/') && document.querySelectorAll('#tours .tour').length === ${TOURS.length}`;
 const HAUT: Point = { x: SCREEN.width / 2, y: SCREEN.height * .2 };
 const CENTRE: Point = { x: SCREEN.width / 2, y: SCREEN.height / 2 };
+
+// La CI partage ces tests entre plusieurs machines : avec E2E_PARTIE=2/3, seul un test sur trois
+// est déclaré, le deuxième, le cinquième… Sans la variable, tous les tests tournent.
+const [partie, parties] = (process.env.E2E_PARTIE ?? '1/1').split('/').map(Number);
+let rang = 0;
+const test = (nom: string, fn: () => Promise<void>, timeout?: number): void => {
+	if (rang++ % parties === partie - 1) globalThis.test(nom, fn, timeout);
+};
 
 let server: StaticServer;
 let browser: Browser;

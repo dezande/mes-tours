@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.10.1] | 62 | 2026-10-11 | La CI en parallèle : tests dans Chrome sur trois machines, publication à part |
 | [1.10.0] | 61 | 2026-10-11 | Trois, six, neuf, Dame, nouveau tour : la valeur par la carte touchée, la famille par son coin, « À 1 carte près » |
 | [1.9.0] | 59 | 2026-10-10 | Trois questions, nouveau tour : 52 cartes, une galerie de photos, la carte retrouvée par ses colonnes |
 | [1.8.0] | 57 | 2026-10-10 | Pluie très fine, nouveau tour ; deux codages de la famille aux cinq cartes ; photos liées aux trois paquets ; le journal des versions dans l'app |
@@ -42,6 +43,13 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 | [0.1.0] | 2 | 2026-10-02 | Première version : le menu de tous les tours, installé une seule fois |
 
 ---
+
+## [1.10.1] — 2026-10-11
+
+62 commits
+
+- **La CI en parallèle** : sur une pull request, le journal et les types, les tests unitaires et les tests dans Chrome tournent chacun sur sa machine, en même temps ; les tests dans Chrome, les plus longs, se partagent entre trois machines (`E2E_PARTIE=1/3`, un test sur trois chacune). Le contrôle exigé pour fusionner garde son nom et n'est vert que si tout l'est.
+- **La publication à part** (`publication.yml`) : chaque fusion sur `main` construit et publie le site, sans plus d'étape « ignorée » affichée sur les pull requests.
 
 ## [1.10.0] — 2026-10-11
 
@@ -407,6 +415,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.10.1]: https://github.com/dezande/mes-tours/releases/tag/v1.10.1
 [1.10.0]: https://github.com/dezande/mes-tours/releases/tag/v1.10.0
 [1.9.0]: https://github.com/dezande/mes-tours/releases/tag/v1.9.0
 [1.8.0]: https://github.com/dezande/mes-tours/releases/tag/v1.8.0
