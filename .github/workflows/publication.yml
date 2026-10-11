@@ -1,0 +1,60 @@
+name: Publication
+
+# Chaque fusion sur main publie le site sur GitHub Pages. Les tests ont déjà tourné sur la pull
+# request (ci.yml), dont la branche devait être à jour avec main : main porte exactement l'arbre
+# vérifié, il n'est plus que construit et publié. « workflow_dispatch » : republier à la main.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Jamais d'annulation : chaque fusion doit aller jusqu'à la publication.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publication:
+    name: Build et déploiement GitHub Pages
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Historique complet : le numéro de version est le nombre de commits.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          # Version de Node figée pour tout le monde (.nvmrc).
+          node-version-file: .nvmrc
+          cache: npm
+
+      # Chaque changement doit s'accompagner d'une entrée dans CHANGELOG.md, sur main aussi.
+      - name: Journal des versions
+        run: node outils/check-changelog.ts --base "${{ github.event.before }}"
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Artefact GitHub Pages
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+      - id: deployment
+        name: Déploiement
+        uses: actions/deploy-pages@v5

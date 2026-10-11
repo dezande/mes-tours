@@ -154,7 +154,7 @@ Un tour à cartes ajoute `cartes.tapis`, `cartes.cartes(…)` et `cartes.vignett
 
 ## Publication et développement
 
-`main` protégée : pull request, fusion en rebase (historique linéaire), branche à jour, CI verte (« Types, tests, build et tests dans Chrome »), une ligne dans le [journal des versions](CHANGELOG.md) pour chaque changement. Chaque fusion sur `main` publie le site.
+`main` protégée : pull request, fusion en rebase (historique linéaire), branche à jour, CI verte (« Types, tests, build et tests dans Chrome », qui réunit les vérifications parallèles), une ligne dans le [journal des versions](CHANGELOG.md) pour chaque changement. Chaque fusion sur `main` publie le site.
 
 **La correction automatique (Auto-fix) est obligatoire sur toutes les pull requests**, quel que soit le flux qui les ouvre : elle est activée dès la création de la PR, et un commentaire sur la PR le signale. Une vérification GitHub qui échoue, un conflit avec `main` ou un commentaire de relecture est alors corrigé, vérifié et poussé sur la branche de la PR. La fusion, elle, reste manuelle.
 
