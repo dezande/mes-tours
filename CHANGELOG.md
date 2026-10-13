@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.11.1] | 66 | 2026-10-13 | Une nouvelle icône : une mallette de magicien en pixel art |
 | [1.11.0] | 64 | 2026-10-12 | Le menu d'accueil refait : tuiles carrées, deux panneaux, réglages généraux, favoris, mode clair et sombre |
 | [1.10.1] | 62 | 2026-10-11 | La CI en parallèle : tests dans Chrome sur trois machines, publication à part |
 | [1.10.0] | 61 | 2026-10-11 | Trois, six, neuf, Dame, nouveau tour : la valeur par la carte touchée, la famille par son coin, « À 1 carte près » |
@@ -45,7 +46,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.11.1] — 2026-10-13
+
+66 commits
 
 - **Une nouvelle icône** sur l'écran d'accueil : une mallette de magicien en pixel art, cuir rouge, coins, fermoirs et étoile de laiton, des étincelles autour, à la place de la grille des quatre tours — lisible même en petit. Dessinée par `outils/icone-app.py`.
 
@@ -436,6 +439,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.11.1]: https://github.com/dezande/mes-tours/releases/tag/v1.11.1
 [1.11.0]: https://github.com/dezande/mes-tours/releases/tag/v1.11.0
 [1.10.1]: https://github.com/dezande/mes-tours/releases/tag/v1.10.1
 [1.10.0]: https://github.com/dezande/mes-tours/releases/tag/v1.10.0
