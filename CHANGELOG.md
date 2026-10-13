@@ -45,6 +45,10 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **Une nouvelle icône** sur l'écran d'accueil : une mallette de magicien en pixel art, cuir rouge, coins, fermoirs et étoile de laiton, des étincelles autour, à la place de la grille des quatre tours — lisible même en petit. Dessinée par `outils/icone-app.py`.
+
 ## [1.11.0] — 2026-10-12
 
 64 commits
