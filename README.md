@@ -188,11 +188,12 @@ Les icônes des tours (32 × 32), l'écrou ⚙ (24 × 24) et la main sont des **
 
 ### Icônes et captures
 
-L'icône de l'app ([`src/assets/icons/icon.svg`](src/assets/icons/icon.svg)) réunit les icônes des quatre premiers tours (la carte de visite n'y est pas), chacune dans une fenêtre bleue bordée de blanc, comme le menu ; elle est engendrée depuis leurs grilles. Les PNG de `public/icons/` en sont rendus **pixel pour pixel** par [`outils/icones-png.py`](outils/icones-png.py) : le dessin de 80 × 80 agrandi un nombre entier de fois (× 6 pour 512, × 2 pour 192), sans lissage, en palette exacte — nets et légers (2 et 3 ko).
+L'icône de l'app ([`src/assets/icons/icon.svg`](src/assets/icons/icon.svg)) est une mallette de magicien en pixel art, cuir rouge et laiton, sur la nuit ; elle est engendrée par [`outils/icone-app.py`](outils/icone-app.py). Les PNG de `public/icons/` en sont rendus **pixel pour pixel** par [`outils/icones-png.py`](outils/icones-png.py) : le dessin de 80 × 80 agrandi un nombre entier de fois (× 6 pour 512, × 2 pour 192), sans lissage, en palette exacte — nets et légers (2 et 3 ko).
 
 Les captures de la fiche d'installation (`public/captures/`, citées par `manifest.json`) sont prises dans Chrome sans interface par [`outils/captures.ts`](outils/captures.ts), après un build.
 
 ```sh
+python3 outils/icone-app.py
 python3 outils/icones-png.py    # il faut Pillow : pip install pillow
 npm run build && node outils/captures.ts
 ```
