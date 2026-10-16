@@ -135,21 +135,21 @@ async function pressKey(page: Page, key: string): Promise<void> {
 
 /* ================= Le menu principal ================= */
 
-test('le menu 16 bits montre les douze tours en tuiles carrées ; l’écrou ⚙ en haut à droite, leurs réglages', async () => {
+test('le menu 16 bits montre les douze tours en tuiles 4:3 ; l’écrou ⚙ en haut à droite, leurs réglages', async () => {
 	await withApp(async (page) => {
 		const tuiles = `[...document.querySelectorAll('#tours .tour')].map((t) => {
 			const b = t.querySelector('button').getBoundingClientRect();
 			return {
 				nom: t.querySelector('.tour-nom').textContent,
 				icone: t.querySelectorAll('svg.tour-icone rect').length > 10,
-				carree: Math.abs(b.width - b.height) < 1 && b.width >= 90,
+				forme: Math.abs(b.width * 3 / 4 - b.height) < 1 && b.width >= 90,
 				ecrou: t.querySelector('.tour-reglages svg.ecrou rect') ? t.querySelector('.tour-reglages').getAttribute('aria-label') : null,
 			};
 		})`;
-		const lancer = await page.evaluate<{ nom: string; icone: boolean; carree: boolean; ecrou: string | null }[]>(tuiles);
+		const lancer = await page.evaluate<{ nom: string; icone: boolean; forme: boolean; ecrou: string | null }[]>(tuiles);
 		expect(lancer.map((t) => t.nom).sort()).toStrictEqual(TOURS.map((t) => t.nom.fr).sort());
 		expect(lancer.every((t) => t.icone), 'une icône ne s’affiche pas').toBeTruthy();
-		expect(lancer.every((t) => t.carree), 'une tuile n’est pas carrée').toBeTruthy();
+		expect(lancer.every((t) => t.forme), 'une tuile n’est pas en 4:3').toBeTruthy();
 		expect(lancer.every((t) => t.ecrou === null), 'un écrou sur une tuile qui lance son tour').toBeTruthy();
 		// L'écrou en haut à droite de l'écran.
 		const ecrou = await centreDe(page, '#menu-bascule');
@@ -163,9 +163,9 @@ test('le menu 16 bits montre les douze tours en tuiles carrées ; l’écrou ⚙
 
 		// Le panneau des réglages : la ligne générale, puis les mêmes tuiles, qui ouvrent les réglages.
 		await panneau(page, 'reglages');
-		const reglages = await page.evaluate<{ nom: string; icone: boolean; carree: boolean; ecrou: string | null }[]>(tuiles);
+		const reglages = await page.evaluate<{ nom: string; icone: boolean; forme: boolean; ecrou: string | null }[]>(tuiles);
 		expect(reglages.map((t) => t.ecrou).sort()).toStrictEqual(TOURS.map((t) => `Réglages : ${t.nom.fr}`).sort());
-		expect(reglages.every((t) => t.carree), 'une tuile de réglages n’est pas carrée').toBeTruthy();
+		expect(reglages.every((t) => t.forme), 'une tuile de réglages n’est pas en 4:3').toBeTruthy();
 		const general = await page.evaluate<number>(`document.querySelector('#reglages-generaux-btn').getBoundingClientRect().bottom - document.querySelector('#tours').getBoundingClientRect().top`);
 		expect(general <= 0, 'la ligne des réglages généraux n’est pas au-dessus des tuiles').toBeTruthy();
 
@@ -182,7 +182,7 @@ test('le menu 16 bits montre les douze tours en tuiles carrées ; l’écrou ⚙
 	});
 }, TIMEOUT);
 
-test('sur un petit téléphone aussi, toutes les tuiles sont des carrés égaux, noms sur deux lignes compris', async () => {
+test('sur un petit téléphone aussi, toutes les tuiles sont des rectangles 4:3 égaux, noms sur deux lignes compris', async () => {
 	await withApp(async (page) => {
 		for (const largeur of [320, 360]) {
 			await page.send('Emulation.setDeviceMetricsOverride', { width: largeur, height: 720, deviceScaleFactor: 3, mobile: true });
@@ -192,7 +192,7 @@ test('sur un petit téléphone aussi, toutes les tuiles sont des carrés égaux,
 				const tailles = await page.evaluate<string[]>(`[...new Set([...document.querySelectorAll('#tours .tour button')].map((b) => { const r = b.getBoundingClientRect(); return Math.round(r.width) + '×' + Math.round(r.height); }))]`);
 				expect(tailles, `${largeur} px, panneau « ${voulu} » : des tuiles de tailles différentes`).toHaveLength(1);
 				const [l, h] = tailles[0]!.split('×').map(Number);
-				expect(l, `${largeur} px : tuiles pas carrées (${tailles[0]})`).toBe(h);
+				expect(Math.abs(l * 3 / 4 - h) < 1, `${largeur} px : tuiles pas en 4:3 (${tailles[0]})`).toBeTruthy();
 				// Aucun nom ne déborde de sa tuile.
 				const debordes = await page.evaluate<string[]>(`[...document.querySelectorAll('#tours .tour-nom')].filter((n) => { const r = n.getBoundingClientRect(), t = n.closest('button').getBoundingClientRect(); return r.left < t.left || r.right > t.right || r.bottom > t.bottom; }).map((n) => n.textContent)`);
 				expect(debordes, `${largeur} px : des noms débordent`).toStrictEqual([]);

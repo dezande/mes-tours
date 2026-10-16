@@ -1,4 +1,4 @@
-// Le menu principal (src/pages/Menu.tsx) : une tuile carrée par tour, rangées dans la mallette qui
+// Le menu principal (src/pages/Menu.tsx) : une tuile en largeur par tour, rangées dans la mallette qui
 // s'ouvre à l'ouverture de l'app ; l'écrou ⚙ en haut à droite
 // ouvre le panneau des réglages : la ligne des réglages généraux (leur page : langue, ordre des
 // tours, favoris, journal), et les réglages de chaque tour.

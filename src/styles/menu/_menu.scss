@@ -1,5 +1,5 @@
 // Le menu principal façon console 16 bits, dans l'esprit des menus de jeux de rôle : fenêtres
-// bleues en dégradé bordées de blanc, tuiles carrées, police pixel, icônes ombrées, et la main qui
+// bleues en dégradé bordées de blanc, tuiles en largeur, police pixel, icônes ombrées, et la main qui
 // montre la tuile touchée. Tout est rangé sous #menu-principal (src/pages/Menu.tsx) : rien ne déborde sur les tours.
 @use "../abstracts/mixins" as *;
 @use "../tours/pile-ou-face/tokens" as pile-ou-face;
@@ -485,7 +485,7 @@ $valise-rayon: 10px;
 	}
 }
 
-// Les tuiles carrées : trois de front sur un téléphone tenu droit, autant qu'il en tient en largeur.
+// Les tuiles, en largeur (4:3) : trois de front sur un téléphone tenu droit, autant qu'il en tient en largeur.
 
 #menu-principal .grille {
 	display: grid;
@@ -502,9 +502,10 @@ $valise-rayon: 10px;
 #menu-principal .tour-reglages {
 	position: relative;
 	width: 100%;
-	// Toutes les tuiles exactement carrées, quel que soit leur nom : la hauteur ne suit jamais le
-	// contenu (min-height: 0), et le contenu se règle sur la largeur de la tuile (unités cqi).
-	aspect-ratio: 1;
+	// Toutes les tuiles exactement de la même forme (4:3), quel que soit leur nom : la hauteur ne
+	// suit jamais le contenu (min-height: 0), et le contenu se règle sur la largeur de la tuile
+	// (unités cqi).
+	aspect-ratio: 4 / 3;
 	min-height: 0;
 	overflow: hidden;
 	container-type: inline-size;
@@ -512,8 +513,8 @@ $valise-rayon: 10px;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 5px;
-	padding: 5px;
+	gap: 3px;
+	padding: 4px;
 	color: inherit;
 	font: inherit;
 	text-align: center;
@@ -602,8 +603,8 @@ $fonds-des-tours: (
 
 #menu-principal .tour-icone {
 	flex: none;
-	width: 44cqi;
-	height: 44cqi;
+	width: 34cqi;
+	height: 34cqi;
 	filter: drop-shadow(2px 3px 0 rgba(5, 6, 26, .7));
 }
 
@@ -611,8 +612,8 @@ $fonds-des-tours: (
 // 16 bits : il ressort sur tous les fonds, même le ciel clair du morpion.
 #menu-principal .tour-nom {
 	max-width: 100%;
-	// 15 px dans une tuile de 104 px ; deux lignes au plus.
-	font-size: 14.5cqi;
+	// 13,5 px dans une tuile de 104 px de large ; deux lignes au plus.
+	font-size: 13cqi;
 	font-weight: 700;
 	// Serré : un nom sur deux lignes tient dans la tuile.
 	line-height: 1.05;
