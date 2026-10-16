@@ -7,8 +7,10 @@
  *
  * Les icônes et l'écrou sont ENGENDRÉS par outils/icones-16-bits.py (éclairage des volumes,
  * tramage des ombres, comme sur les consoles 16 bits) : pour les changer, modifier le script et
- * recopier sa sortie ici. Les tests (tests/logic/pixels.test.ts) vérifient la taille des grilles,
- * les couleurs, et que l'écrou est parfaitement symétrique, son trou au centre.
+ * recopier sa sortie ici. Les morceaux de la mallette (VALISE_*), qui garnissent le menu, viennent
+ * de l'icône de l'app, outils/icone-app.py, de la même façon. Les tests (tests/logic/pixels.test.ts)
+ * vérifient la taille des grilles, les couleurs, et que l'écrou est parfaitement symétrique, son
+ * trou au centre.
  */
 
 /** La palette des dessins : une lettre par couleur. */
@@ -74,6 +76,9 @@ export const PALETTE: Readonly<Record<string, string>> = {
 	X: '#05061a',
 	Y: '#2c5486',
 	Z: '#1d3a63',
+	// La mallette (outils/icone-app.py) : son contour, et la pointe de ses étincelles blanches.
+	4: '#12061a',
+	5: '#8a8ac8',
 };
 
 /** Taille des icônes des tours, en pixels. */
@@ -543,4 +548,82 @@ export const MAIN: readonly string[] = [
 	'...1133321......',
 	'.....1111.......',
 	'................',
+];
+
+/*
+ * LA MALLETTE DU MENU : les tuiles y sont rangées (pages/Menu.tsx). Ses morceaux en pixels sont pris
+ * tels quels dans l'icône de l'app (outils/icone-app.py) : la poignée de laiton (22 × 10), un coin
+ * (6 × 6, celui d'en haut à gauche ; les autres sont retournés en CSS), un fermoir (6 × 7), l'étoile
+ * (20 × 18) et deux étincelles (7 × 7 et 5 × 5). Le cuir, le fond de velours et le couvercle sont
+ * dessinés en CSS (styles/menu/_menu.scss), à la taille des tuiles.
+ */
+export const VALISE_POIGNEE: readonly string[] = [
+	'.....444444444444.....',
+	'..444jjjjjjjjjkjk444..',
+	'.44kjkjkjkjkjkkkkkk44.',
+	'.4kjkjkjkjkkkkkkkkkk4.',
+	'.4jkkk4444444444klkl4.',
+	'4kkjk4..........4klkl4',
+	'4kkk4............4lll4',
+	'4kkk4............4lll4',
+	'.lkl4............4lml.',
+	'.klk4............4mlm.',
+];
+
+export const VALISE_COIN: readonly string[] = [
+	'ijjkjk',
+	'jjkkk.',
+	'jkik..',
+	'kkl...',
+	'jk....',
+	'k.....',
+];
+
+export const VALISE_FERMOIR: readonly string[] = [
+	'444444',
+	'4jkjk4',
+	'4jjkk4',
+	'4jmml4',
+	'4kkkk4',
+	'4klkl4',
+	'444444',
+];
+
+export const VALISE_ETOILE: readonly string[] = [
+	'.........4..........',
+	'........4k4.........',
+	'........4k4.........',
+	'.......4kkl4........',
+	'.......4kkk4........',
+	'....444klkll444.....',
+	'..44jkjkklkllml44...',
+	'.4kjkkkkllllmlmmm4..',
+	'..4kjkklkllllmmm4...',
+	'...4kklkllmlmmm4....',
+	'....4kklkllllm4.....',
+	'....4kllllmlmm4.....',
+	'....4lkllllmlm4.....',
+	'....4kllmlmmmm4.....',
+	'....4lkl444mmm4.....',
+	'....4l44...44m4.....',
+	'...4k4.......4m4....',
+	'....4.........4.....',
+];
+
+export const VALISE_ETINCELLE: readonly string[] = [
+	'...l...',
+	'...j...',
+	'...j...',
+	'ljjgjjl',
+	'...j...',
+	'...j...',
+	'...l...',
+];
+
+export const VALISE_ETINCELLE_PETITE: readonly string[] = [
+	'..5..',
+	'..F..',
+	'5FgF5',
+	'..F..',
+	'..5..',
 ];

@@ -266,31 +266,233 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 	}
 }
 
-// Les tuiles carrées : trois de front sur un téléphone tenu droit, autant qu'il en tient en largeur.
-#menu-principal #tours {
-	width: 100%;
-	max-width: 640px;
-	padding-bottom: 12px;
+/*
+ * LA MALLETTE : les tuiles sont rangées dans la mallette de magicien de l'icône de l'app
+ * (src/assets/icons/icon.svg), posée à plat et vue de dessus, ouverte comme une vraie valise : la
+ * caisse en haut, la poignée et les fermoirs de laiton sur son bord, et le couvercle rabattu à plat
+ * en dessous, sur la charnière qui les joint. Les deux moitiés ont la même taille (les deux rangées
+ * de la grille du #tours, en 1fr) : chacune range la moitié des tours sur son fond de velours,
+ * entre ses parois de cuir rouge tramé et ses coins de laiton. Ses couleurs sont celles de
+ * l'icône, dans les deux apparences ; ses morceaux en pixels viennent de content/pixels.ts
+ * (VALISE_*), au triple de leur taille ($valise-px).
+ *
+ * À L'OUVERTURE DE L'APP (#tours[data-ouverture], posé par pages/Menu.tsx au premier affichage,
+ * le temps de l'ouverture), la mallette est d'abord fermée, le couvercle sur la caisse (tourné de
+ * 180° sur sa charnière : sa face de dehors, le cuir et l'étoile, dessus) : les fermoirs sautent,
+ * puis le couvercle bascule, se dresse vers l'écran et retombe à plat de l'autre côté de la
+ * charnière, sa face de dedans et ses tours découverts, dans quelques étincelles. Pendant ce
+ * temps, il ne reçoit pas les touchers. Sans animation si le téléphone les réduit.
+ */
+$valise-px: 3px;
+$valise-contour: #12061a;
+$valise-cuir-clair: #b13e53;
+$valise-cuir: #8f2540;
+$valise-cuir-sombre: #4a1222;
+$valise-cuir-nuit: #2a0a14;
+$valise-velours: #3a1030;
+$valise-velours-sombre: #1a0616;
+// La paroi de cuir entre le bord de chaque moitié et son fond, et la marge du velours autour des
+// tuiles : minces, pour garder trois tuiles de front sur un téléphone de 360 px.
+$valise-rebord: 8px;
+$valise-marge: 4px;
+// Au-dessus de la caisse, la place de la poignée ; autant en dessous, pour que le point de fuite du
+// couvercle soit sur la charnière, au milieu.
+$valise-dessus: $valise-px * 10 + 4px;
+$valise-rayon: 10px;
+
+// Le cuir rouge, éclairé d'en haut à gauche, tramé en damier de deux pixels d'art comme sur l'icône.
+@mixin valise-cuir {
+	background:
+		repeating-conic-gradient(rgba(0, 0, 0, .18) 0 25%, transparent 0 50%) 0 0 / #{$valise-px * 2} #{$valise-px * 2},
+		linear-gradient(160deg, $valise-cuir-clair 0%, $valise-cuir 30%, $valise-cuir-sombre 80%, $valise-cuir-nuit 100%);
 }
+
+// Le velours prune des fonds, un peu plus clair au milieu.
+@mixin valise-velours {
+	background:
+		repeating-conic-gradient(rgba(255, 255, 255, .04) 0 25%, transparent 0 50%) 0 0 / #{$valise-px * 2} #{$valise-px * 2},
+		radial-gradient(ellipse 80% 55% at 50% 40%, rgba(140, 60, 120, .3), transparent 75%),
+		linear-gradient(180deg, $valise-velours 0%, $valise-velours-sombre 100%);
+}
+
+// La mallette déborde un peu sur les marges du menu : trois tuiles de front, même sur 360 px. Ses
+// deux moitiés, de la même hauteur, se touchent à la charnière ; le couvercle tourne dans la
+// perspective du #tours, dont le point de fuite est sur cette charnière.
+#menu-principal #tours {
+	position: relative;
+	width: calc(100% + 24px);
+	max-width: 640px;
+	padding: $valise-dessus 0;
+	display: grid;
+	grid-template-rows: 1fr 1fr;
+	perspective: 1400px;
+	perspective-origin: 50% 50%;
+}
+
+// Une moitié : le cuir, bordé de sombre, autour du fond de velours et de ses tuiles.
+#menu-principal .valise-moitie {
+	position: relative;
+	padding: $valise-rebord;
+	border: $valise-px solid $valise-contour;
+	border-radius: $valise-rayon;
+	box-shadow:
+		inset 0 $valise-px 0 rgba(255, 255, 255, .14),
+		0 4px 0 var(--m-ombre-portee);
+	@include valise-cuir;
+}
+
+#menu-principal .valise-fond {
+	padding: $valise-marge;
+	border: $valise-px solid $valise-contour;
+	border-radius: $valise-rayon - 4px;
+	box-shadow: inset 0 4px 0 rgba(0, 0, 0, .35);
+	@include valise-velours;
+}
+
+// Les coins de laiton : celui d'en haut à gauche, retourné pour les trois autres.
+#menu-principal .valise-coin {
+	position: absolute;
+	width: $valise-px * 6;
+	height: $valise-px * 6;
+	pointer-events: none;
+
+	&-hg { top: 0; left: 0; }
+	&-hd { top: 0; right: 0; transform: scaleX(-1); }
+	&-bg { bottom: 0; left: 0; transform: scaleY(-1); }
+	&-bd { bottom: 0; right: 0; transform: scale(-1); }
+}
+
+// Les deux fermoirs et la poignée, sur le bord du haut de la caisse, devant le couvercle fermé.
+#menu-principal .valise-fermoir {
+	position: absolute;
+	top: -($valise-px * 3);
+	width: $valise-px * 6;
+	height: $valise-px * 7;
+	z-index: 2;
+	pointer-events: none;
+
+	&-g { left: calc(25% - #{$valise-px * 3}); }
+	&-d { right: calc(25% - #{$valise-px * 3}); }
+}
+
+#menu-principal .valise-poignee {
+	position: absolute;
+	top: -($valise-px * 10 - 2px);
+	left: 50%;
+	width: $valise-px * 22;
+	height: $valise-px * 10;
+	transform: translateX(-50%);
+	z-index: 2;
+	pointer-events: none;
+}
+
+// Le couvercle, sous la caisse, à plat : sa charnière est son bord du haut. Ses deux faces sont dos
+// à dos ; dedans, une moitié comme la caisse, qui lui donne sa hauteur.
+#menu-principal .valise-couvercle {
+	position: relative;
+	transform-origin: 50% 0;
+	transform-style: preserve-3d;
+}
+
+#menu-principal .valise-dehors,
+#menu-principal .valise-dedans {
+	@include backface-hidden;
+}
+
+#menu-principal .valise-dedans {
+	height: 100%;
+}
+
+// Dehors : le cuir, les coins, le jour clair du haut, l'étoile de laiton au milieu. Retourné sur
+// l'autre face : il se voit quand le couvercle est fermé.
+#menu-principal .valise-dehors {
+	position: absolute;
+	inset: 0;
+	border: $valise-px solid $valise-contour;
+	border-radius: $valise-rayon;
+	box-shadow: inset 0 $valise-px 0 rgba(255, 255, 255, .14);
+	transform: rotateX(180deg);
+	@include valise-cuir;
+}
+
+#menu-principal .valise-etoile {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: $valise-px * 20 + 20px;
+	height: $valise-px * 18 + 18px;
+	transform: translate(-50%, -50%);
+	filter: drop-shadow(2px 3px 0 rgba(0, 0, 0, .35));
+}
+
+// Les étincelles de l'ouverture, autour de la mallette : invisibles hors de l'animation.
+#menu-principal .valise-etincelle {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+
+	&-1 { top: 18px; left: 2%; width: $valise-px * 7; height: $valise-px * 7; }
+	&-2 { top: 40%; right: 0; width: $valise-px * 5; height: $valise-px * 5; }
+	&-3 { bottom: 6px; left: 12%; width: $valise-px * 7; height: $valise-px * 7; }
+}
+
+// L'ouverture, au premier affichage : les fermoirs sautent, le couvercle bascule, les étincelles.
+#menu-principal #tours[data-ouverture] {
+	.valise-couvercle {
+		animation: menu-valise-ouvre 1.3s cubic-bezier(.5, 0, .3, 1) .55s both;
+		pointer-events: none;
+	}
+
+	.valise-fermoir {
+		animation: menu-valise-fermoir .25s steps(2, end) .3s;
+	}
+
+	.valise-etincelle {
+		animation: menu-valise-etincelle .7s steps(5, end) both;
+
+		&-1 { animation-delay: 1.55s; }
+		&-2 { animation-delay: 1.7s; }
+		&-3 { animation-delay: 1.85s; }
+	}
+}
+
+@keyframes menu-valise-ouvre {
+	from { transform: rotateX(180deg); }
+	to { transform: rotateX(0); }
+}
+
+@keyframes menu-valise-fermoir {
+	50% { transform: translateY(-$valise-px); }
+}
+
+@keyframes menu-valise-etincelle {
+	0% { opacity: 0; transform: scale(.4); }
+	30% { opacity: 1; transform: scale(1.25); }
+	100% { opacity: 0; transform: scale(.7); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#menu-principal #tours[data-ouverture] {
+		.valise-couvercle {
+			animation: none;
+			pointer-events: auto;
+		}
+
+		.valise-fermoir,
+		.valise-etincelle {
+			animation: none;
+		}
+	}
+}
+
+// Les tuiles carrées : trois de front sur un téléphone tenu droit, autant qu'il en tient en largeur.
 
 #menu-principal .grille {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(98px, 1fr));
-	gap: 10px;
+	gap: 8px;
 }
 
-// « ★ Favoris », « Les autres tours » : au-dessus de leurs tuiles.
-#menu-principal .rangee-titre {
-	margin: 0 0 8px;
-	font: 700 16px/1.2 $pixel;
-	letter-spacing: .5px;
-	color: var(--m-titre);
-	text-shadow: 2px 2px 0 var(--m-texte-ombre);
-}
-
-#menu-principal .grille + .rangee-titre {
-	margin-top: 18px;
-}
 
 #menu-principal .tour {
 	min-width: 0;
@@ -427,6 +629,17 @@ $fonds-des-tours: (
 		-2px 2px 0 $ombre,
 		2px 2px 0 $ombre,
 		2px 3px 0 $ombre;
+}
+
+// L'étoile d'or des favoris, dans le coin de leur tuile (la main des touchers passe dessus).
+#menu-principal .tour .favori {
+	position: absolute;
+	top: 3px;
+	left: 6px;
+	font-size: 17px;
+	line-height: 1;
+	color: $or;
+	text-shadow: 2px 2px 0 $ombre;
 }
 
 // Dans le panneau des réglages, un petit écrou dans le coin de chaque tuile.

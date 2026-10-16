@@ -15,7 +15,8 @@ import { APP_VERSION } from '../../src/version.ts';
 
 /** Chaque test joue une routine entière dans Chrome : jusqu'à 90 s. */
 const TIMEOUT = 90_000;
-const PRET = `document.querySelectorAll('#tours .tour').length === ${TOURS.length}`;
+/** Le menu est construit, et la mallette a fini de s'ouvrir : toutes les tuiles répondent. */
+const PRET = `document.querySelectorAll('#tours .tour').length === ${TOURS.length} && !document.querySelector('#tours[data-ouverture]')`;
 /** Le menu principal est à l'écran : aucun tour ouvert (#/tours/…). */
 const AU_MENU = `!location.hash.startsWith('#/tours/') && document.querySelectorAll('#tours .tour').length === ${TOURS.length}`;
 const HAUT: Point = { x: SCREEN.width / 2, y: SCREEN.height * .2 };
@@ -54,7 +55,7 @@ async function withApp(run: (page: Page) => Promise<void>, url = server.url): Pr
 		await page.goto(url);
 		await page.evaluate(`localStorage.clear(); sessionStorage.clear()`);
 		await page.reload();
-		await page.waitFor(PRET, 'menu construit');
+		await page.waitFor(PRET, 'menu construit, mallette ouverte', 8000);
 		await run(page);
 		expect(page.errors, 'erreurs JavaScript dans la page').toStrictEqual([]);
 	} finally {
