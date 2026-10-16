@@ -158,6 +158,7 @@ test('le menu 16 bits montre les douze tours en tuiles 4:3 ; l’écrou ⚙ en h
 		await attendre(page, `document.fonts.check('16px "Pixelify Sans"')`, 'police pixel absente', 3000);
 		// L'app a son propre identifiant, dans son dossier du site : pas celui de la racine.
 		expect(await page.evaluate(`fetch('manifest.json').then((r) => r.json()).then((m) => [m.id, m.start_url, m.scope])`)).toStrictEqual(['/mes-tours/', './', './']);
+		const hautDeLaMallette = await page.evaluate<number>(`Math.round(document.querySelector('#tours').getBoundingClientRect().top)`);
 		const bas = await page.evaluate<number>(`Math.round(document.querySelector('#tours').getBoundingClientRect().bottom)`);
 		expect(bas <= SCREEN.height, `les tuiles descendent jusqu’à ${bas} px pour un écran de ${SCREEN.height}`).toBeTruthy();
 
@@ -166,8 +167,10 @@ test('le menu 16 bits montre les douze tours en tuiles 4:3 ; l’écrou ⚙ en h
 		const reglages = await page.evaluate<{ nom: string; icone: boolean; forme: boolean; ecrou: string | null }[]>(tuiles);
 		expect(reglages.map((t) => t.ecrou).sort()).toStrictEqual(TOURS.map((t) => `Réglages : ${t.nom.fr}`).sort());
 		expect(reglages.every((t) => t.forme), 'une tuile de réglages n’est pas en 4:3').toBeTruthy();
-		const general = await page.evaluate<number>(`document.querySelector('#reglages-generaux-btn').getBoundingClientRect().bottom - document.querySelector('#tours').getBoundingClientRect().top`);
-		expect(general <= 0, 'la ligne des réglages généraux n’est pas au-dessus des tuiles').toBeTruthy();
+		const general = await page.evaluate<number>(`document.querySelector('#reglages-generaux-btn').getBoundingClientRect().top - document.querySelector('#tours').getBoundingClientRect().bottom`);
+		expect(general >= 0, 'la ligne des réglages généraux n’est pas sous la mallette').toBeTruthy();
+		// La mallette n'a pas bougé d'un panneau à l'autre.
+		expect(await page.evaluate<number>(`Math.round(document.querySelector('#tours').getBoundingClientRect().top)`)).toBe(hautDeLaMallette);
 
 		// Les réglages généraux : la langue, l'ordre, les favoris, la version et son journal.
 		await ouvrirReglagesGeneraux(page);

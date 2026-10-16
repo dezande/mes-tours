@@ -1,6 +1,6 @@
 // Le menu principal (src/pages/Menu.tsx) : une tuile en largeur par tour, rangées dans la mallette qui
 // s'ouvre à l'ouverture de l'app ; l'écrou ⚙ en haut à droite
-// ouvre le panneau des réglages : la ligne des réglages généraux (leur page : langue, ordre des
+// ouvre le panneau des réglages : une tuile de réglages par tour, puis la ligne des réglages généraux (leur page : langue, ordre des
 // tours, favoris, journal), et les réglages de chaque tour.
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/preact';
 import { App } from '../../src/App.tsx';
@@ -74,7 +74,7 @@ test('l’écrou ⚙ en haut à droite ouvre les réglages : la ligne générale
 	await basculer();
 	expect(window.location.hash).toBe('#/reglages');
 	expect(screen.getByRole('button', { name: 'Réglages' })).toHaveAttribute('aria-pressed', 'true');
-	// La ligne des réglages généraux, au-dessus des tuiles.
+	// La ligne des réglages généraux, sous la mallette.
 	expect(screen.getByRole('button', { name: /^Réglages généraux/ })).toBeInTheDocument();
 	expect(screen.queryByRole('radio', { name: 'FR' })).toBeNull();
 	for (const tour of TOURS) {

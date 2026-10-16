@@ -4,8 +4,9 @@
  * et la main des jeux de rôle qui montre la tuile touchée. Deux panneaux, chacun à son adresse :
  *
  *   les tours (#/)              toucher une tuile lance le tour ;
- *   les réglages (#/reglages)   une ligne pour les réglages généraux (pages/ReglagesGeneraux.tsx),
- *                               puis les mêmes tuiles, qui ouvrent chacune les réglages de son tour.
+ *   les réglages (#/reglages)   les mêmes tuiles, qui ouvrent chacune les réglages de son tour, puis,
+ *                               sous la mallette, une ligne pour les réglages généraux
+ *                               (pages/ReglagesGeneraux.tsx) : la mallette ne bouge pas.
  *
  * Les tuiles : les favoris d'abord (une étoile ★ dans leur coin), puis les autres tours, dans l'ordre
  * choisi dans les réglages généraux (logic/rangement.ts). Elles sont rangées dans LA MALLETTE de
@@ -148,18 +149,6 @@ export function Menu({ panneau, depuisLApp }: Props) {
 				// Clignote comme l'écran titre d'un jeu ; masqué pour les lecteurs d'écran.
 				: <p className="invite" aria-hidden="true">{TEXTES.invite[langue]}</p>}
 
-			{/* La ligne des réglages généraux : leur page. */}
-			{enReglages && (
-				<BoutonTactile id="reglages-generaux-btn" onAction={() => naviguer(ADRESSE_DES_REGLAGES_GENERAUX)}>
-					<PixelArt grille={ECROU} className="ecrou" />
-					<span className="libelle">
-						<span className="titre">{TEXTES.reglagesGeneraux[langue]}</span>
-						<span className="detail">{TEXTES.reglagesGenerauxDetail[langue]}</span>
-					</span>
-					<span className="fleche" aria-hidden="true">›</span>
-				</BoutonTactile>
-			)}
-
 			{/* La mallette, vue de dessus : la caisse (le cuir, ses coins, le velours où sont rangées les
 			    premières tuiles ; la poignée et les fermoirs sur son bord), puis le couvercle, qui bascule sur
 			    la charnière entre les deux : sa face de dehors (le cuir et l'étoile) et sa face de dedans
@@ -190,6 +179,19 @@ export function Menu({ panneau, depuisLApp }: Props) {
 					</>
 				)}
 			</nav>
+
+			{/* La ligne des réglages généraux : leur page. Sous la mallette, qui ne bouge pas d'un panneau
+			    à l'autre. */}
+			{enReglages && (
+				<BoutonTactile id="reglages-generaux-btn" onAction={() => naviguer(ADRESSE_DES_REGLAGES_GENERAUX)}>
+					<PixelArt grille={ECROU} className="ecrou" />
+					<span className="libelle">
+						<span className="titre">{TEXTES.reglagesGeneraux[langue]}</span>
+						<span className="detail">{TEXTES.reglagesGenerauxDetail[langue]}</span>
+					</span>
+					<span className="fleche" aria-hidden="true">›</span>
+				</BoutonTactile>
+			)}
 		</main>
 	);
 }
