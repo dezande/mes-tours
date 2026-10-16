@@ -23,7 +23,7 @@ Tous mes accessoires de scène dans **une seule application** : https://dezande.
 | --- | --- |
 | **Ouvrir l'app** | La mallette de l'icône est posée là, fermée : ses fermoirs sautent, son couvercle bascule et se pose à plat, et les tuiles des tours sont rangées dedans, sur le velours des deux moitiés. De retour d'un tour, elle est déjà ouverte |
 | **Toucher une tuile** (bref ou long) | Le tour s'ouvre en plein écran, prêt pour une nouvelle routine ; les boutons du menu agissent au lever du doigt. Les **favoris** d'abord (une étoile ★ dans leur coin), puis les autres tours |
-| **Toucher l'écrou ⚙** en haut à droite du menu | Le panneau des réglages : la ligne des **réglages généraux**, puis une tuile par tour, qui ouvre ses réglages seuls (la **croix** en haut à droite ramène au panneau) ; l'écrou, de nouveau, ramène aux tours |
+| **Toucher l'écrou ⚙** en haut à droite du menu | Le panneau des réglages : la même mallette, qui ne bouge pas, une tuile par tour qui ouvre ses réglages seuls (la **croix** en haut à droite ramène au panneau), puis, sous la mallette, la ligne des **réglages généraux** ; l'écrou, de nouveau, ramène aux tours |
 | **Réglages généraux** | La langue **FR / EN** du menu **et de tous les tours**, l'apparence **claire ou sombre** (automatique : comme le téléphone ; les tours gardent leur décor), l'ordre des tuiles (par date de publication ou alphabétique), les favoris, la version et le journal des versions ; tout est gardé d'une ouverture à l'autre |
 | **Tourner le téléphone** au menu | Le menu suit l'écran : en largeur, les tuiles se rangent sur plusieurs colonnes. Les tours gardent leur orientation |
 | **Fin de la routine** (voir le tableau) | Le tour se remet en place pour une nouvelle routine : **on reste dans le tour** |

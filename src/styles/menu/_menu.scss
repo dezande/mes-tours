@@ -92,10 +92,13 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 		linear-gradient(180deg, var(--m-ciel-haut) 0%, var(--m-ciel-bas) 100%);
 	position: absolute;
 	inset: 0;
-	overflow-y: auto;
+	// Jamais de défilement horizontal, même quand le couvercle de la mallette bascule vers l'écran.
+	overflow: hidden auto;
 	overscroll-behavior: contain;
 	touch-action: manipulation;
-	padding: calc(var(--safe-t) + 22px) calc(var(--safe-r) + 18px) calc(var(--safe-b) + 22px) calc(var(--safe-l) + 18px);
+	// Des marges de 6 px seulement : la mallette prend presque toute la largeur (trois tuiles de front
+	// sur 360 px) ; l'en-tête et la ligne des réglages généraux gardent 18 px.
+	padding: calc(var(--safe-t) + 22px) calc(var(--safe-r) + 6px) calc(var(--safe-b) + 22px) calc(var(--safe-l) + 6px);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -124,7 +127,7 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 
 // En haut : le titre au milieu, l'écrou ⚙ à droite (sa place gardée à gauche).
 #menu-principal #menu-entete {
-	width: 100%;
+	width: calc(100% - 24px);
 	max-width: 640px;
 	display: grid;
 	grid-template-columns: 52px 1fr 52px;
@@ -207,11 +210,11 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 	}
 }
 
-// La ligne des réglages généraux : une fenêtre en largeur, qui ouvre leur page.
+// La ligne des réglages généraux : une fenêtre en largeur, sous la mallette, qui ouvre leur page.
 #menu-principal #reglages-generaux-btn {
-	width: 100%;
+	width: calc(100% - 24px);
 	max-width: 640px;
-	margin-bottom: 14px;
+	margin-top: 4px;
 	padding: 10px 14px;
 	display: flex;
 	align-items: center;
@@ -315,12 +318,12 @@ $valise-rayon: 10px;
 		linear-gradient(180deg, $valise-velours 0%, $valise-velours-sombre 100%);
 }
 
-// La mallette déborde un peu sur les marges du menu : trois tuiles de front, même sur 360 px. Ses
-// deux moitiés, de la même hauteur, se touchent à la charnière ; le couvercle tourne dans la
-// perspective du #tours, dont le point de fuite est sur cette charnière.
+// La mallette prend toute la largeur du menu. Ses deux moitiés, de la même hauteur, se touchent à
+// la charnière ; le couvercle tourne dans la perspective du #tours, dont le point de fuite est sur
+// cette charnière.
 #menu-principal #tours {
 	position: relative;
-	width: calc(100% + 24px);
+	width: 100%;
 	max-width: 640px;
 	padding: $valise-dessus 0;
 	display: grid;
