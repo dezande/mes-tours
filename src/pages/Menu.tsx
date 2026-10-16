@@ -181,9 +181,10 @@ export function Menu({ panneau, depuisLApp }: Props) {
 			</nav>
 
 			{/* La ligne des réglages généraux : leur page. Sous la mallette, qui ne bouge pas d'un panneau
-			    à l'autre. */}
+			    à l'autre, une étiquette de cuir aux coins de laiton, comme elle. */}
 			{enReglages && (
 				<BoutonTactile id="reglages-generaux-btn" onAction={() => naviguer(ADRESSE_DES_REGLAGES_GENERAUX)}>
+					<Coins />
 					<PixelArt grille={ECROU} className="ecrou" />
 					<span className="libelle">
 						<span className="titre">{TEXTES.reglagesGeneraux[langue]}</span>
