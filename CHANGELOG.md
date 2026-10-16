@@ -10,7 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
-| [1.12.0] | 71 | 2026-10-16 | La mallette s'ouvre sur les tours : les tuiles rangées dedans, en largeur, le couvercle qui bascule, une étoile aux favoris |
+| [1.12.0] | 72 | 2026-10-16 | La mallette s'ouvre sur les tours : les tuiles rangées dedans, en largeur, le couvercle qui bascule, une étoile aux favoris |
 | [1.11.1] | 66 | 2026-10-13 | Une nouvelle icône : une mallette de magicien en pixel art |
 | [1.11.0] | 64 | 2026-10-12 | Le menu d'accueil refait : tuiles carrées, deux panneaux, réglages généraux, favoris, mode clair et sombre |
 | [1.10.1] | 62 | 2026-10-11 | La CI en parallèle : tests dans Chrome sur trois machines, publication à part |
@@ -49,12 +49,12 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ## [1.12.0] — 2026-10-16
 
-71 commits
+72 commits
 
-- **La mallette s'ouvre sur les tours.** Au menu, les tuiles sont rangées dans la mallette de l'icône, posée à plat et vue de dessus, ouverte comme une vraie valise : la première moitié des tours dans la caisse, l'autre dans le couvercle rabattu en dessous, chacune sur son fond de velours, entre ses parois de cuir et ses coins de laiton ; la poignée et les fermoirs sur le bord. La mallette entière tient à l'écran. À l'ouverture de l'app, elle est fermée : les fermoirs sautent, le couvercle se dresse et retombe à plat de l'autre côté de sa charnière, dans quelques étincelles. De retour d'un tour, elle est déjà ouverte, et les tuiles répondent tout de suite. Sans animation si le téléphone les réduit.
+- **La mallette s'ouvre sur les tours.** Au menu, les tuiles sont rangées dans la mallette de l'icône, posée à plat et vue de dessus, ouverte comme une vraie valise : la première moitié des tours dans la caisse, l'autre dans le couvercle rabattu en dessous, chacune sur son fond de velours capitonné, entre ses parois de cuir et ses coins de laiton ; la poignée et les fermoirs sur le bord. La mallette entière tient à l'écran. À l'ouverture de l'app, elle est fermée : les fermoirs sautent, le couvercle se dresse et retombe à plat de l'autre côté de sa charnière, dans quelques étincelles. De retour d'un tour, elle est déjà ouverte, et les tuiles répondent tout de suite. Sans animation si le téléphone les réduit.
 - **Les tuiles en largeur** (4:3) plutôt que carrées, toujours trois de front : la mallette est moins haute, l'icône et le nom un peu plus petits.
 - **Plus de défilement horizontal** au menu : la mallette prend la largeur du menu, sans déborder de ses marges.
-- **La mallette ne bouge pas d'un panneau à l'autre** : dans le panneau des réglages, la ligne des réglages généraux passe sous la mallette.
+- **La mallette ne bouge pas d'un panneau à l'autre** : dans le panneau des réglages, la ligne des réglages généraux passe sous la mallette, à son image : une étiquette de cuir rouge aux coins de laiton, le titre en or.
 - **Les favoris portent une étoile ★** dans le coin de leur tuile, toujours en tête du menu, à la place des titres « Favoris » et « Les autres tours », que les deux moitiés de la mallette ne peuvent pas porter.
 - Les morceaux de la mallette en pixels (poignée, coin, fermoir, étoile, étincelles) sont imprimés par `outils/icone-app.py`, pris tels quels dans l'icône.
 

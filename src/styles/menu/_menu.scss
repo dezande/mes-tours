@@ -20,6 +20,52 @@ $or: #ffd86b;
 $or-sombre: #c98c2e;
 $pixel: "Pixelify Sans", ui-monospace, monospace;
 
+// Les couleurs et les matières de la mallette (voir « LA MALLETTE », plus bas) : les mêmes dans les
+// deux apparences, pour la mallette et la ligne des réglages généraux.
+$valise-px: 3px;
+$valise-contour: #12061a;
+$valise-cuir-clair: #b13e53;
+$valise-cuir: #8f2540;
+$valise-cuir-sombre: #4a1222;
+$valise-cuir-nuit: #2a0a14;
+$valise-velours: #3a1030;
+$valise-velours-sombre: #1a0616;
+// La paroi de cuir entre le bord de chaque moitié et son fond, et la marge du velours autour des
+// tuiles : minces, pour garder trois tuiles de front sur un téléphone de 360 px.
+$valise-rebord: 8px;
+$valise-marge: 4px;
+// Au-dessus de la caisse, la place de la poignée.
+$valise-dessus: $valise-px * 10 + 4px;
+$valise-rayon: 10px;
+
+// Le cuir rouge, éclairé d'en haut à gauche, tramé en damier de deux pixels d'art comme sur l'icône.
+@mixin valise-cuir {
+	background:
+		repeating-conic-gradient(rgba(0, 0, 0, .18) 0 25%, transparent 0 50%) 0 0 / #{$valise-px * 2} #{$valise-px * 2},
+		linear-gradient(160deg, $valise-cuir-clair 0%, $valise-cuir 30%, $valise-cuir-sombre 80%, $valise-cuir-nuit 100%);
+}
+
+// Le velours prune des fonds, capitonné : des losanges piqués ($capiton de côté), un éclat sur la
+// piqûre, une ombre dessous, un bouton de laiton sombre à chaque croisement, et chaque bombé un
+// peu plus clair en son milieu.
+$capiton: 26px;
+$piqure-claire: rgba(255, 255, 255, .09);
+$piqure-ombre: rgba(0, 0, 0, .38);
+$bouton-capiton: #7a3058;
+$bouton-capiton-ombre: #1a0616;
+
+@mixin valise-velours {
+	background:
+		radial-gradient(circle, $bouton-capiton 0 1.5px, $bouton-capiton-ombre 2px 2.5px, transparent 3px) 0 0 / #{$capiton} #{$capiton},
+		radial-gradient(circle, $bouton-capiton 0 1.5px, $bouton-capiton-ombre 2px 2.5px, transparent 3px) #{$capiton * 0.5} #{$capiton * 0.5} / #{$capiton} #{$capiton},
+		linear-gradient(45deg, transparent calc(50% - 1px), $piqure-claire calc(50% - 1px) calc(50% + 1px), $piqure-ombre calc(50% + 1px) calc(50% + 3px), transparent calc(50% + 3px)) 0 0 / #{$capiton} #{$capiton},
+		linear-gradient(-45deg, transparent calc(50% - 1px), $piqure-claire calc(50% - 1px) calc(50% + 1px), $piqure-ombre calc(50% + 1px) calc(50% + 3px), transparent calc(50% + 3px)) 0 0 / #{$capiton} #{$capiton},
+		radial-gradient(circle at 50% 0, rgba(255, 255, 255, .07), transparent 45%) 0 0 / #{$capiton} #{$capiton},
+		radial-gradient(circle at 0 50%, rgba(255, 255, 255, .07), transparent 45%) 0 0 / #{$capiton} #{$capiton},
+		radial-gradient(ellipse 80% 55% at 50% 40%, rgba(140, 60, 120, .3), transparent 75%),
+		linear-gradient(180deg, $valise-velours 0%, $valise-velours-sombre 100%);
+}
+
 /*
  * LES DEUX APPARENCES (src/apparence/) : html[data-theme="sombre"], le ciel de nuit d'origine, et
  * html[data-theme="clair"], un ciel de jour aux fenêtres claires bordées de bleu nuit. Elles valent
@@ -210,20 +256,27 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 	}
 }
 
-// La ligne des réglages généraux : une fenêtre en largeur, sous la mallette, qui ouvre leur page.
+// La ligne des réglages généraux, sous la mallette, à son image : une étiquette de cuir rouge aux
+// coins de laiton, le titre en or ; elle ouvre leur page. Les mêmes couleurs dans les deux apparences.
 #menu-principal #reglages-generaux-btn {
+	position: relative;
 	width: calc(100% - 24px);
 	max-width: 640px;
-	margin-top: 4px;
-	padding: 10px 14px;
+	margin-top: 22px;
+	padding: 12px 18px;
 	display: flex;
 	align-items: center;
 	gap: 12px;
-	color: inherit;
+	border: $valise-px solid $valise-contour;
+	border-radius: $valise-rayon;
+	box-shadow:
+		inset 0 $valise-px 0 rgba(255, 255, 255, .14),
+		0 4px 0 var(--m-ombre-portee);
+	color: #f2d6dc;
 	font: inherit;
 	text-align: left;
 	cursor: pointer;
-	@include fenetre(var(--m-ligne-haut), var(--m-ligne-bas));
+	@include valise-cuir;
 
 	.ecrou {
 		flex: none;
@@ -242,25 +295,26 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
 	.titre {
 		font-size: 18px;
 		font-weight: 700;
-		color: var(--m-titre);
-		text-shadow: 2px 2px 0 var(--m-texte-ombre);
+		color: $or;
+		text-shadow: 2px 2px 0 $ombre;
 	}
 
 	.detail {
 		font-size: 13px;
-		color: var(--m-texte);
+		color: #f2d6dc;
+		text-shadow: 1px 1px 0 $ombre;
 	}
 
 	.fleche {
 		font-size: 30px;
 		line-height: 1;
-		color: var(--m-texte-fort);
-		text-shadow: 2px 2px 0 var(--m-texte-ombre);
+		color: $or;
+		text-shadow: 2px 2px 0 $ombre;
 	}
 
 	&:active {
 		transform: translateY(2px);
-		@include fenetre(var(--m-active-haut), var(--m-active-bas));
+		filter: brightness(1.25);
 	}
 
 	&:focus-visible {
@@ -286,36 +340,6 @@ $pixel: "Pixelify Sans", ui-monospace, monospace;
  * charnière, sa face de dedans et ses tours découverts, dans quelques étincelles. Pendant ce
  * temps, il ne reçoit pas les touchers. Sans animation si le téléphone les réduit.
  */
-$valise-px: 3px;
-$valise-contour: #12061a;
-$valise-cuir-clair: #b13e53;
-$valise-cuir: #8f2540;
-$valise-cuir-sombre: #4a1222;
-$valise-cuir-nuit: #2a0a14;
-$valise-velours: #3a1030;
-$valise-velours-sombre: #1a0616;
-// La paroi de cuir entre le bord de chaque moitié et son fond, et la marge du velours autour des
-// tuiles : minces, pour garder trois tuiles de front sur un téléphone de 360 px.
-$valise-rebord: 8px;
-$valise-marge: 4px;
-// Au-dessus de la caisse, la place de la poignée.
-$valise-dessus: $valise-px * 10 + 4px;
-$valise-rayon: 10px;
-
-// Le cuir rouge, éclairé d'en haut à gauche, tramé en damier de deux pixels d'art comme sur l'icône.
-@mixin valise-cuir {
-	background:
-		repeating-conic-gradient(rgba(0, 0, 0, .18) 0 25%, transparent 0 50%) 0 0 / #{$valise-px * 2} #{$valise-px * 2},
-		linear-gradient(160deg, $valise-cuir-clair 0%, $valise-cuir 30%, $valise-cuir-sombre 80%, $valise-cuir-nuit 100%);
-}
-
-// Le velours prune des fonds, un peu plus clair au milieu.
-@mixin valise-velours {
-	background:
-		repeating-conic-gradient(rgba(255, 255, 255, .04) 0 25%, transparent 0 50%) 0 0 / #{$valise-px * 2} #{$valise-px * 2},
-		radial-gradient(ellipse 80% 55% at 50% 40%, rgba(140, 60, 120, .3), transparent 75%),
-		linear-gradient(180deg, $valise-velours 0%, $valise-velours-sombre 100%);
-}
 
 // La mallette prend toute la largeur du menu. Ses deux moitiés, de la même hauteur, se touchent à
 // la charnière ; le couvercle tourne dans la perspective du #tours, dont le point de fuite est sur
