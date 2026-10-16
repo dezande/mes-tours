@@ -1,5 +1,5 @@
 /*
- * Le menu principal, en pixel art façon console 16 bits : une tuile carrée par tour
+ * Le menu principal, en pixel art façon console 16 bits : une tuile en largeur par tour
  * (content/tours.ts), au fond de son tour, avec son icône en pixels (content/pixels.ts) et son nom,
  * et la main des jeux de rôle qui montre la tuile touchée. Deux panneaux, chacun à son adresse :
  *
