@@ -161,7 +161,7 @@ Un tour à cartes ajoute `cartes.tapis`, `cartes.cartes(…)` et `cartes.vignett
 
 ## Publication et développement
 
-`main` protégée : pull request, fusion en rebase (historique linéaire), branche à jour, CI verte (« Types, tests, build et tests dans Chrome », qui réunit les vérifications parallèles), une ligne dans le [journal des versions](CHANGELOG.md) pour chaque changement. Chaque fusion sur `main` publie le site.
+`main` protégée : pull request, fusion en rebase (historique linéaire), branche à jour, CI verte (« Types, tests, build et tests dans Chrome », qui réunit les vérifications parallèles : les tests dans Chrome, les plus longs, se partagent entre six machines), une ligne dans le [journal des versions](CHANGELOG.md) pour chaque changement. Chaque fusion sur `main` publie le site.
 
 **La correction automatique (Auto-fix) est obligatoire sur toutes les pull requests**, quel que soit le flux qui les ouvre : elle est activée dès la création de la PR, et un commentaire sur la PR le signale. Une vérification GitHub qui échoue, un conflit avec `main` ou un commentaire de relecture est alors corrigé, vérifié et poussé sur la branche de la PR. La fusion, elle, reste manuelle.
 
@@ -176,6 +176,7 @@ npm install
 npm run dev         # serveur de développement (Vite), rechargement à chaud
 npm run serve       # build puis serveur local sur http://localhost:8000
 npm test            # tests unitaires et des composants (Jest) : l'app, les tours et les scripts du build
+npm run test:cibles # seulement les tests qui concernent les fichiers modifiés par rapport à main
 npm run test:e2e    # tests dans Chrome (après npm run build)
 npm run typecheck
 npm run check:changelog

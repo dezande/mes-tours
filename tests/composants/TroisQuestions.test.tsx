@@ -145,6 +145,33 @@ test('toucher une colonne la note (un instant après) et passe à la photo suiva
 	expect(vibrate).not.toHaveBeenCalled();
 });
 
+test('une colonne touchée puis, aussitôt, un défilement ou une touche : la colonne n’est pas notée', async () => {
+	await ouvrir();
+	// Au doigt : le défilement l'emporte sur la colonne qui attendait.
+	toucher(150);
+	defiler();
+	expect(photoMontree()).toBe('question-0-rafale');
+	await pause();
+	expect(photoMontree()).toBe('question-0-rafale');
+	defiler('droite');
+	expect(photoMontree()).toBe('question-0');
+	// Au clavier (télécommande) : pareil.
+	toucher(150);
+	act(() => {
+		fireEvent.keyDown(document, { key: 'ArrowRight' });
+	});
+	expect(photoMontree()).toBe('question-0-rafale');
+	await pause();
+	expect(photoMontree()).toBe('question-0-rafale');
+	act(() => {
+		fireEvent.keyDown(document, { key: 'ArrowLeft' });
+	});
+	expect(photoMontree()).toBe('question-0');
+	// Rien de noté : la colonne 2 touchée ensuite est bien la réponse à la question 1.
+	await colonne(150);
+	expect(photoMontree()).toBe('question-1');
+});
+
 test('la révélation : trois colonnes de 13, la carte du spectateur face en bas au milieu de la colonne du milieu', async () => {
 	await ouvrir();
 	await colonne(250);

@@ -7,6 +7,7 @@
  */
 import { writeFileSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { TOURS } from '../src/content/tours.ts';
 import { Browser, SCREEN } from './chrome.ts';
 import { startStaticServer } from './static-server.ts';
 
@@ -26,7 +27,7 @@ try {
 	await page.goto(serveur.url);
 	await page.evaluate(`localStorage.setItem('mes-tours:langue', '"fr"')`);
 	await page.reload();
-	await page.waitFor(`document.querySelectorAll('#tours .tour').length === 4 && document.fonts.check('16px "Pixelify Sans"')`, 'menu');
+	await page.waitFor(`document.querySelectorAll('#tours .tour').length === ${TOURS.length} && document.fonts.check('16px "Pixelify Sans"')`, 'menu');
 	await capture('menu');
 
 	await page.goto(`${serveur.url}#/tours/pile-ou-face`);
