@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.12.0] | 68 | 2026-10-16 | La mallette s'ouvre sur les tours : les tuiles rangées dedans, le couvercle qui bascule, une étoile aux favoris |
 | [1.11.1] | 66 | 2026-10-13 | Une nouvelle icône : une mallette de magicien en pixel art |
 | [1.11.0] | 64 | 2026-10-12 | Le menu d'accueil refait : tuiles carrées, deux panneaux, réglages généraux, favoris, mode clair et sombre |
 | [1.10.1] | 62 | 2026-10-11 | La CI en parallèle : tests dans Chrome sur trois machines, publication à part |
@@ -46,7 +47,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.12.0] — 2026-10-16
+
+68 commits
 
 - **La mallette s'ouvre sur les tours.** Au menu, les tuiles sont rangées dans la mallette de l'icône, posée à plat et vue de dessus, ouverte comme une vraie valise : la première moitié des tours dans la caisse, l'autre dans le couvercle rabattu en dessous, chacune sur son fond de velours, entre ses parois de cuir et ses coins de laiton ; la poignée et les fermoirs sur le bord. La mallette entière tient à l'écran. À l'ouverture de l'app, elle est fermée : les fermoirs sautent, le couvercle se dresse et retombe à plat de l'autre côté de sa charnière, dans quelques étincelles. De retour d'un tour, elle est déjà ouverte, et les tuiles répondent tout de suite. Sans animation si le téléphone les réduit.
 - **Les favoris portent une étoile ★** dans le coin de leur tuile, toujours en tête du menu, à la place des titres « Favoris » et « Les autres tours », que les deux moitiés de la mallette ne peuvent pas porter.
@@ -445,6 +448,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.12.0]: https://github.com/dezande/mes-tours/releases/tag/v1.12.0
 [1.11.1]: https://github.com/dezande/mes-tours/releases/tag/v1.11.1
 [1.11.0]: https://github.com/dezande/mes-tours/releases/tag/v1.11.0
 [1.10.1]: https://github.com/dezande/mes-tours/releases/tag/v1.10.1
