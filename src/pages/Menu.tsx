@@ -7,8 +7,14 @@
  *   les réglages (#/reglages)   une ligne pour les réglages généraux (pages/ReglagesGeneraux.tsx),
  *                               puis les mêmes tuiles, qui ouvrent chacune les réglages de son tour.
  *
- * Les tuiles : les favoris d'abord, puis les autres tours, dans l'ordre choisi dans les réglages
- * généraux (logic/rangement.ts).
+ * Les tuiles : les favoris d'abord (une étoile ★ dans leur coin), puis les autres tours, dans l'ordre
+ * choisi dans les réglages généraux (logic/rangement.ts). Elles sont rangées dans LA MALLETTE de
+ * l'icône de l'app, posée à plat et vue de dessus, ouverte comme une vraie valise : la caisse en
+ * haut, la poignée et les fermoirs sur son bord, le couvercle rabattu à plat en dessous, sur sa
+ * charnière ; chaque moitié range la moitié des tours sur son fond de velours, entre ses parois de
+ * cuir et ses coins de laiton. La mallette entière tient à l'écran. À l'ouverture de l'app, elle est
+ * fermée, le couvercle sur la caisse : les fermoirs sautent et le couvercle bascule (styles/menu/
+ * _menu.scss). De retour d'un tour, elle est déjà ouverte, et les tuiles répondent tout de suite.
  *
  * Le menu suit l'orientation de l'écran (useOrientationLibre) : en paysage, les tuiles se rangent
  * en largeur. Les tours, eux, gardent leur verrou.
@@ -17,11 +23,11 @@
  * les réglages. Les boutons agissent au lever du doigt, appui bref ou long (BoutonTactile).
  */
 
-import { useCallback, useEffect, useRef } from 'preact/hooks';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { useOrientationLibre } from '../appareil/Orientation.tsx';
 import { BoutonTactile } from '../components/BoutonTactile.tsx';
 import { PixelArt } from '../components/PixelArt.tsx';
-import { ECROU, ICONES, MAIN } from '../content/pixels.ts';
+import { ECROU, ICONES, MAIN, VALISE_COIN, VALISE_ETINCELLE, VALISE_ETINCELLE_PETITE, VALISE_ETOILE, VALISE_FERMOIR, VALISE_POIGNEE } from '../content/pixels.ts';
 import { TEXTES } from '../content/textes.ts';
 import { TOURS, type Tour } from '../content/tours.ts';
 import { usePreferencesMenu } from '../hooks/usePreferencesMenu.ts';
@@ -31,6 +37,19 @@ import type { Lang } from '../logic/i18n.ts';
 import { ranger } from '../logic/rangement.ts';
 import { naviguer } from '../routeur.ts';
 
+/** La mallette ne s'ouvre qu'une fois par lancement de l'app : de retour d'un tour, elle est déjà ouverte. */
+let malletteOuverte = false;
+
+/** Le temps de l'ouverture (styles/menu/_menu.scss) : les fermoirs, puis le couvercle qui bascule. */
+const DUREE_OUVERTURE = 2200;
+
+/** Les quatre coins de laiton d'une face de la mallette. */
+const Coins = () => (
+	<>
+		{(['hg', 'hd', 'bg', 'bd'] as const).map((coin) => <PixelArt key={coin} grille={VALISE_COIN} className={`valise-coin valise-coin-${coin}`} />)}
+	</>
+);
+
 interface Props {
 	/** Le panneau affiché : les tours à lancer, ou les réglages. */
 	panneau: 'tours' | 'reglages';
@@ -39,10 +58,10 @@ interface Props {
 }
 
 /** Une tuile : elle lance son tour, ou (panneau des réglages) ouvre ses réglages. */
-function Tuile({ tour, langue, enReglages }: { tour: Tour; langue: Lang; enReglages: boolean }) {
+function Tuile({ tour, langue, enReglages, favori }: { tour: Tour; langue: Lang; enReglages: boolean; favori: boolean }) {
 	const nom = tour.nom[langue];
 	return (
-		<div className="tour" data-dossier={tour.dossier}>
+		<div className="tour" data-dossier={tour.dossier} data-favori={favori ? '' : undefined}>
 			<BoutonTactile
 				className={enReglages ? 'tour-reglages' : 'tour-lancer'}
 				aria-label={enReglages ? `${TEXTES.reglagesDe[langue]}${nom}` : undefined}
@@ -52,6 +71,8 @@ function Tuile({ tour, langue, enReglages }: { tour: Tour; langue: Lang; enRegla
 				<PixelArt grille={MAIN} className="main" />
 				<PixelArt grille={ICONES[tour.dossier]!} className="tour-icone" />
 				<span className="tour-nom">{nom}</span>
+				{/* L'étoile d'or des favoris, dans le coin. */}
+				{favori && <span className="favori" aria-hidden="true">★</span>}
 				{/* Un petit écrou dans le coin : la tuile ouvre les réglages du tour. */}
 				{enReglages && <PixelArt grille={ECROU} className="ecrou" />}
 			</BoutonTactile>
@@ -95,8 +116,22 @@ export function Menu({ panneau, depuisLApp }: Props) {
 		return () => document.removeEventListener('keydown', surTouche);
 	}, [enReglages, basculer]);
 
+	// La mallette : fermée au premier affichage du menu, elle s'ouvre (animation CSS, le temps de
+	// l'ouverture, pendant lequel le couvercle ne reçoit pas les touchers) ; ensuite, ouverte.
+	const [ouverture, setOuverture] = useState(() => !malletteOuverte);
+	useEffect(() => {
+		malletteOuverte = true;
+		const fin = setTimeout(() => setOuverture(false), DUREE_OUVERTURE);
+		return () => clearTimeout(fin);
+	}, []);
+
+	// Les favoris d'abord, puis les autres ; la caisse range la première moitié, le couvercle le reste.
 	const rangees = ranger(TOURS, favoris, tri, langue);
-	const tuiles = (tours: readonly Tour[]) => tours.map((tour) => <Tuile key={tour.dossier} tour={tour} langue={langue} enReglages={enReglages} />);
+	const tous = [...rangees.favoris, ...rangees.autres];
+	const dansLaCaisse = Math.ceil(tous.length / 2);
+	const tuiles = (tours: readonly Tour[]) => tours.map((tour) => (
+		<Tuile key={tour.dossier} tour={tour} langue={langue} enReglages={enReglages} favori={rangees.favoris.includes(tour)} />
+	));
 
 	return (
 		<main id="menu-principal" data-panneau={panneau}>
@@ -125,21 +160,35 @@ export function Menu({ panneau, depuisLApp }: Props) {
 				</BoutonTactile>
 			)}
 
-			<nav id="tours" aria-label={TEXTES.tours[langue]}>
-				{rangees.favoris.length > 0
-					? (
-						<>
-							<h3 className="rangee-titre"><span aria-hidden="true">★ </span>{TEXTES.favoris[langue]}</h3>
-							<div className="grille" data-rangee="favoris">{tuiles(rangees.favoris)}</div>
-							{rangees.autres.length > 0 && (
-								<>
-									<h3 className="rangee-titre">{TEXTES.autresTours[langue]}</h3>
-									<div className="grille" data-rangee="autres">{tuiles(rangees.autres)}</div>
-								</>
-							)}
-						</>
-					)
-					: <div className="grille" data-rangee="autres">{tuiles(rangees.autres)}</div>}
+			{/* La mallette, vue de dessus : la caisse (le cuir, ses coins, le velours où sont rangées les
+			    premières tuiles ; la poignée et les fermoirs sur son bord), puis le couvercle, qui bascule sur
+			    la charnière entre les deux : sa face de dehors (le cuir et l'étoile) et sa face de dedans
+			    (le velours, les autres tuiles). Les étincelles de l'ouverture, autour. */}
+			<nav id="tours" className="valise" data-ouverture={ouverture ? '' : undefined} aria-label={TEXTES.tours[langue]}>
+				<div className="valise-caisse valise-moitie">
+					<Coins />
+					<div className="grille valise-fond" data-moitie="caisse">{tuiles(tous.slice(0, dansLaCaisse))}</div>
+					<PixelArt grille={VALISE_FERMOIR} className="valise-fermoir valise-fermoir-g" />
+					<PixelArt grille={VALISE_FERMOIR} className="valise-fermoir valise-fermoir-d" />
+					<PixelArt grille={VALISE_POIGNEE} className="valise-poignee" />
+				</div>
+				<div className="valise-couvercle">
+					<div className="valise-dehors" aria-hidden="true">
+						<Coins />
+						<PixelArt grille={VALISE_ETOILE} className="valise-etoile" />
+					</div>
+					<div className="valise-dedans valise-moitie">
+						<Coins />
+						<div className="grille valise-fond" data-moitie="couvercle">{tuiles(tous.slice(dansLaCaisse))}</div>
+					</div>
+				</div>
+				{ouverture && (
+					<>
+						<PixelArt grille={VALISE_ETINCELLE} className="valise-etincelle valise-etincelle-1" />
+						<PixelArt grille={VALISE_ETINCELLE_PETITE} className="valise-etincelle valise-etincelle-2" />
+						<PixelArt grille={VALISE_ETINCELLE} className="valise-etincelle valise-etincelle-3" />
+					</>
+				)}
 			</nav>
 		</main>
 	);

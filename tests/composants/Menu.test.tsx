@@ -1,4 +1,5 @@
-// Le menu principal (src/pages/Menu.tsx) : une tuile carrée par tour ; l'écrou ⚙ en haut à droite
+// Le menu principal (src/pages/Menu.tsx) : une tuile carrée par tour, rangées dans la mallette qui
+// s'ouvre à l'ouverture de l'app ; l'écrou ⚙ en haut à droite
 // ouvre le panneau des réglages : la ligne des réglages généraux (leur page : langue, ordre des
 // tours, favoris, journal), et les réglages de chaque tour.
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/preact';
@@ -29,6 +30,30 @@ async function basculer(): Promise<void> {
 	await act(async () => toucher(screen.getByRole('button', { name: 'Réglages' })));
 }
 
+// En premier dans le fichier : la mallette ne s'ouvre qu'au premier affichage du menu depuis le
+// chargement de l'app (un état du module Menu.tsx).
+test('la mallette s’ouvre au premier affichage du menu seulement ; chaque moitié range la moitié des tours', () => {
+	render(<App />);
+	expect(document.querySelector('#tours')).toHaveAttribute('data-ouverture');
+	// Le couvercle, ses deux faces, les fermoirs, la poignée, les étincelles de l'ouverture.
+	expect(document.querySelector('#tours .valise-couvercle .valise-dehors .valise-etoile')).toBeInTheDocument();
+	expect(document.querySelectorAll('#tours .valise-fermoir')).toHaveLength(2);
+	expect(document.querySelector('#tours .valise-poignee')).toBeInTheDocument();
+	expect(document.querySelectorAll('#tours .valise-etincelle')).toHaveLength(3);
+	// La première moitié des tours dans la caisse, l'autre dans le couvercle ; tous, dans l'ordre.
+	const caisse = [...document.querySelectorAll<HTMLElement>('#tours .valise-caisse .tour')].map((t) => t.dataset.dossier);
+	const couvercle = [...document.querySelectorAll<HTMLElement>('#tours .valise-couvercle .tour')].map((t) => t.dataset.dossier);
+	expect(caisse).toHaveLength(Math.ceil(TOURS.length / 2));
+	expect(couvercle).toHaveLength(Math.floor(TOURS.length / 2));
+	expect([...caisse, ...couvercle]).toStrictEqual(dossiersAffiches());
+	cleanup();
+
+	// Affiché de nouveau (de retour d'un tour) : déjà ouverte, sans étincelles.
+	render(<App />);
+	expect(document.querySelector('#tours')).not.toHaveAttribute('data-ouverture');
+	expect(document.querySelector('#tours .valise-etincelle')).toBeNull();
+});
+
 test('une tuile par tour, avec son nom, qui lance le tour ; ni réglages ni langue sur ce panneau', () => {
 	render(<App />);
 	expect([...dossiersAffiches()].sort()).toStrictEqual(TOURS.map((tour) => tour.dossier).sort());
@@ -37,9 +62,9 @@ test('une tuile par tour, avec son nom, qui lance le tour ; ni réglages ni lang
 	}
 	expect(document.querySelector('.tour-reglages')).toBeNull();
 	expect(document.querySelector('#reglages-generaux-btn')).toBeNull();
-	// Ni favoris, ni titres de rangées : une seule grille, par date de publication.
-	expect(document.querySelectorAll('#tours .grille')).toHaveLength(1);
-	expect(document.querySelector('.rangee-titre')).toBeNull();
+	// Aucun favori, aucune étoile : les deux moitiés de la mallette, par date de publication.
+	expect(document.querySelectorAll('#tours .grille')).toHaveLength(2);
+	expect(document.querySelector('#tours .favori')).toBeNull();
 	expect(dossiersAffiches().slice(0, 5)).toStrictEqual(['boule-de-cristal', 'pile-ou-face', 'six-predictions', 'analyseur-q', 'carte-de-visite']);
 	expect(screen.getByRole('button', { name: 'Réglages' })).toHaveAttribute('aria-pressed', 'false');
 });
@@ -149,13 +174,15 @@ test('les favoris : touchés dans les réglages généraux, en tête du menu, pu
 	await basculer();
 	expect(await screen.findByText('Choisis un tour')).toBeInTheDocument();
 
-	// Les favoris d'abord (dans l'ordre choisi : par date de publication), puis les autres.
-	expect(screen.getByRole('heading', { level: 3, name: 'Favoris' })).toBeInTheDocument();
-	expect(screen.getByRole('heading', { level: 3, name: 'Les autres tours' })).toBeInTheDocument();
-	const favoris = [...document.querySelectorAll<HTMLElement>('.grille[data-rangee="favoris"] .tour')].map((t) => t.dataset.dossier);
+	// Les favoris d'abord (dans l'ordre choisi : par date de publication), une étoile dans leur coin,
+	// puis les autres ; l'étoile ne change pas le nom de la tuile.
+	const favoris = [...document.querySelectorAll<HTMLElement>('#tours .tour[data-favori]')].map((t) => t.dataset.dossier);
 	expect(favoris).toStrictEqual(['pile-ou-face', 'morpion']);
+	expect(dossiersAffiches().slice(0, 2)).toStrictEqual(['pile-ou-face', 'morpion']);
 	expect(dossiersAffiches()).toHaveLength(TOURS.length);
 	expect(dossiersAffiches().slice(2)).not.toContain('morpion');
+	expect(within(tuile('morpion')).getByRole('button', { name: 'Morpion' })).toContainElement(tuile('morpion').querySelector('.favori'));
+	expect(within(tuile('boule-de-cristal')).getByRole('button', { name: 'Boule de cristal' }).querySelector('.favori')).toBeNull();
 });
 
 test('l’apparence : automatique par défaut, puis claire ou sombre au choix, gardée', async () => {
@@ -196,7 +223,7 @@ test('des favoris abîmés ou inconnus sont ignorés', () => {
 	localStorage.setItem('mes-tours:favoris', '["tour-secret","morpion","morpion"]');
 	localStorage.setItem('mes-tours:tri', '"au-hasard"');
 	render(<App />);
-	expect([...document.querySelectorAll<HTMLElement>('.grille[data-rangee="favoris"] .tour')].map((t) => t.dataset.dossier)).toStrictEqual(['morpion']);
+	expect([...document.querySelectorAll<HTMLElement>('#tours .tour[data-favori]')].map((t) => t.dataset.dossier)).toStrictEqual(['morpion']);
 	expect(dossiersAffiches()[1]).toBe('boule-de-cristal');
 });
 

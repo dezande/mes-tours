@@ -6,6 +6,10 @@ Le dessin fait 80 × 80 pixels d'art. La mallette tient au centre : les coins so
 masques d'icône d'Android (purpose « maskable »). Les PNG de public/icons/ en sont ensuite rendus par
 outils/icones-png.py.
 
+Le script imprime aussi les morceaux de la mallette qui garnissent le menu (src/content/pixels.ts,
+VALISE_*) : la poignée, un coin de laiton, un fermoir, l'étoile et deux étincelles, en grilles de
+lettres de la palette du menu. Pour les changer, modifier le dessin ici et recopier la sortie.
+
 Usage : python3 outils/icone-app.py && python3 outils/icones-png.py
 """
 import math
@@ -176,3 +180,35 @@ with open('src/assets/icons/icon.svg', 'w', encoding='utf-8') as f:
 	f.write(''.join(rects))
 	f.write('\n</svg>\n')
 print(f'icon.svg : {len(rects)} rectangles')
+
+# ---------- Les morceaux de la mallette, pour le menu (src/content/pixels.ts) ----------
+# Les lettres de la palette de content/pixels.ts ; la mallette y ajoute « 4 » (son contour) et
+# « 5 » (la pointe des étincelles blanches).
+LETTRES = {CONTOUR: '4', '#8a8ac8': '5', OR[0]: 'm', OR[1]: 'l', OR[2]: 'k', OR[3]: 'j', OR[4]: 'i', '#ffffff': 'g', '#d8e0ee': 'F'}
+
+
+def morceau(x0, y0, x1, y1, garder=lambda c: True):
+	"""Le rectangle [x0, x1] × [y0, y1] du dessin, en lettres ; la nuit et ce qui n'est pas gardé, en « . »."""
+	return [''.join('.' if t[y][x] == NUIT or not garder(t[y][x]) else LETTRES[t[y][x]] for x in range(x0, x1 + 1)) for y in range(y0, y1 + 1)]
+
+
+# Un coin de laiton entier (celui de la mallette s'arrête au coin arrondi, que le menu dessine en CSS).
+coin_plein = [['.'] * 6 for _ in range(6)]
+for d in range(6):
+	for e in range(6 - d):
+		coin_plein[e][d] = LETTRES[ramp(0.95 - 0.1 * (d + e), OR, d, e)]
+coin_plein[2][2] = LETTRES[OR[4]]
+
+MORCEAUX = {
+	'VALISE_POIGNEE': morceau(PX0, PY0, PX1, Y0 - 1),
+	'VALISE_COIN': [''.join(ligne) for ligne in coin_plein],
+	'VALISE_FERMOIR': morceau(22, COUVERCLE - 3, 27, COUVERCLE + 3),
+	'VALISE_ETOILE': morceau(30, 42, 49, 59, lambda c: c in OR or c == CONTOUR),
+	'VALISE_ETINCELLE': morceau(15, 14, 21, 20),
+	'VALISE_ETINCELLE_PETITE': morceau(60, 18, 64, 22),
+}
+for nom, lignes in MORCEAUX.items():
+	print(f'export const {nom}: readonly string[] = [')
+	for ligne in lignes:
+		print(f"\t'{ligne}',")
+	print('];\n')

@@ -26,7 +26,6 @@ export const TEXTES = {
 	triAlphabetique: { fr: 'Par ordre alphabétique', en: 'Alphabetical' },
 	favoris: { fr: 'Favoris', en: 'Favourites' },
 	favorisAide: { fr: 'Touche un tour pour l’ajouter à tes favoris, en tête du menu, ou l’en retirer.', en: 'Tap a trick to add it to your favourites, at the top of the menu, or to remove it.' },
-	autresTours: { fr: 'Les autres tours', en: 'Other tricks' },
 	tours: { fr: 'Tours', en: 'Tricks' },
 	// « Réglages : Pile ou face » — le français met une espace avant les deux-points, pas l'anglais.
 	reglagesDe: { fr: 'Réglages : ', en: 'Settings: ' },

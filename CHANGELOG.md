@@ -46,6 +46,12 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **La mallette s'ouvre sur les tours.** Au menu, les tuiles sont rangées dans la mallette de l'icône, posée à plat et vue de dessus, ouverte comme une vraie valise : la première moitié des tours dans la caisse, l'autre dans le couvercle rabattu en dessous, chacune sur son fond de velours, entre ses parois de cuir et ses coins de laiton ; la poignée et les fermoirs sur le bord. La mallette entière tient à l'écran. À l'ouverture de l'app, elle est fermée : les fermoirs sautent, le couvercle se dresse et retombe à plat de l'autre côté de sa charnière, dans quelques étincelles. De retour d'un tour, elle est déjà ouverte, et les tuiles répondent tout de suite. Sans animation si le téléphone les réduit.
+- **Les favoris portent une étoile ★** dans le coin de leur tuile, toujours en tête du menu, à la place des titres « Favoris » et « Les autres tours », que les deux moitiés de la mallette ne peuvent pas porter.
+- Les morceaux de la mallette en pixels (poignée, coin, fermoir, étoile, étincelles) sont imprimés par `outils/icone-app.py`, pris tels quels dans l'icône.
+
 ## [1.11.1] — 2026-10-13
 
 66 commits
