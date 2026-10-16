@@ -10,6 +10,7 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 | Version | Commits | Date | En une phrase |
 | --- | --- | --- | --- |
+| [1.12.1] | 74 | 2026-10-16 | Packages à jour, Node 26, quatre-vingt-quatre tests de plus, trois corrections, la CI sur six machines |
 | [1.12.0] | 72 | 2026-10-16 | La mallette s'ouvre sur les tours : les tuiles rangées dedans, en largeur, le couvercle qui bascule, une étoile aux favoris |
 | [1.11.1] | 66 | 2026-10-13 | Une nouvelle icône : une mallette de magicien en pixel art |
 | [1.11.0] | 64 | 2026-10-12 | Le menu d'accueil refait : tuiles carrées, deux panneaux, réglages généraux, favoris, mode clair et sombre |
@@ -47,7 +48,9 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
-## [Non publié]
+## [1.12.1] — 2026-10-16
+
+74 commits
 
 - **Les dépendances à jour** : Preact 11.0.1, Vite 8.3.4, Sass 1.105.2, SWC 1.16.18, user-event 14.6.8 — des versions mineures, rien ne change dans l'app. Et **Node 26** pour le build, les scripts et les tests (`.nvmrc`, `engines`, les types de Node 26.6) ; la CI lit `.nvmrc`.
 - **Quatre-vingt-quatre tests de plus** (711 en tout), là où l'app n'en avait pas : les tours à zones dans l'app — la boule de cristal et la carte de visite, leurs bandes et leurs coins, les phases d'une routine, le double tap, l'appui de 3 s, le clavier, les réglages, le test des zones, le paysage —, les six prédictions, l'Analyseur Q (le diaporama, le bouton d'une slide et son délai, le faux chargement et ses pauses, l'écran noir, les réglages et l'ancien nom `rain-man`), les boutons qui agissent au lever du doigt, le stockage, les mises à jour, et la page d'un tour.
@@ -461,6 +464,7 @@ gh release create v0.2.0 --title "v0.2.0 — Titre" --notes-file notes.md
 
 
 
+[1.12.1]: https://github.com/dezande/mes-tours/releases/tag/v1.12.1
 [1.12.0]: https://github.com/dezande/mes-tours/releases/tag/v1.12.0
 [1.11.1]: https://github.com/dezande/mes-tours/releases/tag/v1.11.1
 [1.11.0]: https://github.com/dezande/mes-tours/releases/tag/v1.11.0
