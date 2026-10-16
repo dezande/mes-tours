@@ -41,21 +41,6 @@ export function PageTour({ dossier, enReglages, depuisLApp }: Props) {
 	const tour = TOURS.find((t) => t.dossier === dossier)!;
 	const entree = entreeDuRegistre(dossier)!;
 
-	// Le tour est chargé à sa première ouverture ; ensuite, il est déjà là.
-	const [Composant, setComposant] = useState<ComponentType | null>(() => charges.get(dossier) ?? null);
-	useEffect(() => {
-		if (Composant) return undefined;
-		let actif = true;
-		void entree.charger().then(({ default: charge }) => {
-			charges.set(dossier, charge);
-			// Une fonction se passe à setState sous forme de… fonction qui la renvoie.
-			if (actif) setComposant(() => charge);
-		});
-		return () => {
-			actif = false;
-		};
-	}, [Composant, dossier, entree]);
-
 	/*
 	 * Retour au menu. Ouvert depuis le menu, le tour y revient par l'historique ; ouvert autrement
 	 * (adresse tapée à la main), il remplace sa page par le menu. Une seule fois : l'appui de 3 s et
@@ -68,6 +53,25 @@ export function PageTour({ dossier, enReglages, depuisLApp }: Props) {
 		if (depuisLApp) history.back();
 		else naviguer('/', { remplacer: true });
 	}, [depuisLApp]);
+
+	// Le tour est chargé à sa première ouverture ; ensuite, il est déjà là.
+	const [Composant, setComposant] = useState<ComponentType | null>(() => charges.get(dossier) ?? null);
+	useEffect(() => {
+		if (Composant) return undefined;
+		let actif = true;
+		entree.charger().then(({ default: charge }) => {
+			charges.set(dossier, charge);
+			// Une fonction se passe à setState sous forme de… fonction qui la renvoie.
+			if (actif) setComposant(() => charge);
+		}).catch(() => {
+			// Fichier du tour introuvable (hors-ligne avant la fin du cache, version remplacée) : plutôt
+			// qu'une scène vide sans sortie, le menu.
+			if (actif) quitter();
+		});
+		return () => {
+			actif = false;
+		};
+	}, [Composant, dossier, entree, quitter]);
 
 	useEffect(() => {
 		document.documentElement.dataset.tour = dossier;

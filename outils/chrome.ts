@@ -213,7 +213,10 @@ export class Page {
 	/** Charge une adresse et attend la fin du chargement. */
 	async goto(url: string): Promise<void> {
 		const loaded = this.#nextEvent('Page.loadEventFired');
-		await this.send('Page.navigate', { url });
+		const { loaderId } = await this.send('Page.navigate', { url }) as { loaderId?: string };
+		// Même document (seul le « # » change, d'un tour à l'autre) : rien ne se charge, la page
+		// n'annoncera jamais de chargement. Les attentes qui suivent (waitFor) font le reste.
+		if (loaderId === undefined) return;
 		await loaded;
 	}
 

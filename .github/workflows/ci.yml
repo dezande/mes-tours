@@ -15,8 +15,13 @@ concurrency:
   cancel-in-progress: true
 
 # Les vérifications tournent en parallèle, chacune sur sa machine ; les tests dans Chrome, les plus
-# longs, se partagent entre trois machines. Après la fusion en rebase, main porte exactement l'arbre
+# longs, se partagent entre six machines. Après la fusion en rebase, main porte exactement l'arbre
 # vérifié ici : il n'est plus que construit et publié.
+#
+# Mesuré sur un passage vert : installer les dépendances prend 5 s (cache npm), le build 2 s, les
+# types 2 s, les tests unitaires 30 s ; tout le temps est dans les tests dans Chrome, qui jouent de
+# vraies routines (appuis de 3 s, fondus). Le seul levier est donc leur partage : avec trois machines,
+# chacune en avait pour près de 2 min ; avec six, pour 1 min.
 jobs:
   types:
     name: Journal et types
@@ -64,14 +69,15 @@ jobs:
         run: npm test
 
   chrome:
-    name: Tests dans Chrome (${{ matrix.partie }}/3)
+    # Le nombre de parties est celui de la matrice (strategy.job-total) : pour en changer, une seule liste.
+    name: Tests dans Chrome (${{ matrix.partie }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
       # Une partie en échec n'arrête pas les autres : on voit tous les tests qui échouent.
       fail-fast: false
       matrix:
-        partie: [1, 2, 3]
+        partie: [1, 2, 3, 4, 5, 6]
     steps:
       - uses: actions/checkout@v7
         with:
@@ -90,13 +96,13 @@ jobs:
 
       # L'app compilée dans Chrome sans interface, sur un écran de téléphone simulé :
       # chaque routine jusqu’au retour au menu, l’écrou des réglages, la sortie de secours et le hors-ligne.
-      # Chaque machine joue un test sur trois (E2E_PARTIE, tests/e2e/app.e2e.ts).
+      # Chaque machine joue un test sur six (E2E_PARTIE, tests/e2e/app.e2e.ts).
       # Google Chrome est préinstallé sur les machines ubuntu de GitHub (variable CHROME_BIN).
       # Limite de temps : une page de Chrome qui ne se ferme pas ne doit pas bloquer la CI.
       - name: Tests dans Chrome
         timeout-minutes: 6
         env:
-          E2E_PARTIE: ${{ matrix.partie }}/3
+          E2E_PARTIE: ${{ matrix.partie }}/${{ strategy.job-total }}
         run: npm run test:e2e
 
   # Le contrôle exigé par la protection de main : vert seulement si toutes les vérifications le sont.

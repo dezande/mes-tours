@@ -47,6 +47,16 @@ Les numéros suivent [semver](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORR
 
 ---
 
+## [Non publié]
+
+- **Les dépendances à jour** : Preact 11.0.1, Vite 8.3.4, Sass 1.105.2, SWC 1.16.18, user-event 14.6.8 — des versions mineures, rien ne change dans l'app. Et **Node 26** pour le build, les scripts et les tests (`.nvmrc`, `engines`, les types de Node 26.6) ; la CI lit `.nvmrc`.
+- **Quatre-vingt-quatre tests de plus** (711 en tout), là où l'app n'en avait pas : les tours à zones dans l'app — la boule de cristal et la carte de visite, leurs bandes et leurs coins, les phases d'une routine, le double tap, l'appui de 3 s, le clavier, les réglages, le test des zones, le paysage —, les six prédictions, l'Analyseur Q (le diaporama, le bouton d'une slide et son délai, le faux chargement et ses pauses, l'écran noir, les réglages et l'ancien nom `rain-man`), les boutons qui agissent au lever du doigt, le stockage, les mises à jour, et la page d'un tour.
+- **Trois questions** : une colonne touchée puis, dans l'instant, un défilement ou une touche de la télécommande n'est plus notée en réponse à la mauvaise question.
+- **Les mises à jour** : une nouvelle version n'est plus cherchée pendant un tour — installée à ce moment-là, elle retirait du cache hors-ligne les fichiers des tours pas encore ouverts dans la session, qui s'ouvraient alors sur une scène vide. Et un tour dont le fichier est introuvable ramène au menu.
+- `outils/captures.ts` attendait quatre tuiles au menu, qui en a douze : il attend toutes celles de la liste des tours. Et il ne reste plus bloqué en passant du menu à un tour : une adresse qui ne change que par son « # » ne charge rien, le pilote de Chrome (`outils/chrome.ts`) n'attend plus un chargement qui ne vient pas.
+- **Les tests ciblés** : `npm run test:cibles` (`outils/tests-cibles.ts`) ne lance que les tests qui concernent les fichiers modifiés par rapport à `main` (`jest --findRelatedTests`), jamais la suite entière ni les tests dans Chrome, qui restent à la CI. Le skill `/tests-cibles` et les consignes du dépôt (`CLAUDE.md`) demandent à Claude Code de s'en tenir là.
+- **La CI plus courte** : les tests dans Chrome, qui font tout le temps d'un passage (près de 2 min par machine, les autres vérifications prenant moins de 45 s), se partagent entre six machines au lieu de trois ; le nombre de parties se lit dans la matrice, à un seul endroit.
+
 ## [1.12.0] — 2026-10-16
 
 72 commits

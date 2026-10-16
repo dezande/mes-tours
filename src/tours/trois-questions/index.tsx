@@ -214,7 +214,11 @@ export default function TroisQuestions() {
 			const avant = etatRef.current;
 			const libre = dx < 0 ? voisinesRef.current.suivante : voisinesRef.current.precedente;
 			const suivi = libre ? dx : dx * RESISTANCE;
-			if (geste === 'suivant' || geste === 'precedent') return appliquer(apresDefilement(avant, geste), geste, suivi);
+			if (geste === 'suivant' || geste === 'precedent') {
+				// Une colonne touchée juste avant ne sera pas notée : le défilement l'emporte.
+				clearTimeout(enAttente.current);
+				return appliquer(apresDefilement(avant, geste), geste, suivi);
+			}
 			if (geste === 'none') return reposer();
 			if (enRevelation(avant)) {
 				if (geste === 'double') {
@@ -242,8 +246,9 @@ export default function TroisQuestions() {
 	// R : une nouvelle routine ; Échap ou M : retour au menu.
 	useClavier(keyAction, (action) => {
 		const avant = etatRef.current;
+		// Une colonne touchée juste avant ne sera pas notée : la touche l'emporte.
+		clearTimeout(enAttente.current);
 		if (action === 'remettre') {
-			clearTimeout(enAttente.current);
 			cancelAnimationFrame(image.current);
 			setAnime(false);
 			setDecalage(0);
