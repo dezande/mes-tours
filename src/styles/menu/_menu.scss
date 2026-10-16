@@ -298,8 +298,7 @@ $valise-velours-sombre: #1a0616;
 // tuiles : minces, pour garder trois tuiles de front sur un téléphone de 360 px.
 $valise-rebord: 8px;
 $valise-marge: 4px;
-// Au-dessus de la caisse, la place de la poignée ; autant en dessous, pour que le point de fuite du
-// couvercle soit sur la charnière, au milieu.
+// Au-dessus de la caisse, la place de la poignée.
 $valise-dessus: $valise-px * 10 + 4px;
 $valise-rayon: 10px;
 
@@ -320,16 +319,16 @@ $valise-rayon: 10px;
 
 // La mallette prend toute la largeur du menu. Ses deux moitiés, de la même hauteur, se touchent à
 // la charnière ; le couvercle tourne dans la perspective du #tours, dont le point de fuite est sur
-// cette charnière.
+// cette charnière (le milieu, décalé de la moitié de la place de la poignée).
 #menu-principal #tours {
 	position: relative;
 	width: 100%;
 	max-width: 640px;
-	padding: $valise-dessus 0;
+	padding: $valise-dessus 0 0;
 	display: grid;
 	grid-template-rows: 1fr 1fr;
 	perspective: 1400px;
-	perspective-origin: 50% 50%;
+	perspective-origin: 50% calc(50% + #{$valise-dessus * 0.5});
 }
 
 // Une moitié : le cuir, bordé de sombre, autour du fond de velours et de ses tuiles.
@@ -663,9 +662,13 @@ $fonds-des-tours: (
 	}
 
 	#menu-principal #menu-entete,
-	#menu-principal #reglages-generaux-btn,
-	#menu-principal #tours {
+	#menu-principal #reglages-generaux-btn {
 		max-width: 960px;
+	}
+
+	// La mallette moins large que l'écran : des tuiles moins hautes, la mallette entière à l'écran.
+	#menu-principal #tours {
+		max-width: 760px;
 	}
 
 	#menu-principal h1 {
@@ -673,7 +676,7 @@ $fonds-des-tours: (
 	}
 
 	#menu-principal .invite {
-		margin: 8px 0;
+		margin: 5px 0;
 	}
 
 	#menu-principal .grille {
